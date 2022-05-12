@@ -7,5 +7,6 @@ from userAuth.views import UserCreationView
 app_name = 'userAuth'
 
 urlpatterns = [
-    path('login/', UserCreationView.as_view(), name='login'),
+    path('signup/', UserCreationView.as_view(), name='signup'),
+
 ]
