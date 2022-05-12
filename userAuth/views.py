@@ -9,5 +9,5 @@ from userAuth.models import UserCreation
 
 class UserCreationView(CreateView):
     form_class = UserCreation
-    template_name = 'registration/user_create.html'
+    template_name = 'userAuth/user/signup.html'
     success_url = reverse_lazy('homepage')
