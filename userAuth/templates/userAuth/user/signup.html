@@ -6,8 +6,6 @@
 
 {% block content %}
     <h1>Signup</h1>
-    <form method="post">{% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit" value="Confirm">
-    </form>
+    {% crispy form %}
+
 {% endblock %}
