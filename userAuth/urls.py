@@ -8,5 +8,5 @@ app_name = 'userAuth'
 
 urlpatterns = [
     path('signup/', UserCreationView.as_view(), name='signup'),
-
+   
 ]

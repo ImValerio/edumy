@@ -6,11 +6,8 @@ from crispy_forms.layout import Submit
 from userAuth.templates.models import UserType
 
 
-class UserCreation(UserCreationForm):
-    """
+class UserSignup(UserCreationForm):
 
-
-    """
     helper = FormHelper()
     helper.form_method = 'POST'
     helper.add_input(Submit('submit', 'Submit'))
@@ -29,3 +26,23 @@ class UserCreation(UserCreationForm):
         ('teacher', 'Teacher')
     ))
 
+'''
+class UserLogin(forms.ModelForm):
+    helper = FormHelper()
+    helper.form_method = 'POST'
+    helper.add_input(Submit('submit', 'Submit'))
+    helper.inputs[0].field_classes = 'btn btn-success'
+
+    class Meta:
+        model = UserType
+        fields = ('email', 'password')
+
+    email = forms.EmailField(max_length=64,
+                             help_text='Enter a valid email address')
+    type = forms.ChoiceField(choices=(
+        ('student', 'Student'),
+        ('teacher', 'Teacher')
+    ))
+
+
+'''
