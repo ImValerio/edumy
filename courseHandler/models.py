@@ -8,7 +8,7 @@ class Course(models.Model):
     title = models.CharField(max_length=120)
     description = models.CharField(max_length=1024)
     category = models.CharField(max_length=100)
-    image = models.ImageField(width_field=1920, height_field=1080)
+    image = models.ImageField(upload_to='imgs', width_field=1920, height_field=1080)
     duration = models.IntegerField()
     price = models.IntegerField()
     author = models.ForeignKey(UserType, related_name='course_user', on_delete=models.PROTECT)

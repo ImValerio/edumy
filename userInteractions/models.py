@@ -18,6 +18,6 @@ class Answer(models.Model):
 class Review(models.Model):
     title = models.CharField(max_length=120)
     body = models.CharField(max_length=1024)
-    rating = models.IntegerField(max_length=1)
+    rating = models.IntegerField()
     student_id = models.ForeignKey(UserType, related_name='review_user', on_delete=models.PROTECT)
     course_id = models.ForeignKey(Course, related_name='review_course', on_delete=models.PROTECT)
