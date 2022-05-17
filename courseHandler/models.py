@@ -6,6 +6,7 @@ from userAuth.models import UserType
 
 class Course(models.Model):
     title = models.CharField(max_length=120)
+    description = models.CharField(max_length=1024)
     category = models.CharField(max_length=100)
     image = models.ImageField(width_field=1920, height_field=1080)
     duration = models.IntegerField()
@@ -34,3 +35,10 @@ class Answer(models.Model):
     body = models.CharField(max_length=1024)
     question_id = models.ForeignKey(Question, related_name='answer_question', on_delete=models.CASCADE)
     author_id = models.ForeignKey(UserType, related_name='answer_user', on_delete=models.PROTECT)
+
+class Review(models.Model):
+    title = models.CharField(max_length=120)
+    body = models.CharField(max_length=1024)
+    rating = models.IntegerField(max_length=1)
+    student_id = models.ForeignKey(UserType, related_name='review_user', on_delete=models.PROTECT)
+    course_id = models.ForeignKey(Course, related_name='review_course', on_delete=models.PROTECT)
