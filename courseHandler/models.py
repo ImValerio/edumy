@@ -24,3 +24,8 @@ class Video(models.Model):
     title = models.CharField(max_length=120)
     duration = models.IntegerField()
     course_id = models.ForeignKey(Course, related_name='video_course', on_delete=models.CASCADE)
+
+class Question(models.Model):
+    body = models.CharField(max_length=1024)
+    video_id = models.ForeignKey(Video, related_name='question_video', on_delete=models.CASCADE)
+    student_id = models.ForeignKey(UserType, related_name='question_user', on_delete=models.PROTECT)
