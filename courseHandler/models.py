@@ -13,3 +13,9 @@ class Course(models.Model):
     author = models.ForeignKey(UserType, related_name='course_user', on_delete=models.PROTECT)
     is_active = models.BooleanField()
     creation_date = models.DateField()
+
+class FollowCourse(models.Model):
+    course_id = models.ForeignKey(Course, related_name='followCourse_course', on_delete=models.CASCADE)
+    student_id = models.ForeignKey(UserType, related_name='followCourse_user', on_delete=models.PROTECT)
+    start_date = models.DateField()
+    end_date = models.DateField()
