@@ -19,3 +19,8 @@ class FollowCourse(models.Model):
     student_id = models.ForeignKey(UserType, related_name='followCourse_user', on_delete=models.PROTECT)
     start_date = models.DateField()
     end_date = models.DateField()
+
+class Video(models.Model):
+    title = models.CharField(max_length=120)
+    duration = models.IntegerField()
+    course_id = models.ForeignKey(Course, related_name='video_course', on_delete=models.CASCADE)
