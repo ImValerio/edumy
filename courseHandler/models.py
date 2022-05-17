@@ -29,3 +29,8 @@ class Question(models.Model):
     body = models.CharField(max_length=1024)
     video_id = models.ForeignKey(Video, related_name='question_video', on_delete=models.CASCADE)
     student_id = models.ForeignKey(UserType, related_name='question_user', on_delete=models.PROTECT)
+
+class Answer(models.Model):
+    body = models.CharField(max_length=1024)
+    question_id = models.ForeignKey(Question, related_name='answer_question', on_delete=models.CASCADE)
+    author_id = models.ForeignKey(UserType, related_name='answer_user', on_delete=models.PROTECT)
