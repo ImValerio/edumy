@@ -1,3 +1,4 @@
+from django.core.validators import FileExtensionValidator
 from django.db import models
 
 # Create your models here.
@@ -28,5 +29,6 @@ class Video(models.Model):
     title = models.CharField(max_length=120)
     description = models.CharField(max_length=1024)
     duration = models.IntegerField()
+    file = models.FileField(upload_to='videos', validators=[FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm', 'mkv'])])
     course = models.ForeignKey(Course, related_name='video_course', on_delete=models.PROTECT)
 
