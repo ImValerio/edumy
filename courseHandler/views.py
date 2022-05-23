@@ -14,3 +14,4 @@ class CourseCreate(CreateView):
     #fields = ['title', 'description', 'category', 'price', 'creation_date']
     success_url = reverse_lazy('hompage')
     form_class = CourseForm
+

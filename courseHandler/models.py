@@ -10,10 +10,10 @@ class Course(models.Model):
     description = models.CharField(max_length=1024)
     category = models.CharField(max_length=100)
     image = models.ImageField(upload_to='imgs', width_field=1920, height_field=1080)
-    duration = models.IntegerField()
+    duration = models.IntegerField(default= 0, blank=True)
     price = models.IntegerField()
     author = models.ForeignKey(UserType, related_name='course_user', on_delete=models.CASCADE)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default= True)
     creation_date = models.DateField()
 
 # Se il corso o lo studente vengono eliminati le tuple rimangono inveriate
