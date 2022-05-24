@@ -5,6 +5,13 @@
 {% block title %}Upload Video{% endblock %}
 
 {% block content %}
+    <ul>
+    {% for video in videos %}
+    <li>{{ video.title }}</li>
+    {% endfor %}
+
+    </ul>
+
     <h1>Upload Video</h1>
 
         {% crispy form %}
