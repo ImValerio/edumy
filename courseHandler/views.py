@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.views.generic import CreateView
+from django.views.generic import DetailView
 
 from courseHandler.forms import CreateVideo
 from courseHandler.models import Video
@@ -15,10 +15,14 @@ class VideoUploadView(CreateView):
     template_name = 'courseHandler/video/upload-video.html'
 
 """
+class VideoUploadDetail(DetailView):
+    model = Video
+    template_name = 'courseHandler/video/upload-video-detail.html'
 
 
 def VideoUploadView(request, pk):
     if request.user.is_authenticated:
+        print(request.user)
         if request.method == 'POST':
             form = CreateVideo(request.POST, request.FILES)
             if form.is_valid():
@@ -29,10 +33,10 @@ def VideoUploadView(request, pk):
         else:
             form = CreateVideo()
             videos = Video.objects.all().filter(course_id=pk)
-            print(videos)
             context = {
                 "form": form,
-                "videos": videos
+                "videos": videos,
+                "pk": pk
             }
             return render(request, 'courseHandler/video/upload-video.html', context)
     else:

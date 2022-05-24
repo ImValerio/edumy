@@ -7,7 +7,7 @@
 {% block content %}
     <ul>
     {% for video in videos %}
-    <li>{{ video.title }}</li>
+        <a href="{% url 'courseHandler:course-upload-video-detail' course_id=pk pk=video.id %}">{{ video.title }}</a><br>
     {% endfor %}
 
     </ul>

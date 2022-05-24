@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ video.title }}{% endblock %}
+
+{% block content %}
+    {% load static %}
+    <h1>{{ video.title }}</h1>
+    <video width="1280" height="720" controls>
+        <source src="{% get_media_prefix %}{{ video.file }} ">
+    </video>
+    <p>{{ video.description }}</p>
+
+{% endblock %}
