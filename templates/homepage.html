@@ -4,4 +4,8 @@
 
 {% block content %}
     <h1>Edumy</h1>
+    <a href="{% url 'courseHandler:course-create' %}">course create</a><br>
+    <a href="{% url 'login' %}">Login</a><br>
+    <a href="{% url 'logout' %}">Logout</a><br>
+    <a href="{% url 'userAuth:signup' %}">Signup</a><br>
 {% endblock %}
