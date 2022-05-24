@@ -1,10 +1,10 @@
 from django.urls import path
 
-from courseHandler.views import VideoUploadView
+from courseHandler.views import create
 
 app_name = 'courseHandler'
 
 urlpatterns = [
-    path('user/course/<int:pk>', VideoUploadView.as_view(), name='course-upload-video')
+    path('user/course/<int:id>', create, name='course-upload-video')
 
 ]

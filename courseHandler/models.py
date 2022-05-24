@@ -28,7 +28,7 @@ class FollowCourse(models.Model):
 class Video(models.Model):
     title = models.CharField(max_length=120)
     description = models.CharField(max_length=1024)
-    duration = models.IntegerField()
-    file = models.FileField(upload_to='videos', validators=[FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm', 'mkv'])])
-    course = models.ForeignKey(Course, related_name='video_course', on_delete=models.PROTECT)
+    duration = models.IntegerField(default=0)
+    file = models.FileField(upload_to='videos', validators=[FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm', 'mkv'])],default='settings.MEDIA_ROOT/imgs/default.jpg')
+    course = models.ForeignKey(Course, related_name='video_course', on_delete=models.PROTECT, null=True, blank=True)
 
