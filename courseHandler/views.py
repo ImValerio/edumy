@@ -51,27 +51,25 @@ class CourseCreate(LoginRequiredMixin,CreateView):
     form_class = CourseForm
 
     def form_valid(self, form):
-        author = get_object_or_404(UserType, pk=form.instance.author_id)
-        if author.type == "Teacher":
-            form.instance.author_id = self.request.user.id
-            return super().form_valid(form)
-        else:
-            print("Tu non sei un teacher")
+        form.instance.author_id = self.request.user.id
 
-'''def createCourse(request):
-    if request.user.is_authenticated and request.user.type == "teacher":
-        if request.method == 'POST':
-            form = CourseForm(request.POST, request.FILES)
-            if form.is_valid():
-                instance = form.save(commit=False)
-                instance.author_id = request.user.id
-                instance.save()
-                return redirect('courseHandler:course-create')
-        else:
-            form = CourseForm()
-            context = {
-                "form": form,
-            }
-            return render(request, 'courseHandler/course/create.html', context)
-    else:
-        return HttpResponseRedirect('/')'''
+        return super().form_valid(form)
+
+
+    """   def createCourse(request):
+            if request.user.is_authenticated and request.user.type == "teacher":
+                if request.method == 'POST':
+                    form = CourseForm(request.POST, request.FILES)
+                    if form.is_valid():
+                        instance = form.save(commit=False)
+                        instance.author_id = request.user.id
+                        instance.save()
+                        return redirect('courseHandler:course-create')
+                else:
+                    form = CourseForm()
+                    context = {
+                        "form": form,
+                    }
+                    return render(request, 'courseHandler/course/create.html', context)
+            else:
+                return HttpResponseRedirect('/') """
