@@ -5,7 +5,11 @@
 {% block title %}Create Course{% endblock %}
 
 {% block content %}
-
+    <!--<ul>
+    {% for course in object %}
+        <a href="{% url 'courseHandler:course-detail' course.pk %}">{{ object.title }}</a><br>
+    {% endfor %}
+    </ul>-->
     <h1>Course</h1>
     {% crispy form %}
 

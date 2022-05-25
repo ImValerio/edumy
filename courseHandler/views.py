@@ -1,12 +1,12 @@
 # Create your views here.index'
 from django.views.generic import DetailView
 from courseHandler.forms import CreateVideo
-from courseHandler.models import Video
+from courseHandler.models import Video, Course
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 
 from courseHandler.forms import CourseForm
 from userAuth.models import UserType
@@ -45,18 +45,27 @@ def VideoUploadView(request, pk):
     else:
         return HttpResponseRedirect('/')
 
-class CourseCreate(LoginRequiredMixin,CreateView):
+
+class CourseCreate(LoginRequiredMixin, CreateView):
     template_name = 'courseHandler/course/create.html'
     success_url = reverse_lazy('homepage')
     form_class = CourseForm
 
     def form_valid(self, form):
-        author = get_object_or_404(UserType, pk=form.instance.author_id)
-        if author.type == "Teacher":
-            form.instance.author_id = self.request.user.id
-            return super().form_valid(form)
-        else:
-            print("Tu non sei un teacher")
+        #author = get_object_or_404(UserType, pk=form.instance.author_id)
+        #if author.type == "Teacher":
+        form.instance.author_id = self.request.user.id
+        return super().form_valid(form)
+        #else:
+            #print("Tu non sei un teacher")
+
+class CourseDetail(LoginRequiredMixin, DetailView):
+    model = Course
+    template_name = "courseHandler/course/detail.html"
+
+class CourseList(LoginRequiredMixin, ListView):
+    model = Course
+    template_name = 'courseHandler/course/list.html'
 
 '''def createCourse(request):
     if request.user.is_authenticated and request.user.type == "teacher":
