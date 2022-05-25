@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+<<<<<<< HEAD
     <data-source source="LOCAL" name="db.sqlite3" uuid="6d9ba920-7369-4095-9909-5bb8f8bb67fc">
+=======
+    <data-source source="LOCAL" name="db.sqlite3" uuid="95943cdc-7e31-4129-a0be-66deacd52a20">
+>>>>>>> giacomo
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/db.sqlite3</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$USER_HOME$/Desktop/TecWeb/Progetti/techweb-main/django/biblio3auth/biblio3/db.sqlite3</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
