@@ -10,8 +10,7 @@ class Course(models.Model):
     title = models.CharField(max_length=120)
     description = models.CharField(max_length=1024)
     category = models.CharField(max_length=100)
-    image = models.FileField(upload_to='videos', validators=[FileExtensionValidator(allowed_extensions=['png'])],default='settings.MEDIA_ROOT/imgs/default.jpg')
-
+    image = models.FileField(upload_to='imgs', validators=[FileExtensionValidator(allowed_extensions=['png'])],default='settings.MEDIA_ROOT/imgs/default.jpg')
     duration = models.IntegerField(default= 0, blank=True)
     price = models.IntegerField()
     author = models.ForeignKey(UserType, related_name='course_user', on_delete=models.CASCADE)
