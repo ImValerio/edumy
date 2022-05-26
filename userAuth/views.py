@@ -1,3 +1,6 @@
+
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -19,9 +22,15 @@ class UserDetailView(DetailView):
 
 class UserUpdateView(UpdateView):
     model = UserType
-    form_class = UserSignup
+    form_class = UserUpdate
     template_name = 'userAuth/user/update.html'
 
     def form_valid(self, form):
         pk = str(form.instance.pk)
         return redirect('userAuth:profile', pk)
+
+
+class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
+    template_name = 'userAuth/user/change_password.html'
+    success_message = "Successfully Changed Your Password"
+    success_url = reverse_lazy('homepage')

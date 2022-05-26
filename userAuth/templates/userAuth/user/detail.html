@@ -9,5 +9,6 @@
     <p><b>Email:</b> {{ usertype.email }}</p>
     <p><b>Username:</b> {{ usertype.username }}</p>
 
-    <a href="{% url 'userAuth:update-profile' pk=usertype.id %}">Update user</a>
+    <a href="{% url 'userAuth:update-profile' pk=usertype.id %}">Update user</a><br>
+    <a href="{% url 'homepage' %}">Home</a>
 {% endblock %}

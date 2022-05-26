@@ -7,5 +7,5 @@
 {% block content %}
     <h1>Update user</h1>
     {% crispy form %}
-
+    <a href="{% url 'userAuth:password_change' %}">Change password</a>
 {% endblock %}
