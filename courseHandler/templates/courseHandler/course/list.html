@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+
+{% block title %}Course Detail{% endblock %}
+
+{% block content %}
+
+    <h1>Course List</h1>
+
+    <ul>
+        {% for course in object_list  %}
+            <div class="d-flex">
+                <p class="mr-3">{{ course.title }}</p>
+                <p class="mr-3">{{ course.author.first_name }}</p>
+                <p class="mr-3">{{ course.category }}</p>
+                <p class="mr-3"><a href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a></p>
+                <p class="mr-3"><a href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a></p>
+                <p class=""><a href="{% url 'courseHandler:course-update' course.pk %}">Update</a></p>
+            </div>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

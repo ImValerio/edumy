@@ -9,8 +9,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('courseHandler', '0001_initial'),
         ('userAuth', '0001_initial'),
+        ('courseHandler', '0001_initial'),
     ]
 
     operations = [

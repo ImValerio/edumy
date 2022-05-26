@@ -27,3 +27,15 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = ('title', 'description', 'category', 'image' ,'price', 'creation_date')
+
+
+class SearchCourseForm(forms.Form):
+
+    CHOICE_LIST = [("Title","Cerca tra i corsi"), ("Author","Cerca tra gli autori"),
+                   ("Category","Cerca tra le categorie")]
+    helper = FormHelper()
+    helper.form_id = "search_crispy_form"
+    helper.form_method = "POST"
+    helper.add_input(Submit("submit","Cerca"))
+    search_string = forms.CharField(label="Cerca qualcosa",max_length=100, min_length=3, required=True)
+    search_where = forms.ChoiceField(label="Dove?", required=True, choices=CHOICE_LIST)
