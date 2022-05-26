@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <h1>Profile</h1>
+    <p><b>Name:</b> {{ usertype.first_name }}</p>
+    <p><b>Last Name:</b> {{ usertype.last_name }}</p>
+    <p><b>Email:</b> {{ usertype.email }}</p>
+    <p><b>Username:</b> {{ usertype.username }}</p>
+
+    <a href="{% url 'userAuth:update-profile' pk=usertype.id %}">Update user</a><br>
+    <a href="{% url 'homepage' %}">Home</a>
+{% endblock %}

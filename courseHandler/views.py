@@ -106,20 +106,24 @@ class CourseSearchView(CourseList):
             qq = self.model.objects.filter(category__icontains=sstring)
         return qq
 
-'''def createCourse(request):
-    if request.user.is_authenticated and request.user.type == "teacher":
-        if request.method == 'POST':
-            form = CourseForm(request.POST, request.FILES)
-            if form.is_valid():
-                instance = form.save(commit=False)
-                instance.author_id = request.user.id
-                instance.save()
-                return redirect('courseHandler:course-create')
-        else:
-            form = CourseForm()
-            context = {
-                "form": form,
-            }
-            return render(request, 'courseHandler/course/create.html', context)
-    else:
-        return HttpResponseRedirect('/')'''
+
+        return super().form_valid(form)
+
+
+    """   def createCourse(request):
+            if request.user.is_authenticated and request.user.type == "teacher":
+                if request.method == 'POST':
+                    form = CourseForm(request.POST, request.FILES)
+                    if form.is_valid():
+                        instance = form.save(commit=False)
+                        instance.author_id = request.user.id
+                        instance.save()
+                        return redirect('courseHandler:course-create')
+                else:
+                    form = CourseForm()
+                    context = {
+                        "form": form,
+                    }
+                    return render(request, 'courseHandler/course/create.html', context)
+            else:
+                return HttpResponseRedirect('/') """
