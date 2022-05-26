@@ -6,14 +6,19 @@
 
 {% block content %}
 
-    {% for course in object_list  %}
-        <tr>
-            <td>{{ course.title }}</td>
-            <td>{{ course.author.first_name }}</td>
-            <td>{{ course.category }}</td>
-            <td><a href="{% url 'courseHandler:course-detail' course.pk %}">detail</a>
-            </td>
-        </tr>
-    {% endfor %}
+    <h1>Course List</h1>
+
+    <ul>
+        {% for course in object_list  %}
+            <div class="d-flex">
+                <p class="mr-3">{{ course.title }}</p>
+                <p class="mr-3">{{ course.author.first_name }}</p>
+                <p class="mr-3">{{ course.category }}</p>
+                <p class="mr-3"><a href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a></p>
+                <p class="mr-3"><a href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a></p>
+                <p class=""><a href="{% url 'courseHandler:course-update' course.pk %}">Update</a></p>
+            </div>
+        {% endfor %}
+    </ul>
 
 {% endblock %}

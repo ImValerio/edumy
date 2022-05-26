@@ -1,6 +1,6 @@
 # Create your views here.index'
-from django.views.generic import DetailView
-from courseHandler.forms import CreateVideo
+from django.views.generic import DetailView, DeleteView, UpdateView
+from courseHandler.forms import CreateVideo, SearchCourseForm
 from courseHandler.models import Video, Course
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -63,9 +63,48 @@ class CourseDetail(LoginRequiredMixin, DetailView):
     model = Course
     template_name = "courseHandler/course/detail.html"
 
+class CourseDelete(LoginRequiredMixin, DeleteView):
+    model = Course
+    template_name = 'courseHandler/course/delete.html'
+    success_url = reverse_lazy('courseHandler:course-list')
+
+class CourseUpdate(LoginRequiredMixin, UpdateView):
+    model = Course
+    template_name = 'courseHandler/course/update.html'
+    success_url = reverse_lazy('courseHandler:course-list')
+    form_class = CourseForm
+
 class CourseList(LoginRequiredMixin, ListView):
     model = Course
     template_name = 'courseHandler/course/list.html'
+
+def search(request):
+
+    if request.method == "POST":
+        form = SearchCourseForm(request.POST)
+        if form.is_valid():
+            sstring = form.cleaned_data.get("search_string")
+            where = form.cleaned_data.get("search_where")
+            return redirect("courseHandler:course-search-result", sstring, where)
+    else:
+        form = SearchCourseForm()
+
+    return render(request, template_name="courseHandler/course/search.html", context={"form": form})
+
+class CourseSearchView(CourseList):
+    titolo = "La tua ricerca ha dato come risultato"
+
+    def get_queryset(self):
+        sstring = self.request.resolver_match.kwargs["sstring"]
+        where = self.request.resolver_match.kwargs["where"]
+
+        if "Title" in where:
+            qq = self.model.objects.filter(title__icontains=sstring)
+        elif "Author" in where:
+            qq = self.model.objects.filter(author__username__icontains=sstring)
+        else:
+            qq = self.model.objects.filter(category__icontains=sstring)
+        return qq
 
 '''def createCourse(request):
     if request.user.is_authenticated and request.user.type == "teacher":

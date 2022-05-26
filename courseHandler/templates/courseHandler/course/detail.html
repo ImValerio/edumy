@@ -7,12 +7,10 @@
 
 {% block content %}
 
-    <h1></h1>
     <h1>{{ object.title }}</h1>
     <p>{{ object.author.first_name }}</p>
     <p>{{ object.category }}</p>
     <img src="{% get_media_prefix %}{{ object.image }} " width="1280" height="720">
-
     <p>{{ object.description }}</p>
     <p>{{ object.price }}</p>
     <p>{{ object.creation_date }}</p>
