@@ -26,3 +26,19 @@ class UserSignup(UserCreationForm):
         ('teacher', 'Teacher')
     ))
 
+class UserUpdate(forms.ModelForm):
+
+    helper = FormHelper()
+    helper.form_method = 'POST'
+    helper.add_input(Submit('submit', 'Submit'))
+    helper.inputs[0].field_classes = 'btn btn-success'
+
+    class Meta:
+        model = UserType
+        fields = ('username', 'first_name', 'last_name', 'email', 'password', 'type')
+
+        type = forms.ChoiceField(choices=(
+        ('student', 'Student'),
+        ('teacher', 'Teacher')
+        ))
+
