@@ -3,13 +3,15 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from courseHandler.views import VideoUploadView, VideoUploadDetail, CourseCreate, CourseDetail, CourseList, CourseDelete, CourseUpdate, search, CourseSearchView
+from courseHandler.views import VideoUploadView, VideoUploadDetail, CourseCreate, CourseDetail, CourseList, \
+    CourseDelete, CourseUpdate, search, CourseSearchView, VideoUpdateView
 
 app_name = 'courseHandler'
 
 urlpatterns = [
     path('user/course/<int:pk>', VideoUploadView, name='course-upload-video'),
     path('user/course/<int:course_id>/video/<int:pk>', VideoUploadDetail.as_view(), name='course-upload-video-detail'),
+    path('user/course/<int:course_id>/video/<int:pk>/update', VideoUpdateView.as_view(), name='video-update'),
     path('course/create', CourseCreate.as_view(), name='course-create'),
     path('course/<int:pk>/detail', CourseDetail.as_view(), name='course-detail'),
     path('course/<int:pk>/delete', CourseDelete.as_view(), name='course-delete'),

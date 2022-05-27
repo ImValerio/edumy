@@ -10,4 +10,6 @@
     </video>
     <p>{{ video.description }}</p>
 
+    <a href="{% url 'courseHandler:video-update' pk=video.id course_id=video.course_id %}">Update video</a>
+
 {% endblock %}

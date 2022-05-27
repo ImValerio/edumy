@@ -1,6 +1,6 @@
 # Create your views here.index'
 from django.views.generic import DetailView, DeleteView, UpdateView
-from courseHandler.forms import CreateVideo, SearchCourseForm
+from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm
 from courseHandler.models import Video, Course
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -44,6 +44,16 @@ def VideoUploadView(request, pk):
             return render(request, 'courseHandler/video/upload-video.html', context)
     else:
         return HttpResponseRedirect('/')
+
+class VideoUpdateView(LoginRequiredMixin, UpdateView):
+    model = Video
+    form_class = UpdateVideoForm
+    template_name = 'courseHandler/video/update.html'
+
+    def form_valid(self, form):
+        form.instance.save()
+        pk = str(form.instance.course_id)
+        return redirect('courseHandler:course-upload-video', pk)
 
 
 class CourseCreate(LoginRequiredMixin, CreateView):

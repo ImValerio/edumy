@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'courseHandler.apps.CoursehandlerConfig',
     'userInteractions.apps.UserinteractionsConfig',
     'crispy_forms',
+    'django_cleanup.apps.CleanupConfig'
 ]
 
 MIDDLEWARE = [
