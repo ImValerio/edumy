@@ -10,6 +10,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy,reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
+from operator import itemgetter
 from userAuth.models import UserType
 
 """
@@ -20,6 +21,7 @@ class VideoUploadView(CreateView):
 
 """
 
+Cart = get_cart_class()
 
 class VideoUploadDetail(DetailView):
     model = Video
@@ -96,12 +98,33 @@ class CourseList(LoginRequiredMixin, ListView):
     model = Course
     template_name = 'courseHandler/course/list.html'
 
+def CourseListStore(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = CreateVideo(request.POST, request.FILES)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.course_id = int(pk)
+                instance.save()
+                return redirect('courseHandler:course-upload-video', pk)
+        else:
+            courses = Course.objects.all()
 
-class CourseListStore(LoginRequiredMixin, ListView):
+            cart = Cart.new(request)
+
+            context = {
+                "courses": courses,
+                "cartProd": cart.products
+            }
+            return render(request, 'courseHandler/course/store.html', context)
+    else:
+        return HttpResponseRedirect('/')
+
+"""class CourseListStore(LoginRequiredMixin, ListView):
     model = Course
     template_name = 'courseHandler/course/store.html'
 
-
+"""
 def search(request):
     if request.method == "POST":
         form = SearchCourseForm(request.POST)
@@ -132,7 +155,6 @@ class CourseSearchView(CourseList):
 
         return super().form_valid(form)
 
-Cart = get_cart_class()
 
 def CartView(request):
     if request.user.is_authenticated:
