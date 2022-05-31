@@ -1,5 +1,6 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from dj_shop_cart.cart import CartItem
 
 # Create your models here.
 from userAuth.models import UserType
@@ -16,6 +17,10 @@ class Course(models.Model):
     author = models.ForeignKey(UserType, related_name='course_user', on_delete=models.CASCADE)
     is_active = models.BooleanField(default= True)
     creation_date = models.DateField()
+
+    #def get_price(self, item: CartItem) -> Integer: return
+
+
 
 # Se il corso o lo studente vengono eliminati le tuple rimangono inveriate
 class FollowCourse(models.Model):

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Store{% endblock %}
+
+{% block content %}
+
+    {% load static %}
+    <h1>Store</h1>
+
+    
+   <ul>
+        {% for course in object_list %}
+            {% if course not in cart %}
+                <div class="d-flex">
+                    <img src="{% get_media_prefix %}{{ course.image }} " width="300" height="200" class="mr-3">
+                    <div>
+                        <h1 >{{ course.title }}</h1>
+                        <p>{{ course.description }}</p>
+                        <h3 >{{ course.author.first_name }}</h3>
+                        <p >{{ course.category }}</p>
+                        <button data-product="{{ course.id }}" data-action="add" class="btn-primary cart-update">Add to cart</button>
+                    </div>
+
+                </div>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endblock %}

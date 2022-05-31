@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'courseHandler.apps.CoursehandlerConfig',
     'userInteractions.apps.UserinteractionsConfig',
     'crispy_forms',
-    'django_cleanup.apps.CleanupConfig'
+    'django_cleanup.apps.CleanupConfig',
+    'dj_shop_cart',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "dj_shop_cart.context_processors.cart",
             ],
         },
     },
@@ -133,5 +135,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'homepage'
 
-MEDIA_ROOT='static/media'
+MEDIA_ROOT = 'static/media'
+
 

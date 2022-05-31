@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load static %}
+    <div>
+    {% for item in cart %}
+         <div class="d-flex m-1">
+                <img src="{% get_media_prefix %}{{ item.product.image }} " width="300" height="200" class="mr-3">
+                <div>
+                    <h1 >{{ item.product.title }}</h1>
+                    <h3 >{{ item.product.author.first_name }}</h3>
+                    <p >{{ item.product.category }}</p>
+                    <button data-product="{{ item.product.id }}" data-action="remove" class="btn-primary cart-update">Remove</button>
+                </div>
+
+            </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}
