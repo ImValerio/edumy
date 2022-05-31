@@ -7,7 +7,7 @@ window.onload = () => {
             const prodId = btn.dataset.product
             const op = btn.dataset.action
             const res = await fetch(`../cart/${op}/${prodId}`)
-
+            btn.parentElement.parentElement.remove();
             console.log(res)
         })
     }

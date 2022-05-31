@@ -101,17 +101,18 @@ class CourseList(LoginRequiredMixin, ListView):
 def CourseListStore(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            form = CreateVideo(request.POST, request.FILES)
+            """
+             form = CreateVideo(request.POST, request.FILES)
             if form.is_valid():
                 instance = form.save(commit=False)
                 instance.course_id = int(pk)
                 instance.save()
                 return redirect('courseHandler:course-upload-video', pk)
+            """
+
         else:
             courses = Course.objects.all()
-
             cart = Cart.new(request)
-
             context = {
                 "courses": courses,
                 "cartProd": cart.products
@@ -186,7 +187,7 @@ def remove_product(request, pk):
     course = Course.objects.get(pk=pk)
     cart = Cart.new(request)
     cart.remove(course, quantity=1)
-    return HttpResponseRedirect(reverse('courseHandler:cart-view'))
+    return redirect(reverse('courseHandler:cart-view'))
 
 
 @require_POST
