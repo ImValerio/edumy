@@ -5,12 +5,13 @@
 
     {% load static %}
     <h1>Store</h1>
+    <a class="btn btn-primary m-1" href="{% url 'courseHandler:cart-view' %}">CART</a>
 
     
    <ul>
         {% for course in courses %}
             {% if course not in cartProd %}
-                <div class="d-flex">
+                <div class="d-flex m-1">
                     <img src="{% get_media_prefix %}{{ course.image }} " width="300" height="200" class="mr-3">
                     <div>
                         <h1 >{{ course.title }}</h1>
@@ -24,4 +25,5 @@
             {% endif %}
         {% endfor %}
     </ul>
+
 {% endblock %}

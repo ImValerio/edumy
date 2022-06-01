@@ -1,4 +1,6 @@
 # Create your views here.index'
+from functools import reduce
+
 from dj_shop_cart.cart import get_cart_class
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import DetailView, DeleteView, UpdateView
@@ -10,7 +12,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy,reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
-from operator import itemgetter
+from operator import add
 from userAuth.models import UserType
 
 """
@@ -167,8 +169,11 @@ def CartView(request):
                 return redirect('homepage')
         else:
             cart = Cart.new(request)
+            items_prices = [item.price for item in cart.products]
+            tot_price = sum(items_prices)
             context = {
                 "cart": cart,
+                'totPrice': tot_price
             }
             return render(request, 'cart.html', context)
     else:

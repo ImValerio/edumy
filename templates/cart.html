@@ -10,11 +10,21 @@
                     <h1 >{{ item.product.title }}</h1>
                     <h3 >{{ item.product.author.first_name }}</h3>
                     <p >{{ item.product.category }}</p>
-                    <button data-product="{{ item.product.id }}" data-action="remove" class="btn-primary cart-update">Remove</button>
+                    <p >
+                        <span class="course-price">{{ item.product.price }}</span>$
+                    </p>
+                    <button data-product="{{ item.product.id }}" data-price="{{ item.product.price }}" data-action="remove" class="btn-primary cart-update">Remove</button>
                 </div>
-
             </div>
     {% endfor %}
+        <hr>
+    {% if totPrice != 0 %}
+        <h2 >Total price: <span id="tot-price">{{ totPrice }}</span>$</h2>
+
+        {% else %}
+            <h2 >The cart is empty... </h2>
+    {% endif %}
+    <a href="{% url 'courseHandler:course-list-store' %}">back to store</a>
     </div>
 
 {% endblock %}
