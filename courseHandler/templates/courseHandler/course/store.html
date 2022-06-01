@@ -11,7 +11,7 @@
    <ul>
         {% for course in courses %}
             {% if course not in cartProd %}
-                <div class="d-flex m-1">
+                <div class="d-flex m-1 bg-light ">
                     <img src="{% get_media_prefix %}{{ course.image }} " width="400"  class="mr-3">
                     <div>
                         <a href="{% url 'courseHandler:course-detail' pk=course.id %}">

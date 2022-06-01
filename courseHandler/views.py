@@ -31,8 +31,11 @@ class VideoUploadDetail(DetailView):
 
 
 def VideoUploadView(request, pk):
-    if request.user.is_authenticated:
-        print(request.user)
+    if request.user.is_authenticated :
+        course_check = Course.objects.get(pk=pk)
+        if course_check.author_id != request.user.id:
+            return HttpResponseRedirect('/')
+
         if request.method == 'POST':
             form = CreateVideo(request.POST, request.FILES)
             if form.is_valid():
