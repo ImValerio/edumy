@@ -5,20 +5,22 @@
 
     {% load static %}
     <h1>Store</h1>
-    <a class="btn btn-primary m-1" href="{% url 'courseHandler:cart-view' %}">CART</a>
+    <a class="btn btn-primary m-1 font-weight-bold" href="{% url 'courseHandler:cart-view' %}">CART</a>
 
     
    <ul>
         {% for course in courses %}
             {% if course not in cartProd %}
                 <div class="d-flex m-1">
-                    <img src="{% get_media_prefix %}{{ course.image }} " width="300" height="200" class="mr-3">
+                    <img src="{% get_media_prefix %}{{ course.image }} " width="400"  class="mr-3">
                     <div>
-                        <h1 >{{ course.title }}</h1>
+                        <a href="{% url 'courseHandler:course-detail' pk=course.id %}">
+                            <h1 class="text-body">{{ course.title }} ({{ course.price }}$)</h1>
+                        </a>
                         <p>{{ course.description }}</p>
-                        <h5 >-{{ course.author.first_name }} {{ course.author.last_name }}</h5>
-                        <p >({{ course.category }})</p>
-                        <button data-product="{{ course.id }}" data-action="add" class="btn-primary cart-update">Add to cart</button>
+                        <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
+                        <p class="text-muted">{{ course.category }}</p>
+                        <button data-product="{{ course.id }}" data-action="add" class="btn btn-success cart-update">Add to cart</button>
                     </div>
 
                 </div>
