@@ -1,5 +1,4 @@
 # Create your views here.index'
-from functools import reduce
 
 from dj_shop_cart.cart import get_cart_class
 from django.views.decorators.http import require_POST, require_GET
@@ -12,8 +11,6 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy,reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
-from operator import add
-from userAuth.models import UserType
 
 """
 class VideoUploadView(CreateView):
@@ -25,13 +22,22 @@ class VideoUploadView(CreateView):
 
 Cart = get_cart_class()
 
+def teacher_is_authorized(request, pk):
+    if not request.user.is_authenticated:
+        return False
+    course_check = Course.objects.get(pk=pk)
+    if course_check.author_id != request.user.id:
+        return False
+
+    return True
+
 class VideoUploadDetail(DetailView):
     model = Video
     template_name = 'courseHandler/video/upload-video-detail.html'
 
 
 def VideoUploadView(request, pk):
-    if request.user.is_authenticated :
+    if request.user.is_authenticated:
         course_check = Course.objects.get(pk=pk)
         if course_check.author_id != request.user.id:
             return HttpResponseRedirect('/')
@@ -81,50 +87,66 @@ class CourseCreate(LoginRequiredMixin, CreateView):
         # print("Tu non sei un teacher")
 
 
-class CourseDetail(LoginRequiredMixin, DetailView):
+class CourseDetail(DetailView):
     model = Course
     template_name = "courseHandler/course/detail.html"
+    def dispatch(self, request, *args, pk, **kwargs):
+        course_check = Course.objects.get(pk=pk)
+        print(course_check.is_active)
+        if not course_check.is_active and course_check.author_id != request.user.id:
+            return redirect('homepage')
+
+        return super().dispatch(request, *args, **kwargs)
 
 
-class CourseDelete(LoginRequiredMixin, DeleteView):
+class CourseDelete(DeleteView):
     model = Course
     template_name = 'courseHandler/course/delete.html'
     success_url = reverse_lazy('courseHandler:course-list')
 
+    def dispatch(self, request, *args, pk, **kwargs):
+        if not teacher_is_authorized(request, pk):
+            return redirect('homepage')
 
-class CourseUpdate(LoginRequiredMixin, UpdateView):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class CourseUpdate(UpdateView):
     model = Course
     template_name = 'courseHandler/course/update.html'
     success_url = reverse_lazy('courseHandler:course-list')
     form_class = CourseForm
 
+    def dispatch(self, request, *args, pk, **kwargs):
+        if not teacher_is_authorized(request, pk):
+            return redirect('homepage')
 
-class CourseList(LoginRequiredMixin, ListView):
+        return super().dispatch(request, *args, **kwargs)
+
+
+
+class CourseList(ListView):
     model = Course
     template_name = 'courseHandler/course/list.html'
 
 def CourseListStore(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            """
-             form = CreateVideo(request.POST, request.FILES)
-            if form.is_valid():
-                instance = form.save(commit=False)
-                instance.course_id = int(pk)
-                instance.save()
-                return redirect('courseHandler:course-upload-video', pk)
-            """
-
-        else:
-            courses = Course.objects.all()
-            cart = Cart.new(request)
-            context = {
-                "courses": courses,
-                "cartProd": cart.products
-            }
-            return render(request, 'courseHandler/course/store.html', context)
+    if request.method == 'POST':
+        """
+         form = CreateVideo(request.POST, request.FILES)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.course_id = int(pk)
+            instance.save()
+            return redirect('courseHandler:course-upload-video', pk)
+        """
     else:
-        return HttpResponseRedirect('/')
+        courses = Course.objects.all().filter(is_active=True)
+        cart = Cart.new(request)
+        context = {
+            "courses": courses,
+            "cartProd": cart.products
+        }
+        return render(request, 'courseHandler/course/store.html', context)
 
 """class CourseListStore(LoginRequiredMixin, ListView):
     model = Course

@@ -15,7 +15,7 @@ class Course(models.Model):
     duration = models.IntegerField(default= 0, blank=True)
     price = models.IntegerField()
     author = models.ForeignKey(UserType, related_name='course_user', on_delete=models.CASCADE)
-    is_active = models.BooleanField(default= True)
+    is_active = models.BooleanField(default= False)
     creation_date = models.DateField()
 
     #def get_price(self, item: CartItem) -> Integer: return
