@@ -3,13 +3,15 @@ from django.views.generic import DetailView, DeleteView, UpdateView
 from courseHandler.forms import CreateVideo, SearchCourseForm
 from courseHandler.models import Video, Course
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 
 from courseHandler.forms import CourseForm
 from userAuth.models import UserType
+from userInteractions.forms import QuestionForm, AnswerForm
+from userInteractions.models import Question, Answer
 
 """
 class VideoUploadView(CreateView):
@@ -18,9 +20,44 @@ class VideoUploadView(CreateView):
     template_name = 'courseHandler/video/upload-video.html'
 
 """
+'''
 class VideoUploadDetail(DetailView):
     model = Video
-    template_name = 'courseHandler/video/upload-video-detail.html'
+    template_name = 'courseHandler/video/upload-video-detail.html' 
+
+    def get_context_data(self, **kwargs):
+        context = super(VideoUploadDetail, self).get_context_data(**kwargs)
+        form = QuestionForm()
+        context['form'] = form
+        return context
+        '''
+
+def VideoUpUploadDetail(request, course_id, pk):
+    if request.user.is_authenticated:
+        print(request.user)
+        if request.method == 'POST':
+            formQuestion = QuestionForm(request.POST, request.FILES)
+            if formQuestion.is_valid():
+                instance = formQuestion.save(commit=False)
+                instance.student_id = request.user.id
+                instance.video_id = int(pk)
+                instance.save()
+                return HttpResponse("You have created a question", content_type='text/plain')
+        else:
+            formQuestion = QuestionForm()
+            questions = Question.objects.all().filter(video_id=pk)
+            answers = Answer.objects.all().filter(video_id=pk)
+            video = Video.objects.get(pk=pk)
+            context = {
+                "formQuestion": formQuestion,
+                "questions": questions,
+                "answers": answers,
+                "video": video,
+                "pk": pk
+            }
+            return render(request, 'courseHandler/video/upload-video-detail.html', context)
+    else:
+        return HttpResponseRedirect('/')
 
 
 def VideoUploadView(request, pk):
@@ -74,12 +111,11 @@ class CourseUpdate(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('courseHandler:course-list')
     form_class = CourseForm
 
-class CourseList(LoginRequiredMixin, ListView):
+class CourseList(ListView):
     model = Course
     template_name = 'courseHandler/course/list.html'
 
 def search(request):
-
     if request.method == "POST":
         form = SearchCourseForm(request.POST)
         if form.is_valid():
@@ -88,16 +124,13 @@ def search(request):
             return redirect("courseHandler:course-search-result", sstring, where)
     else:
         form = SearchCourseForm()
-
     return render(request, template_name="courseHandler/course/search.html", context={"form": form})
 
 class CourseSearchView(CourseList):
     titolo = "La tua ricerca ha dato come risultato"
-
     def get_queryset(self):
         sstring = self.request.resolver_match.kwargs["sstring"]
         where = self.request.resolver_match.kwargs["where"]
-
         if "Title" in where:
             qq = self.model.objects.filter(title__icontains=sstring)
         elif "Author" in where:
@@ -105,8 +138,6 @@ class CourseSearchView(CourseList):
         else:
             qq = self.model.objects.filter(category__icontains=sstring)
         return qq
-
-
         return super().form_valid(form)
 
 
