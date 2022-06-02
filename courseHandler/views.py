@@ -123,11 +123,19 @@ class CourseUpdate(UpdateView):
 
         return super().dispatch(request, *args, **kwargs)
 
-
-
 class CourseList(ListView):
     model = Course
     template_name = 'courseHandler/course/list.html'
+
+def CourseListView(request):
+    if not request.user.is_authenticated or request.user.usertype.type == 'student':
+        return redirect('homepage')
+    courses = Course.objects.all().filter(author_id=request.user.id)
+    print(courses)
+    context = {
+        "courses": courses,
+    }
+    return render(request, 'courseHandler/course/list.html', context)
 
 def CourseListStore(request):
     if request.method == 'POST':

@@ -8,9 +8,8 @@
 
     <h1>Course List</h1>
 
-    {% if userType.type == 'teacher' and userType.id == course.author%}
     <ul>
-        {% for course in object_list %}
+        {% for course in courses %}
             <div class="d-flex">
                 <p class="mr-3">{{ course.title }}</p>
                 <p class="mr-3">{{ course.author.first_name }}</p>
@@ -21,5 +20,4 @@
             </div>
         {% endfor %}
     </ul>
-{% endif %}
 {% endblock %}
