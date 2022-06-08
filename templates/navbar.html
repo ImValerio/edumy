@@ -1,0 +1,15 @@
+<nav class="d-flex justify-content-around w-100">
+    <a class='h3' href="{% url 'courseHandler:course-list-store' %}">Store</a>
+     {% if user.is_authenticated %}
+         {% if user.usertype.type == 'teacher' %}
+            <a class='h3' href="{% url 'courseHandler:course-create' %}">Create course</a>
+         {% endif %}
+         <a class='h3' href="{% url 'courseHandler:course-list' %}">My courses</a>
+    <a class='h3' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a>
+         <a class='h3' href="{% url 'logout' %}">Logout</a>
+     {% else %}
+    <a class='h3' href="{% url 'login' %}">Login</a>
+    <a class='h3' href="{% url 'userAuth:signup' %}">Signup</a>
+     {% endif %}
+
+</nav>

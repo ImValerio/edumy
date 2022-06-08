@@ -4,17 +4,5 @@
 
 {% block content %}
     <h1>Edumy</h1>
-    {% if user.is_authenticated %}
-        <a class='h3' href="{% url 'courseHandler:course-create' %}">Course create</a><br>
-        <a class='h3' href="{% url 'logout' %}">Logout</a><br>
-        <a class='h3' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a><br>
-        {% if user.usertype.type == 'teacher' %}
-            <a class='h3' href="{% url 'courseHandler:course-list' %}">My courses</a><br>
-        {% endif %}
-    {% else %}
-        <a class='h3' href="{% url 'login' %}">Login</a><br>
-        <a class='h3' href="{% url 'userAuth:signup' %}">Signup</a><br>
-    {% endif %}
 
-    <a class='h3' href="{% url 'courseHandler:course-list-store' %}">Store</a><br>
 {% endblock %}

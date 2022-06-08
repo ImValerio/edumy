@@ -27,7 +27,7 @@ class FollowCourse(models.Model):
     course = models.ForeignKey(Course, related_name='followCourse_course', on_delete=models.PROTECT)
     student = models.ForeignKey(UserType, related_name='followCourse_user', on_delete=models.PROTECT)
     start_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(null=True)
 
 # Se il corso viene eliminato i video rimangono disponibili per gli utenti che hanno gia acquistato il corso
 class Video(models.Model):

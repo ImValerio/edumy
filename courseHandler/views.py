@@ -4,7 +4,7 @@ from dj_shop_cart.cart import get_cart_class
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import DetailView, DeleteView, UpdateView
 from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm
-from courseHandler.models import Video, Course
+from courseHandler.models import Video, Course, FollowCourse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, HttpRequest, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -51,7 +51,7 @@ def VideoUploadView(request, pk):
                 return redirect('courseHandler:course-upload-video', pk)
         else:
             form = CreateVideo()
-            videos = Video.objects.all().filter(course_id=pk)
+            videos = Video.objects.filter(course_id=pk)
             context = {
                 "form": form,
                 "videos": videos,
@@ -128,10 +128,15 @@ class CourseList(ListView):
     template_name = 'courseHandler/course/list.html'
 
 def CourseListView(request):
-    if not request.user.is_authenticated or request.user.usertype.type == 'student':
+    if not request.user.is_authenticated:
         return redirect('homepage')
-    courses = Course.objects.all().filter(author_id=request.user.id)
-    print(courses)
+
+    if request.user.usertype.type == 'student':
+       courses = FollowCourse.objects.filter(student_id=request.user.id).select_related('course')
+       courses = [e.course for e in courses]
+    else:
+        courses = Course.objects.filter(author_id=request.user.id)
+
     context = {
         "courses": courses,
     }
@@ -139,6 +144,8 @@ def CourseListView(request):
 
 def CourseListStore(request):
     if request.method == 'POST':
+
+
         """
          form = CreateVideo(request.POST, request.FILES)
         if form.is_valid():
