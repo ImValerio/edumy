@@ -7,11 +7,11 @@
 {% block content %}
     <h1>Question List</h1>
     <ul>
-        {% for question in object_list %}
-            <div class="d-flex">
-                <p class="mr-3">{{ question.body }}</p>
-                <a href="{% url 'userInteractions:answer-create' question=question.id video=question.video_id %}">Add answer</a><br>
-            </div>
+        {% for question in list %}
+                <div class="d-flex">
+                    <p class="mr-3">{{ question.body }} </p>
+                    <a href="{% url 'userInteractions:answer-create' question=question.id video=question.video_id %}">Add answer</a><br>
+                </div>
         {% endfor %}
     </ul>
 {% endblock %}

@@ -6,6 +6,5 @@ app_name = 'userInteractions'
 
 urlpatterns = [
     path('question/list/<int:video>', QuestionList, name='question-list'),
-    path('answer/<int:question>/<int:video>/create', AnswerCreate, name='answer-create')
-
+    path('answer/<int:question>/<int:video>/create', AnswerCreate, name='answer-create'),
 ]

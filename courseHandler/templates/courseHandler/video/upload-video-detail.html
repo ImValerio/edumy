@@ -13,6 +13,8 @@
 
     <a href="{% url 'userInteractions:question-list' video=video.id %}">All question</a><br>
 
+    {% include "userInteractions/question-answer-list.html"%}
+
     {% include "userInteractions/question/create.html" %}
 
 {% endblock %}
