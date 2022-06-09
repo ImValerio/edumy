@@ -1,16 +1,19 @@
 # Create your views here.index'
-
 from dj_shop_cart.cart import get_cart_class
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import DetailView, DeleteView, UpdateView
 from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm
 from courseHandler.models import Video, Course, FollowCourse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, HttpRequest, JsonResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.http import HttpResponseRedirect, JsonResponse, HttpRequest, HttpResponse
+
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy,reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
+
+from userInteractions.forms import QuestionForm
+from userInteractions.models import Question, Answer
 
 """
 class VideoUploadView(CreateView):
@@ -31,9 +34,34 @@ def teacher_is_authorized(request, pk):
 
     return True
 
-class VideoUploadDetail(DetailView):
-    model = Video
-    template_name = 'courseHandler/video/upload-video-detail.html'
+
+
+def VideoUploadDetail(request, course_id, pk):
+    if request.user.is_authenticated:
+        print(request.user)
+        if request.method == 'POST':
+            formQuestion = QuestionForm(request.POST, request.FILES)
+            if formQuestion.is_valid():
+                instance = formQuestion.save(commit=False)
+                instance.student_id = request.user.id
+                instance.video_id = int(pk)
+                instance.save()
+                return HttpResponse("You have created a question", content_type='text/plain')
+        else:
+            formQuestion = QuestionForm()
+            questions = Question.objects.all().filter(video_id=pk)
+            answers = Answer.objects.all().filter(video_id=pk)
+            questionsAnswerList = list(zip(questions, answers))
+            video = Video.objects.get(pk=pk)
+            context = {
+                "formQuestion": formQuestion,
+                "questionsAnswerList": questionsAnswerList,
+                "video": video,
+                "pk": pk
+            }
+            return render(request, 'courseHandler/video/upload-video-detail.html', context)
+    else:
+        return HttpResponseRedirect('/')
 
 
 def VideoUploadView(request, pk):
@@ -123,6 +151,7 @@ class CourseUpdate(UpdateView):
 
         return super().dispatch(request, *args, **kwargs)
 
+
 class CourseList(ListView):
     model = Course
     template_name = 'courseHandler/course/list.html'
@@ -168,6 +197,7 @@ def CourseListStore(request):
     template_name = 'courseHandler/course/store.html'
 
 """
+
 def search(request):
     if request.method == "POST":
         form = SearchCourseForm(request.POST)
@@ -177,17 +207,14 @@ def search(request):
             return redirect("courseHandler:course-search-result", sstring, where)
     else:
         form = SearchCourseForm()
-
     return render(request, template_name="courseHandler/course/search.html", context={"form": form})
 
 
 class CourseSearchView(CourseList):
     titolo = "La tua ricerca ha dato come risultato"
-
     def get_queryset(self):
         sstring = self.request.resolver_match.kwargs["sstring"]
         where = self.request.resolver_match.kwargs["where"]
-
         if "Title" in where:
             qq = self.model.objects.filter(title__icontains=sstring)
         elif "Author" in where:
@@ -196,7 +223,7 @@ class CourseSearchView(CourseList):
             qq = self.model.objects.filter(category__icontains=sstring)
         return qq
 
-        return super().form_valid(form)
+        #return super().form_valid(form)
 
 
 def CartView(request):
