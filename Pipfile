@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 django = "*"
 helpers = "*"
+django-cleanup = "*"
+dj-shop-cart = "*"
 
 [dev-packages]
 

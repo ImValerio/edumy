@@ -2,6 +2,8 @@
 from dj_shop_cart.cart import get_cart_class
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import DetailView, DeleteView, UpdateView
+from django.views.generic.edit import FormMixin
+
 from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm
 from courseHandler.models import Video, Course, FollowCourse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,7 +14,7 @@ from django.urls import reverse_lazy,reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
 
-from userInteractions.forms import QuestionForm
+from userInteractions.forms import QuestionForm, ReviewForm
 from userInteractions.models import Question, Answer
 
 """
@@ -115,16 +117,41 @@ class CourseCreate(LoginRequiredMixin, CreateView):
         # print("Tu non sei un teacher")
 
 
-class CourseDetail(DetailView):
+class CourseDetail(FormMixin, DetailView):
     model = Course
     template_name = "courseHandler/course/detail.html"
+    form_class= ReviewForm
+
     def dispatch(self, request, *args, pk, **kwargs):
         course_check = Course.objects.get(pk=pk)
         print(course_check.is_active)
         if not course_check.is_active and course_check.author_id != request.user.id:
             return redirect('homepage')
-
         return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('courseHandler:course-detail', kwargs={'pk': self.object.id})
+
+    def get_context_data(self, **kwargs):
+        context = super(CourseDetail, self).get_context_data(**kwargs)
+        context['formReview'] = ReviewForm(initial={'post': self.object})
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, formReview):
+        course = self.get_object()
+        instance = formReview.save(commit=False)
+        instance.course_id = int(course.pk)
+        instance.student_id = int(self.request.user.id)
+        formReview.save()
+        return super(CourseDetail, self).form_valid(formReview)
 
 
 class CourseDelete(DeleteView):
