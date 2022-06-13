@@ -2,13 +2,13 @@
 from dj_shop_cart.cart import get_cart_class
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import DetailView, DeleteView, UpdateView
-from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm
-from courseHandler.models import Video, Course, FollowCourse
+from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm, PaymentsForm
+from courseHandler.models import Video, Course, FollowCourse, Payment
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse, HttpRequest, HttpResponse
 
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy,reverse
+from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
 
@@ -25,6 +25,7 @@ class VideoUploadView(CreateView):
 
 Cart = get_cart_class()
 
+
 def teacher_is_authorized(request, pk):
     if not request.user.is_authenticated:
         return False
@@ -33,7 +34,6 @@ def teacher_is_authorized(request, pk):
         return False
 
     return True
-
 
 
 def VideoUploadDetail(request, course_id, pk):
@@ -118,6 +118,7 @@ class CourseCreate(LoginRequiredMixin, CreateView):
 class CourseDetail(DetailView):
     model = Course
     template_name = "courseHandler/course/detail.html"
+
     def dispatch(self, request, *args, pk, **kwargs):
         course_check = Course.objects.get(pk=pk)
         print(course_check.is_active)
@@ -156,13 +157,14 @@ class CourseList(ListView):
     model = Course
     template_name = 'courseHandler/course/list.html'
 
+
 def CourseListView(request):
     if not request.user.is_authenticated:
         return redirect('homepage')
 
     if request.user.usertype.type == 'student':
-       courses = FollowCourse.objects.filter(student_id=request.user.id).select_related('course')
-       courses = [e.course for e in courses]
+        courses = FollowCourse.objects.filter(student_id=request.user.id).select_related('course')
+        courses = [e.course for e in courses]
     else:
         courses = Course.objects.filter(author_id=request.user.id)
 
@@ -171,9 +173,9 @@ def CourseListView(request):
     }
     return render(request, 'courseHandler/course/list.html', context)
 
+
 def CourseListStore(request):
     if request.method == 'POST':
-
 
         """
          form = CreateVideo(request.POST, request.FILES)
@@ -192,11 +194,13 @@ def CourseListStore(request):
         }
         return render(request, 'courseHandler/course/store.html', context)
 
+
 """class CourseListStore(LoginRequiredMixin, ListView):
     model = Course
     template_name = 'courseHandler/course/store.html'
 
 """
+
 
 def search(request):
     if request.method == "POST":
@@ -212,6 +216,7 @@ def search(request):
 
 class CourseSearchView(CourseList):
     titolo = "La tua ricerca ha dato come risultato"
+
     def get_queryset(self):
         sstring = self.request.resolver_match.kwargs["sstring"]
         where = self.request.resolver_match.kwargs["where"]
@@ -223,24 +228,30 @@ class CourseSearchView(CourseList):
             qq = self.model.objects.filter(category__icontains=sstring)
         return qq
 
-        #return super().form_valid(form)
+        # return super().form_valid(form)
 
 
 def CartView(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            form = CreateVideo(request.POST, request.FILES)
+            form = PaymentsForm(request.POST)
             if form.is_valid():
-                instance = form.save(commit=False)
-                instance.save()
-                return redirect('homepage')
+                cart = Cart.new(request)
+                for item in cart:
+                    Payment.objects.create(method=request.POST['payments'], course_id=int(item.product.id),
+                                           user_id=int(request.user.id))
+
+                    #FollowCourse.objects.create()
+                return redirect('courseHandler:course-list')
         else:
             cart = Cart.new(request)
             items_prices = [item.price for item in cart.products]
             tot_price = sum(items_prices)
+            payments_form = PaymentsForm()
             context = {
                 "cart": cart,
-                'totPrice': tot_price
+                "totPrice": tot_price,
+                "paymentsForm": payments_form
             }
             return render(request, 'cart.html', context)
     else:
@@ -253,6 +264,7 @@ def add_product(request, pk):
     course = Course.objects.get(pk=pk)
     cart.add(course, quantity=1)
     return JsonResponse({'msg': 'Course added'})
+
 
 @require_GET
 def remove_product(request, pk):

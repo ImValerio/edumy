@@ -20,6 +20,7 @@
         <hr>
     {% if totPrice != 0 %}
         <h2 >Total price: <span id="tot-price">{{ totPrice }}</span>$</h2>
+        {% include "payments.html" %}
 
         {% else %}
             <h2 >The cart is empty... </h2>

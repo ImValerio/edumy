@@ -25,10 +25,7 @@
             </div>
 
             {% if user.usertype.type == 'teacher' %}
-            <div class="d-flex">
-                <p class="mr-3">{{ course.title }}</p>
-                <p class="mr-3">{{ course.author.first_name }}</p>
-                <p class="mr-3">{{ course.category }}</p>
+            <div class="d-flex ml-2">
                 <p class="mr-3"><a href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a></p>
                 <p class="mr-3"><a href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a></p>
                 <p class=""><a href="{% url 'courseHandler:course-update' course.pk %}">Update</a></p>
