@@ -241,7 +241,8 @@ def CartView(request):
                     Payment.objects.create(method=request.POST['payments'], course_id=int(item.product.id),
                                            user_id=int(request.user.id))
 
-                    #FollowCourse.objects.create()
+                    FollowCourse.objects.create(course_id=int(item.product.id), student_id=request.user.id)
+
                 return redirect('courseHandler:course-list')
         else:
             cart = Cart.new(request)
