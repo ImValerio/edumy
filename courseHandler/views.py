@@ -187,10 +187,15 @@ def CourseListStore(request):
         """
     else:
         courses = Course.objects.all().filter(is_active=True)
+        courses_bought_id = []
+        if request.user.usertype.type == 'student':
+            courses_bought = FollowCourse.objects.filter(student_id=request.user.id)
+            courses_bought_id = [e.course_id for e in courses_bought]
         cart = Cart.new(request)
         context = {
             "courses": courses,
-            "cartProd": cart.products
+            "cartProd": cart.products,
+            "coursesBought": courses_bought_id
         }
         return render(request, 'courseHandler/course/store.html', context)
 

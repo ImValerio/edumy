@@ -23,11 +23,13 @@ window.onload = () => {
 
     for(let btn of publishBtns) {
         btn.addEventListener('click', async (e) => {
-            const courseId = btn.dataset.course;
-            await fetch(`${courseId}/publish`);
+           const courseId = btn.dataset.course;
+           await fetch(`${courseId}/publish`);
 
-            btn.classList = 'mr-3 text-success font-weight-bold'
-            btn.innerHTML = 'published'
+           document.querySelector('.button-modal').innerText = 'published';
+           document.querySelector('.button-modal').classList = 'mr-3 text-success font-weight-bold bg-transparent border-0';
+           $('#exampleModal').modal('hide');
+
         })
     }
 

@@ -16,27 +16,50 @@
                 <div>
 
                     <a href="{% url 'courseHandler:course-detail' course.id %}">
-                        <h1 >{{ course.title }}</h1>
+                        <h1>{{ course.title }}</h1>
                     </a>
-                    <h3 >{{ course.author.first_name }}</h3>
-                    <p >{{ course.category }}</p>
-                {% if user.usertype.type == 'teacher' %}
-                    {% if course.is_active %}
-                        <p class="mr-3 text-success font-weight-bold">published</p>
-                    {% else %}
-                        <p class="mr-3 btn btn-primary font-weight-bold publish-course" data-course={{ course.id }}>publish</p>
+                    <h3>{{ course.author.first_name }}</h3>
+                    <p>{{ course.category }}</p>
+                    {% if user.usertype.type == 'teacher' %}
+                        {% if course.is_active %}
+                            <p class="mr-3 text-success font-weight-bold">published</p>
+                        {% else %}
+                            <button type="button" class="mr-3 btn btn-primary font-weight-bold button-modal"
+                               data-toggle="modal" data-target="#exampleModal">publish</button>
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            You sure you want to publish this course?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                                            </button>
+                                            <button type="button" class="btn btn-primary publish-course" data-course={{ course.id }}>Confirm
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
                 </div>
             </div>
 
             {% if user.usertype.type == 'teacher' %}
-            <div class="d-flex align-items-center  ml-2">
-                <a class="mr-3" href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a>
-                <a class="mr-3" href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a>
-                <a class="mr-3" href="{% url 'courseHandler:course-update' course.pk %}">Update</a>
+                <div class="d-flex align-items-center  ml-2">
+                    <a class="mr-3" href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a>
+                    <a class="mr-3" href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a>
+                    <a class="mr-3" href="{% url 'courseHandler:course-update' course.pk %}">Update</a>
 
-            </div>
+                </div>
 
             {% endif %}
         {% endfor %}
