@@ -20,15 +20,22 @@
                     </a>
                     <h3 >{{ course.author.first_name }}</h3>
                     <p >{{ course.category }}</p>
-
+                {% if user.usertype.type == 'teacher' %}
+                    {% if course.is_active %}
+                        <p class="mr-3 text-success font-weight-bold">published</p>
+                    {% else %}
+                        <p class="mr-3 btn btn-primary font-weight-bold publish-course" data-course={{ course.id }}>publish</p>
+                    {% endif %}
+                {% endif %}
                 </div>
             </div>
 
             {% if user.usertype.type == 'teacher' %}
-            <div class="d-flex ml-2">
-                <p class="mr-3"><a href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a></p>
-                <p class="mr-3"><a href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a></p>
-                <p class=""><a href="{% url 'courseHandler:course-update' course.pk %}">Update</a></p>
+            <div class="d-flex align-items-center  ml-2">
+                <a class="mr-3" href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a>
+                <a class="mr-3" href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a>
+                <a class="mr-3" href="{% url 'courseHandler:course-update' course.pk %}">Update</a>
+
             </div>
 
             {% endif %}

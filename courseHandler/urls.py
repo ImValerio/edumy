@@ -5,8 +5,7 @@ from django.conf.urls.static import static
 
 from courseHandler.views import VideoUploadView, VideoUploadDetail, CourseCreate, CourseDetail, CourseList, \
     CourseDelete, CourseUpdate, search, CourseSearchView, VideoUpdateView, CourseListStore, add_product, CartView, \
-    remove_product, CourseListView
-
+    remove_product, CourseListView, publish_course
 
 app_name = 'courseHandler'
 
@@ -21,6 +20,7 @@ urlpatterns = [
     path("course/search", search, name="course-search"),
     path("course/search/result/<str:sstring>/<str:where>/", CourseSearchView.as_view(), name="course-search-result"),
     path('course/list', CourseListView, name='course-list'),
+    path('course/<int:pk>/publish', publish_course, name='course-publish'),
     path('store', CourseListStore, name='course-list-store'),
     path('cart', CartView, name='cart-view'),
     path('cart/add/<int:pk>', add_product, name='add-product'),

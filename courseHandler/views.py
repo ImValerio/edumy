@@ -279,20 +279,10 @@ def remove_product(request, pk):
 def empty_cart(request: HttpRequest):
     Cart.new(request).empty()
 
-    """   def createCourse(request):
-            if request.user.is_authenticated and request.user.type == "teacher":
-                if request.method == 'POST':
-                    form = CourseForm(request.POST, request.FILES)
-                    if form.is_valid():
-                        instance = form.save(commit=False)
-                        instance.author_id = request.user.id
-                        instance.save()
-                        return redirect('courseHandler:course-create')
-                else:
-                    form = CourseForm()
-                    context = {
-                        "form": form,
-                    }
-                    return render(request, 'courseHandler/course/create.html', context)
-            else:
-                return HttpResponseRedirect('/') """
+@require_GET
+def publish_course(request, pk):
+    course = Course.objects.get(id=pk)
+    course.is_active = True
+    course.save()
+    return JsonResponse({'msg': 'Now the course is visible'})
+
