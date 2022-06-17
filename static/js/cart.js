@@ -1,6 +1,7 @@
 window.onload = () => {
     let updateBtns = document.getElementsByClassName('cart-update');
     let publishBtns = document.getElementsByClassName('publish-course');
+    const notificationsBtn = document.getElementById('notifications-btn');
 
     for(let btn of updateBtns) {
         btn.addEventListener('click', async (e) => {
@@ -33,6 +34,9 @@ window.onload = () => {
         })
     }
 
-
+    notificationsBtn.addEventListener('click',async ()=>{
+        const userId = notificationsBtn.dataset.user;
+        await fetch(`/${userId}/readNotifications`);
+    })
 }
 

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_cleanup.apps.CleanupConfig',
     'dj_shop_cart',
+    'notifications'
 ]
 
 MIDDLEWARE = [

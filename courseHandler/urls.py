@@ -5,11 +5,12 @@ from django.conf.urls.static import static
 
 from courseHandler.views import VideoUploadView, VideoUploadDetail, CourseCreate, CourseDetail, CourseList, \
     CourseDelete, CourseUpdate, search, CourseSearchView, VideoUpdateView, CourseListStore, add_product, CartView, \
-    remove_product, CourseListView, publish_course
+    remove_product, CourseListView, publish_course, read_notifications
 
 app_name = 'courseHandler'
 
 urlpatterns = [
+    path('<int:pk>/readNotifications', read_notifications, name='read-notifications'),
     path('user/course/<int:pk>', VideoUploadView, name='course-upload-video'),
     path('user/course/<int:course_id>/video/<int:pk>', VideoUploadDetail, name='course-upload-video-detail'),
     path('user/course/<int:course_id>/video/<int:pk>/update', VideoUpdateView.as_view(), name='video-update'),

@@ -1,5 +1,6 @@
 # Create your views here.index'
 from dj_shop_cart.cart import get_cart_class
+from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import DetailView, DeleteView, UpdateView
 from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm, PaymentsForm
@@ -121,7 +122,6 @@ class CourseDetail(DetailView):
 
     def dispatch(self, request, *args, pk, **kwargs):
         course_check = Course.objects.get(pk=pk)
-        print(course_check.is_active)
         if not course_check.is_active and course_check.author_id != request.user.id:
             return redirect('homepage')
 
@@ -291,3 +291,8 @@ def publish_course(request, pk):
     course.save()
     return JsonResponse({'msg': 'Now the course is visible'})
 
+@require_GET
+def read_notifications(request, pk):
+    user = User.objects.get(pk=pk)
+    user.notifications.mark_all_as_read()
+    return JsonResponse({'msg': 'There are 0 unread notifications'})
