@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from notifications.signals import notify
 
+from courseHandler.models import Video, Course
 from userInteractions.forms import AnswerForm
 from userInteractions.models import Question, Answer
 from django.shortcuts import render, redirect
@@ -31,7 +32,9 @@ def AnswerCreate(request, question, video):
                 sender = User.objects.get(id=request.user.id)
                 question_row = Question.objects.get(id=question)
                 recipient = User.objects.get(id=question_row.student_id)
-                message = f"{request.user.first_name} answered your question"
+                video_id = Video.objects.values_list('id').get(id=question_row.video_id)
+                course_title = Course.objects.values_list('title').get(id=video_id[0])
+                message = f"[{course_title[0]}] {request.user.first_name} answered your question"
                 notify.send(sender, recipient=recipient, verb='Message',
                             description=message)
                 return redirect('courseHandler:userInteractions:question-list', video)

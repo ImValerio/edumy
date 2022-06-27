@@ -1,6 +1,6 @@
  {% load notifications_tags %}
 
-{% live_notify_list list_class="dropdown-menu" %}
+
 <nav class="d-flex justify-content-around w-100">
     <a class='h3' href="{% url 'courseHandler:course-list-store' %}">Store</a>
     {% if user.is_authenticated %}
@@ -14,18 +14,12 @@
                     data-toggle="dropdown"
                     data-user="{{ user.id }}"
                     aria-expanded="false">
-                Notifications ({{ user.notifications.unread|length }})
+                Notifications ({% live_notify_badge %})
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+            <div id='notify-list' class="dropdown-menu" aria-labelledby="dropdownMenu2">
 
-                {% for notification in  user.notifications.unread %}
-                    <div>
-                        <button class="dropdown-item" type="button">{{ notification.description }}</button>
-                    </div>
-                    <hr>
-                {% endfor %}
+
             </div>
-
         </div>
         <a class='h3' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a>
         <a class='h3' href="{% url 'logout' %}">Logout</a>
