@@ -15,8 +15,18 @@
     <p>{{ object.price }}</p>
     <p>{{ object.creation_date }}</p>
 
-
     <a class="btn btn-primary" href="{% url 'courseHandler:course-list-store' %}">Store</a><br>
-    {% include "userInteractions/review/create.html"%}
 
+     {% for course in couseList %}
+            <div class="d-flex">
+                <p class="mr-3 text-danger">{{ course.image }} </p>
+                <p class="mr-3">{{ course.price }}</p>
+            </div>
+     {% endfor %}
+
+    {% include "userInteractions/review/list.html"%}
+
+    {% if user.usertype.type == 'student' %}
+        {% include "userInteractions/review/create.html"%}
+    {% endif %}
 {% endblock %}

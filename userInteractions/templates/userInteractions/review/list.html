@@ -5,10 +5,11 @@
 
 {% block content %}
     <ul>
-        {% for question, answer in questions_answer_list %}
+        {% for review in reviews %}
             <div class="d-flex">
-                <p class="mr-3 text-danger">{{ question.body }} </p>
-                <p class="mr-3">{{ answer.body }}</p>
+                <p class="mr-3 text-danger">{{ review.title }} </p>
+                <p class="mr-3">{{ review.body }}</p>
+                <p class="mr-3">{{ review.rating }}</p>
             </div>
         {% endfor %}
     </ul>

@@ -25,6 +25,6 @@ urlpatterns = [
     path('cart', CartView, name='cart-view'),
     path('cart/add/<int:pk>', add_product, name='add-product'),
     path('cart/remove/<int:pk>', remove_product, name='remove-product'),
-    path('', include('userInteractions.urls'))
+    path('', include('userInteractions.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

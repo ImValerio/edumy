@@ -1,9 +1,12 @@
 
 # Create your views here.
 from django.http import HttpResponseRedirect, HttpResponse
+
+from courseHandler.models import Video
 from userInteractions.forms import AnswerForm
 from userInteractions.models import Question, Answer
 from django.shortcuts import render
+
 
 def QuestionList(request, video):
     context = {}
@@ -15,20 +18,22 @@ def QuestionList(request, video):
     return render(request, "userInteractions/question/list.html", context)
 
 def AnswerCreate(request, question, video):
-    if request.user.is_authenticated:
+    video_course = Video.objects.filter(pk=video).select_related('course')
+    course_author_id = [c.course.author_id for c in video_course]
+    if request.user.is_authenticated and request.user.id == course_author_id[0]:
         if request.method == 'POST':
-            formAnswer = AnswerForm(request.POST, request.FILES)
-            if formAnswer.is_valid():
-                instance = formAnswer.save(commit=False)
-                instance.author_id = request.user.id
+            form_answer = AnswerForm(request.POST, request.FILES)
+            if form_answer.is_valid():
+                instance = form_answer.save(commit=False)
+                instance.author_id = course_author_id[0]
                 instance.question_id = question
                 instance.video_id = video
                 instance.save()
                 return HttpResponse("You have created a answer", content_type='text/plain')
         else:
-            formAnswer = AnswerForm()
+            form_answer = AnswerForm()
             context = {
-                "formAnswer": formAnswer,
+                "form_answer": form_answer,
                 "question": question,
                 "video": video
             }

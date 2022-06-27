@@ -4,5 +4,11 @@
 
 {% block content %}
     <h1>Edumy</h1>
+    {% for c in courseList %}
+            <div class="d-flex">
+                <p class="mr-3 text-danger">{{ c.image }} </p>
+                <p class="mr-3">{{ c.price }}</p>
+            </div>
+     {% endfor %}
 
 {% endblock %}

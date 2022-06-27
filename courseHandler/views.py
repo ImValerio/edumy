@@ -1,5 +1,8 @@
 # Create your views here.index'
+from audioop import avg
+
 from dj_shop_cart.cart import get_cart_class
+from django.db.models import Max, Count
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import DetailView, DeleteView, UpdateView
 from django.views.generic.edit import FormMixin
@@ -15,7 +18,7 @@ from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
 
 from userInteractions.forms import QuestionForm, ReviewForm
-from userInteractions.models import Question, Answer
+from userInteractions.models import Question, Answer, Review
 
 """
 class VideoUploadView(CreateView):
@@ -36,29 +39,28 @@ def teacher_is_authorized(request, pk):
 
     return True
 
-
-
 def VideoUploadDetail(request, course_id, pk):
     if request.user.is_authenticated:
-        print(request.user)
         if request.method == 'POST':
-            formQuestion = QuestionForm(request.POST, request.FILES)
-            if formQuestion.is_valid():
-                instance = formQuestion.save(commit=False)
+            form_question = QuestionForm(request.POST, request.FILES)
+            if form_question.is_valid():
+                instance = form_question.save(commit=False)
                 instance.student_id = request.user.id
                 instance.video_id = int(pk)
                 instance.save()
                 return HttpResponse("You have created a question", content_type='text/plain')
         else:
-            formQuestion = QuestionForm()
+            form_question = QuestionForm()
             questions = Question.objects.all().filter(video_id=pk)
             answers = Answer.objects.all().filter(video_id=pk)
-            questionsAnswerList = list(zip(questions, answers))
+            course = Course.objects.filter(pk=course_id)
+            questions_answer_list = list(zip(questions, answers))
             video = Video.objects.get(pk=pk)
             context = {
-                "formQuestion": formQuestion,
-                "questionsAnswerList": questionsAnswerList,
+                "form_question": form_question,
+                "questions_answer_list": questions_answer_list,
                 "video": video,
+                "course": course,
                 "pk": pk
             }
             return render(request, 'courseHandler/video/upload-video-detail.html', context)
@@ -124,7 +126,6 @@ class CourseDetail(FormMixin, DetailView):
 
     def dispatch(self, request, *args, pk, **kwargs):
         course_check = Course.objects.get(pk=pk)
-        print(course_check.is_active)
         if not course_check.is_active and course_check.author_id != request.user.id:
             return redirect('homepage')
         return super().dispatch(request, *args, **kwargs)
@@ -134,6 +135,27 @@ class CourseDetail(FormMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CourseDetail, self).get_context_data(**kwargs)
+        #se userCourses è vuoto fare una ricerca totale dei corsi
+        #userCourses = FollowCourse.objects.filter(student_id=self.request.user.id).select_related('course')
+        #courses = [course.course for course in userCourses]
+        #listPrice = [c.price for c in courses]
+        #listcategory = [c.category for c in courses]
+        #avg = sum(listPrice) / len(listcategory)
+        #percentage = avg * 0.3
+        #minAvg = avg - percentage
+        #maxAvg = avg + percentage
+        #popularCategory = list(Counter(listcategory))[0]
+        #fare la ricerca su corso preso in dettaglio(utilizzare self)
+        #all_courses = Course.objects.filter(category=popularCategory, price__range=(minAvg,maxAvg))
+        percentage = self.object.price * 0.3
+        min_price = self.object.price - percentage
+        max_price = self.object.price + percentage
+        all_courses = Course.objects.filter(category=self.object.category, price__range=(min_price,max_price))
+        #ids = [course.pk for course in userCourses]
+        course_no_follow = [course for course in all_courses if course.id != self.object.id]
+        context['couseList'] = course_no_follow
+        #context['couseList'] = all_courses
+        context['reviews'] = Review.objects.filter(course_id=self.object.id)
         context['formReview'] = ReviewForm(initial={'post': self.object})
         return context
 
@@ -293,20 +315,3 @@ def remove_product(request, pk):
 def empty_cart(request: HttpRequest):
     Cart.new(request).empty()
 
-    """   def createCourse(request):
-            if request.user.is_authenticated and request.user.type == "teacher":
-                if request.method == 'POST':
-                    form = CourseForm(request.POST, request.FILES)
-                    if form.is_valid():
-                        instance = form.save(commit=False)
-                        instance.author_id = request.user.id
-                        instance.save()
-                        return redirect('courseHandler:course-create')
-                else:
-                    form = CourseForm()
-                    context = {
-                        "form": form,
-                    }
-                    return render(request, 'courseHandler/course/create.html', context)
-            else:
-                return HttpResponseRedirect('/') """

@@ -13,10 +13,13 @@
 
     <a href="{% url 'courseHandler:video-update' pk=video.id course_id=video.course_id %}">Update video</a>
 
-    <a href="{% url 'userInteractions:question-list' video=video.id %}">All question</a><br>
+    {% if course.author_id == user.id %}
+        <a href="{% url 'userInteractions:question-list' video=video.id %}">All question</a><br>
+    {% endif %}
 
     {% include "userInteractions/question-answer-list.html"%}
 
-    {% include "userInteractions/question/create.html" %}
-
+    {% if user.usertype.type == 'student' %}
+        {% include "userInteractions/question/create.html" %}
+    {% endif %}
 {% endblock %}
