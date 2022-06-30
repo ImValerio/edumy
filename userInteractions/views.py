@@ -10,8 +10,8 @@ from django.shortcuts import render
 
 def QuestionList(request, video):
     context = {}
-    answer_list = Answer.objects.all().filter(video_id=video)
-    question_list = Question.objects.all().filter(video_id=video)
+    answer_list = Answer.objects.filter(video_id=video)
+    question_list = Question.objects.filter(video_id=video)
     ids = [answer.question_id for answer in answer_list] #id che vogliamo escludere dalle question
     question_no_answer = [question for question in question_list if question.id not in ids] #seleziono le question che non hanno una risposta
     context["list"] = question_no_answer

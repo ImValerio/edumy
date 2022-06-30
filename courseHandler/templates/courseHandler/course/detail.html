@@ -24,9 +24,11 @@
             </div>
      {% endfor %}
 
-    {% include "userInteractions/review/list.html"%}
-
     {% if user.usertype.type == 'student' %}
         {% include "userInteractions/review/create.html"%}
     {% endif %}
+
+    {% include "userInteractions/review/list.html"%}
+
+
 {% endblock %}

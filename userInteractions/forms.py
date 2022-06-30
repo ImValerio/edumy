@@ -8,6 +8,7 @@ class QuestionForm(forms.ModelForm):
     helper = FormHelper()
     helper.form_id = "add_question_crispy_form"
     helper.form_method = 'POST'
+    helper.form_class = 'd-none'
     helper.add_input(Submit('submit', 'Submit'))
     helper.inputs[0].field_classes = 'btn btn-success'
 
@@ -29,8 +30,9 @@ class AnswerForm(forms.ModelForm):
 
 class ReviewForm(forms.ModelForm):
     helper = FormHelper()
-    helper.form_id = "add_answer_crispy_form"
+    helper.form_id = "add_review_crispy_form"
     helper.form_method = 'POST'
+    helper.form_class = 'd-none'
     helper.add_input(Submit('submit', 'Submit'))
     helper.inputs[0].field_classes = 'btn btn-success'
 

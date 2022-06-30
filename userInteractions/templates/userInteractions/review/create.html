@@ -1,5 +1,24 @@
 {% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
 
-<h1>Review</h1>
+
 {% crispy formReview %}
+<button id="btn" type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="bottom" title="Add a review">+</button>
+
+<script>
+
+    const btn = document.getElementById('btn');
+    const form = document.getElementById('add_review_crispy_form');
+    let toggle = false;
+    btn.addEventListener("click", () => {
+        if(toggle){
+            form.classList.add('d-none');
+            btn.innerText = "+";
+            toggle = false;
+        }else{
+            form.classList.remove('d-none');
+            btn.innerText = "-";
+            toggle = true;
+        }
+    })
+</script>

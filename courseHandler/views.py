@@ -16,6 +16,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy,reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
+from userAuth.models import UserType
 
 from userInteractions.forms import QuestionForm, ReviewForm
 from userInteractions.models import Question, Answer, Review
@@ -48,7 +49,7 @@ def VideoUploadDetail(request, course_id, pk):
                 instance.student_id = request.user.id
                 instance.video_id = int(pk)
                 instance.save()
-                return HttpResponse("You have created a question", content_type='text/plain')
+                return redirect('courseHandler:course-upload-video-detail', course_id, pk)
         else:
             form_question = QuestionForm()
             questions = Question.objects.all().filter(video_id=pk)
@@ -155,7 +156,7 @@ class CourseDetail(FormMixin, DetailView):
         course_no_follow = [course for course in all_courses if course.id != self.object.id]
         context['couseList'] = course_no_follow
         #context['couseList'] = all_courses
-        context['reviews'] = Review.objects.filter(course_id=self.object.id)
+        context['reviews'] = Review.objects.filter(course_id=self.object.id).select_related('student')
         context['formReview'] = ReviewForm(initial={'post': self.object})
         return context
 
@@ -274,6 +275,19 @@ class CourseSearchView(CourseList):
 
         #return super().form_valid(form)
 
+def courses_statistic(request, pk):
+        context = {}
+        courses = Course.objects.filter(author_id = request.user.id)
+        courses_id = [course.id for course in courses ]
+        bests_sellers = FollowCourse.objects.filter(course_id__in=courses_id).values('course').annotate(Count('course'))
+        print(bests_sellers[0]['course'])
+        courses = courses.values()
+        for c in courses:
+            for c1 in bests_sellers:
+                if c['id'] == c1['course']:
+                    c['course_sold'] = c1['course__count']
+        context['courses'] = courses
+        return render(request, "courseHandler/course/statistic.html")
 
 def CartView(request):
     if request.user.is_authenticated:

@@ -1,8 +1,28 @@
 {% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
 
-<h1>Question</h1>
-{% crispy form_question %}
+    <p id="title" class="d-none">Insert your question</p>
+    {% crispy form_question %}
+    <button id="btn" type="button" class="btn btn-outline-primary" data-toggle="tooltip" data-placement="bottom" title="Add a question">+</button>
+
+<script>
+    const btn = document.getElementById('btn');
+    const form = document.getElementById('add_question_crispy_form');
+    const title = document.getElementById('title');
+    let toggle = false;
+    btn.addEventListener("click", () => {
+        if(toggle){
+            form.classList.add('d-none');
+            title.classList.add('d-none');
+            btn.innerText = "+";
+            toggle = false;
+        }else{
+            form.classList.remove('d-none');
+            title.classList.remove('d-none');
+            btn.innerText = "-";
+            toggle = true;
+        }
+    })
 
 
-
+</script>

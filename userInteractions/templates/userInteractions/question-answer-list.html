@@ -4,12 +4,30 @@
 {% block title %}{% endblock %}
 
 {% block content %}
-    <ul>
-        {% for question, answer in questions_answer_list %}
-            <div class="d-flex">
-                <p class="mr-3 text-danger">{{ question.body }} </p>
-                <p class="mr-3">{{ answer.body }}</p>
+    <div class="container">
+    {% for question, answer in questions_answer_list %}
+        <div class="accordion" id="accordionQuestionAnswer{{answer.id}}">
+            <div class="card">
+                <div class="card-header" id="question{{ question.id}}">
+                    <button class="btn btn-primary" type="button" class="card-link" data-toggle="collapse" data-target="#answer{{answer.id}}" aria-expanded="false">
+                        {{ question.body }}
+                    </button>
+                </div>
+
+                <div id="answer{{answer.id}}" class="collapse show" data-parent="#accordionQuestionAnswer{{answer.id}}">
+                    <div class="card-body">
+                        {{ answer.body }}
+                    </div>
+                </div>
             </div>
-        {% endfor %}
-    </ul>
+        </div>
+    {% endfor %}
+    </div>
 {% endblock %}
+
+<script>
+    $('.collapse').collapse();
+    $(document).click(function() {
+        $('.collapse').collapse('hide');
+    });
+</script>

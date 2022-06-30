@@ -1,17 +1,36 @@
 {% extends 'base.html' %}
 {% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
-
 {% block title %}Question List{% endblock %}
 
 {% block content %}
+
+    <div class="container">
     <h1>Question List</h1>
-    <ul>
+
         {% for question in list %}
-                <div class="d-flex">
-                    <p class="mr-3">{{ question.body }} </p>
-                    <a href="{% url 'userInteractions:answer-create' question=question.id video=question.video_id %}">Add answer</a><br>
+            <div class="accordion" id="accordionQuestionList{{question.id}}">
+                <div class="card">
+                    <div class="card-header" id="question{{ question.id}}">
+                        <button class="btn btn-primary" type="button" class="card-link" data-toggle="collapse" data-target="#questionAnswer{{question.id}}" aria-expanded="false">
+                            {{ question.body }}
+                        </button>
+                    </div>
+
+                    <div id="questionAnswer{{question.id}}" class="collapse show" data-parent="#accordionQuestionList{{question.id}}">
+                        <div class="card-body">
+                           <p>a</p>
+                        </div>
+                    </div>
+
                 </div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
+<script>
+    $('.collapse').collapse();
+    $(document).click(function() {
+        $('.collapse').collapse('hide');
+    });
+</script>
 {% endblock %}

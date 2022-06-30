@@ -4,13 +4,21 @@
 {% block title %}{% endblock %}
 
 {% block content %}
-    <ul>
+    <div class="container">
+        <p>Recensioni</p>
         {% for review in reviews %}
-            <div class="d-flex">
-                <p class="mr-3 text-danger">{{ review.title }} </p>
-                <p class="mr-3">{{ review.body }}</p>
-                <p class="mr-3">{{ review.rating }}</p>
-            </div>
+                <div class="row border-bottom">
+                    <ion-icon name="person-circle-outline" style="height: 4.8rem; width: 4.8rem;"></ion-icon>
+                    <div class="col">
+                        <p>{{ review.student }}</p>
+                        <p class="mr-3">{{ review.rating }}</p>
+                        <p class="mr-3">{{ review.body }}</p>
+                    </div>
+                </div>
         {% endfor %}
-    </ul>
+    </div>
+
 {% endblock %}
+<script>
+
+</script>
