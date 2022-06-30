@@ -15,7 +15,7 @@
                 <img src="{% get_media_prefix %}{{ course.image }} " width="400" class="mr-3">
                 <div>
 
-                    <a href="{% url 'courseHandler:course-detail' course.id %}">
+                    <a href="{% url 'courseHandler:course-upload-video' course.id %}">
                         <h1>{{ course.title }}</h1>
                     </a>
                     <h3>{{ course.author.first_name }}</h3>

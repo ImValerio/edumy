@@ -49,6 +49,7 @@ def VideoUploadDetail(request, course_id, pk):
                 instance.save()
                 return HttpResponse("You have created a question", content_type='text/plain')
         else:
+
             formQuestion = QuestionForm()
             questions = Question.objects.all().filter(video_id=pk)
             answers = Answer.objects.all().filter(video_id=pk)
@@ -67,11 +68,8 @@ def VideoUploadDetail(request, course_id, pk):
 
 def VideoUploadView(request, pk):
     if request.user.is_authenticated:
-        course_check = Course.objects.get(pk=pk)
-        if course_check.author_id != request.user.id:
-            return HttpResponseRedirect('/')
 
-        if request.method == 'POST':
+        if request.method == 'POST' and teacher_is_authorized(request,pk):
             form = CreateVideo(request.POST, request.FILES)
             if form.is_valid():
                 instance = form.save(commit=False)
@@ -79,14 +77,22 @@ def VideoUploadView(request, pk):
                 instance.save()
                 return redirect('courseHandler:course-upload-video', pk)
         else:
-            form = CreateVideo()
-            videos = Video.objects.filter(course_id=pk)
-            context = {
-                "form": form,
-                "videos": videos,
-                "pk": pk
-            }
-            return render(request, 'courseHandler/video/upload-video.html', context)
+            if(teacher_is_authorized(request,pk)):
+                form = CreateVideo()
+                videos = Video.objects.filter(course_id=pk)
+                context = {
+                    "form": form,
+                    "videos": videos,
+                    "pk": pk
+                }
+                return render(request, 'courseHandler/video/upload-video.html', context)
+            else:
+                videos = Video.objects.filter(course_id=pk)
+                context = {
+                    "videos": videos,
+                    "pk": pk
+                }
+                return render(request, 'courseHandler/video/videos.html', context)
     else:
         return HttpResponseRedirect('/')
 

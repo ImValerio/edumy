@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Videos{% endblock %}
+
+{% block content %}
+    <h1>Video list</h1>
+    <div class="list-group">
+    {% if videos %}
+        {% for video in videos %}
+            <a href="{% url 'courseHandler:course-upload-video-detail' course_id=pk pk=video.id %}" class="list-group-item h2">{{ video.title }}</a><br>
+        {% endfor %}
+    {% endif %}
+
+    </div>
+{% endblock %}
