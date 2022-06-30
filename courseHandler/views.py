@@ -3,20 +3,20 @@ from audioop import avg
 
 from dj_shop_cart.cart import get_cart_class
 from django.db.models import Max, Count
-from django.views.decorators.http import require_GET, require_POST
-from django.views.generic import DetailView, DeleteView, UpdateView
 from django.views.generic.edit import FormMixin
 
-from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm
-from courseHandler.models import Video, Course, FollowCourse
+from django.contrib.auth.models import User
+from django.views.decorators.http import require_GET, require_POST
+from django.views.generic import DetailView, DeleteView, UpdateView
+from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm, PaymentsForm
+from courseHandler.models import Video, Course, FollowCourse, Payment
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, JsonResponse, HttpRequest, HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpRequest
 
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy,reverse
+from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
-from userAuth.models import UserType
 
 from userInteractions.forms import QuestionForm, ReviewForm
 from userInteractions.models import Question, Answer, Review
@@ -30,6 +30,7 @@ class VideoUploadView(CreateView):
 """
 
 Cart = get_cart_class()
+
 
 def teacher_is_authorized(request, pk):
     if not request.user.is_authenticated:
@@ -71,11 +72,8 @@ def VideoUploadDetail(request, course_id, pk):
 
 def VideoUploadView(request, pk):
     if request.user.is_authenticated:
-        course_check = Course.objects.get(pk=pk)
-        if course_check.author_id != request.user.id:
-            return HttpResponseRedirect('/')
 
-        if request.method == 'POST':
+        if request.method == 'POST' and teacher_is_authorized(request,pk):
             form = CreateVideo(request.POST, request.FILES)
             if form.is_valid():
                 instance = form.save(commit=False)
@@ -83,14 +81,22 @@ def VideoUploadView(request, pk):
                 instance.save()
                 return redirect('courseHandler:course-upload-video', pk)
         else:
-            form = CreateVideo()
-            videos = Video.objects.filter(course_id=pk)
-            context = {
-                "form": form,
-                "videos": videos,
-                "pk": pk
-            }
-            return render(request, 'courseHandler/video/upload-video.html', context)
+            if(teacher_is_authorized(request,pk)):
+                form = CreateVideo()
+                videos = Video.objects.filter(course_id=pk)
+                context = {
+                    "form": form,
+                    "videos": videos,
+                    "pk": pk
+                }
+                return render(request, 'courseHandler/video/upload-video.html', context)
+            else:
+                videos = Video.objects.filter(course_id=pk)
+                context = {
+                    "videos": videos,
+                    "pk": pk
+                }
+                return render(request, 'courseHandler/video/videos.html', context)
     else:
         return HttpResponseRedirect('/')
 
@@ -206,13 +212,14 @@ class CourseList(ListView):
     model = Course
     template_name = 'courseHandler/course/list.html'
 
+
 def CourseListView(request):
     if not request.user.is_authenticated:
         return redirect('homepage')
 
     if request.user.usertype.type == 'student':
-       courses = FollowCourse.objects.filter(student_id=request.user.id).select_related('course')
-       courses = [e.course for e in courses]
+        courses = FollowCourse.objects.filter(student_id=request.user.id).select_related('course')
+        courses = [e.course for e in courses]
     else:
         courses = Course.objects.filter(author_id=request.user.id)
 
@@ -221,9 +228,9 @@ def CourseListView(request):
     }
     return render(request, 'courseHandler/course/list.html', context)
 
+
 def CourseListStore(request):
     if request.method == 'POST':
-
 
         """
          form = CreateVideo(request.POST, request.FILES)
@@ -235,18 +242,25 @@ def CourseListStore(request):
         """
     else:
         courses = Course.objects.all().filter(is_active=True)
+        courses_bought_id = []
+        if request.user.usertype.type == 'student':
+            courses_bought = FollowCourse.objects.filter(student_id=request.user.id)
+            courses_bought_id = [e.course_id for e in courses_bought]
         cart = Cart.new(request)
         context = {
             "courses": courses,
-            "cartProd": cart.products
+            "cartProd": cart.products,
+            "coursesBought": courses_bought_id
         }
         return render(request, 'courseHandler/course/store.html', context)
+
 
 """class CourseListStore(LoginRequiredMixin, ListView):
     model = Course
     template_name = 'courseHandler/course/store.html'
 
 """
+
 
 def search(request):
     if request.method == "POST":
@@ -262,6 +276,7 @@ def search(request):
 
 class CourseSearchView(CourseList):
     titolo = "La tua ricerca ha dato come risultato"
+
     def get_queryset(self):
         sstring = self.request.resolver_match.kwargs["sstring"]
         where = self.request.resolver_match.kwargs["where"]
@@ -273,7 +288,7 @@ class CourseSearchView(CourseList):
             qq = self.model.objects.filter(category__icontains=sstring)
         return qq
 
-        #return super().form_valid(form)
+        # return super().form_valid(form)
 
 def courses_statistic(request, pk):
         context = {}
@@ -292,18 +307,25 @@ def courses_statistic(request, pk):
 def CartView(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            form = CreateVideo(request.POST, request.FILES)
+            form = PaymentsForm(request.POST)
             if form.is_valid():
-                instance = form.save(commit=False)
-                instance.save()
-                return redirect('homepage')
+                cart = Cart.new(request)
+                for item in cart:
+                    Payment.objects.create(method=request.POST['payments'], course_id=int(item.product.id),
+                                           user_id=int(request.user.id))
+
+                    FollowCourse.objects.create(course_id=int(item.product.id), student_id=request.user.id)
+
+                return redirect('courseHandler:course-list')
         else:
             cart = Cart.new(request)
             items_prices = [item.price for item in cart.products]
             tot_price = sum(items_prices)
+            payments_form = PaymentsForm()
             context = {
                 "cart": cart,
-                'totPrice': tot_price
+                "totPrice": tot_price,
+                "paymentsForm": payments_form
             }
             return render(request, 'cart.html', context)
     else:
@@ -317,6 +339,7 @@ def add_product(request, pk):
     cart.add(course, quantity=1)
     return JsonResponse({'msg': 'Course added'})
 
+
 @require_GET
 def remove_product(request, pk):
     course = Course.objects.get(pk=pk)
@@ -329,3 +352,15 @@ def remove_product(request, pk):
 def empty_cart(request: HttpRequest):
     Cart.new(request).empty()
 
+@require_GET
+def publish_course(request, pk):
+    course = Course.objects.get(id=pk)
+    course.is_active = True
+    course.save()
+    return JsonResponse({'msg': 'Now the course is visible'})
+
+@require_GET
+def read_notifications(request, pk):
+    user = User.objects.get(pk=pk)
+    user.notifications.mark_all_as_read()
+    return JsonResponse({'msg': 'There are 0 unread notifications'})

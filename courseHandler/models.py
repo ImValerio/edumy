@@ -38,3 +38,9 @@ class Video(models.Model):
     file = models.FileField(upload_to='videos', validators=[FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm', 'mkv'])], default='settings.MEDIA_ROOT/imgs/default.jpg')
     course = models.ForeignKey(Course, related_name='video_course', on_delete=models.PROTECT, null=True, blank=True)
 
+class Payment(models.Model):
+    method = models.CharField(max_length=120)
+    course = models.ForeignKey(Course, related_name='payment_course', on_delete=models.PROTECT, null=True, blank=True)
+    user = models.ForeignKey(UserType, related_name='payment_user', on_delete=models.PROTECT, null=True, blank=True)
+
+

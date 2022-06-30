@@ -1,15 +1,31 @@
+ {% load notifications_tags %}
+
+
 <nav class="d-flex justify-content-around w-100">
     <a class='h3' href="{% url 'courseHandler:course-list-store' %}">Store</a>
-     {% if user.is_authenticated %}
-         {% if user.usertype.type == 'teacher' %}
+    {% if user.is_authenticated %}
+        {% if user.usertype.type == 'teacher' %}
             <a class='h3' href="{% url 'courseHandler:course-create' %}">Create course</a>
-         {% endif %}
-         <a class='h3' href="{% url 'courseHandler:course-list' %}">My courses</a>
-    <a class='h3' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a>
-         <a class='h3' href="{% url 'logout' %}">Logout</a>
-     {% else %}
-    <a class='h3' href="{% url 'login' %}">Login</a>
-    <a class='h3' href="{% url 'userAuth:signup' %}">Signup</a>
-     {% endif %}
+        {% endif %}
+        <a class='h3' href="{% url 'courseHandler:course-list' %}">My courses</a>
+
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="notifications-btn"
+                    data-toggle="dropdown"
+                    data-user="{{ user.id }}"
+                    aria-expanded="false">
+                Notifications ({% live_notify_badge %})
+            </button>
+            <div id='notify-list' class="dropdown-menu" aria-labelledby="dropdownMenu2">
+
+
+            </div>
+        </div>
+        <a class='h3' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a>
+        <a class='h3' href="{% url 'logout' %}">Logout</a>
+    {% else %}
+        <a class='h3' href="{% url 'login' %}">Login</a>
+        <a class='h3' href="{% url 'userAuth:signup' %}">Signup</a>
+    {% endif %}
 
 </nav>
