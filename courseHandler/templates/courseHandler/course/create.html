@@ -5,6 +5,13 @@
 {% block title %}Create Course{% endblock %}
 
 {% block content %}
-    <h1>Course</h1>
-    {% crispy form %}
+    <div class="container">
+        <div class="border-bottom border-dark">
+            <h1>Create your course</h1>
+        </div>
+        <div class="p-2 mt-2">
+            {% crispy form %}
+        </div>
+    </div>
+
 {% endblock %}
