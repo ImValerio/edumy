@@ -11,69 +11,32 @@
         <fieldset>
             <legend class="border-bottom">Detail Course</legend>
         </fieldset>
-        <div class="flex-col mt-2">
-            <div class="col mb-3">
-                <img class="img-fluid rounded" src="{% get_media_prefix %}{{ object.image }}"
-                     style="width: 500px; height: 250px">
-            </div>
-            <div class="col mb-3">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="">
-                            <h6>Title</h6>
-                            <div class="rounded border p-2">
-                                <p class="card-text">{{ object.title }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% if user.usertype.type == 'student' %}
-                        <div class="col-md-6 mb-3">
-                            <div class="">
-                                <h6>Author</h6>
-                                <div class="rounded border p-2">
-                                    <p class="card-text">{{ object.author.first_name }} {{ object.author.last_name }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="">
-                            <h6>Category</h6>
-                            <div class="rounded border p-2">
-                                <p class="card-text">{{ object.category }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="">
-                            <h6>Price</h6>
-                            <div class="rounded border p-2">
-                                <p class="card-text">{{ object.price }}$</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="">
-                            <h6>Creation Date</h6>
-                            <div class="rounded border p-2">
-                                <p class="card-text">{{ object.creation_date }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="">
-                    <div class="">
-                        <h6>Description</h6>
-                        <div class="rounded border p-2">
-                            <p class="card-text">{{ object.description }}</p>
-                        </div>
+        <div class="flex-col mb-3">
+            <div class="d-flex flex-column flex-md-row mb-3">
+                <div class="col col-md-6 d-flex">
+                    <img class="img-fluid rounded" src="{% get_media_prefix %}{{ object.image }}"
+                     style="width: 500px; height: 250px">
+                </div>
+                <div class="col col-md-6 d-flex flex-column justify-content-between">
+                    <div class="d-flex flex-column flex-grow-1 justify-content-around">
+                        <h1 class="">{{ object.title }}</h1>
+                        {% if user.usertype.type == 'student' %}
+                            <h3 class="">{{ object.author.first_name }} {{ object.author.last_name }}</h3>
+                        {% endif %}
+                        <h4 class="">{{ object.category }}</h4>
+                        <h4 class="">{{ object.price }}$</h4>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <h5 class="card-text">{{ object.creation_date }}</h5>
                     </div>
                 </div>
+            </div>
+            <div class="">
+                <h5 class="card-text">{{ object.description }}</h5>
             </div>
         </div>
+
         <div class="d-flex justify-content-between">
             <div class="">
                 <button class="btn btn-light align-self-center" href="{% url 'courseHandler:course-list-store' %}">
@@ -103,9 +66,9 @@
                     </a>
                 {% endif %}
             </div>
-    </div>
+        </div>
 
-    <div class="d-flex justify-content-between mt-3">
+        <div class="d-flex justify-content-between mt-3">
         {% if reviews %}
             <div>
                 {% include "userInteractions/review/list.html" %}
