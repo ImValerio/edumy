@@ -52,7 +52,7 @@
             {% for course in page_obj %}
                 <div class="card bg-light shadow d-flex flex-col align-items-stretch"
                      style="width: 20rem; border-radius: 1rem 1rem 1rem 1rem;">
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column justify-content-between">
                         <div class="row">
                             <div class="col-10">
                                 <img class="img-fluid rounded" src="{% get_media_prefix %}{{ course.image }}"
@@ -73,16 +73,18 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <a class="card-title" href="{% url 'courseHandler:course-upload-video' course.id %}">
-                            <h1 class="text-body">{{ course.title }}</h1>
-                        </a>
-                        {% if user.usertype.type == 'student' %}
-                            <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
-                        {% endif %}
-                        <h6 class="card-subtitle mb-2 text-muted">{{ course.category }}</h6>
-                        <p class="card-text">{{ course.price }}$</p>
                         <div class="">
-                            <div class="card_text mb-2"><p>{{ course.description }}</p></div>
+                            <a class="card-title" href="{% url 'courseHandler:course-upload-video' course.id %}">
+                                <h1 class="text-body">{{ course.title }}</h1>
+                            </a>
+                            {% if user.usertype.type == 'student' %}
+                                <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
+                            {% endif %}
+                            <h6 class="card-subtitle mb-2 text-muted">{{ course.category }}</h6>
+                            <p class="card-text">{{ course.price }}$</p>
+                            <div class="">
+                                <div class="card_text mb-2"><p>{{ course.description }}</p></div>
+                            </div>
                         </div>
                         <div class="d-flex flex-row justify-content-between">
                             <div class="d-flex flex-column align-items-start">
@@ -133,11 +135,11 @@
             {% endfor %}
         </div>
     {% if messages %}
-        <ul class="messages">
+        <div class="messages mt-3">
             {% for message in messages %}
-                <li{% if message.tags %} id="alert" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                <div {% if message.tags %} id="alert" class="alert alert-success {{ message.tags }}"{% endif %}>{{ message }}</div>
             {% endfor %}
-        </ul>
+        </div>
     {% endif %}
 
     </div>
