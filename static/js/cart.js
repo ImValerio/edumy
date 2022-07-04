@@ -1,5 +1,9 @@
 window.onload = () => {
     let updateBtns = document.getElementsByClassName('cart-update');
+
+    let loadCommentsBtn = document.getElementById('load-comments');
+    let reviewContainer= document.getElementById('review-container');
+
     let publishBtns = document.getElementsByClassName('publish-course');
     const notificationsBtn = document.getElementById('notifications-btn');
     const notifyListElem = document.querySelector('#notify-list');
@@ -53,6 +57,28 @@ window.onload = () => {
         notifyListElem.innerHTML = ''
         notifyUnreadElem.innerText = '0';
     })
+    let page = 1;
+    loadCommentsBtn.addEventListener('click',async ()=>{
+        page += 1
+        const data = await fetch(`/reviews?page=${page}`)
+        const {page_obj, max_page} = await data.json()
+        if(page_obj){
+            page_obj.forEach(review =>{
+
+                reviewContainer.innerHTML += `<div class="row border-bottom">
+                        <ion-icon name="person-circle-outline" style="height: 4.8rem; width: 4.8rem;"></ion-icon>
+                        <div class="col">
+                            <p>${ review.student }</p>
+                            <p class="mr-3">${ review.rating }/5</p>
+                            <p class="mr-3">${ review.body }</p>
+                        </div>
+                    </div>`
+            })
+        }
+        if(max_page)
+            loadCommentsBtn.classList.add('d-none')
+
+    })
 }
 
 const my_special_notification_callback = data => {
@@ -60,4 +86,7 @@ const my_special_notification_callback = data => {
     data.unread_list.forEach(e=>{
         notifyListElem.innerHTML += `<div><button class='dropdown-item' type='button'>${e.description}</button></div>`
     })
+
+
+
 }

@@ -4,14 +4,14 @@
 {% block title %}{% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container" id="review-container">
         <p>Recensioni</p>
         {% for review in reviews %}
                 <div class="row border-bottom">
                     <ion-icon name="person-circle-outline" style="height: 4.8rem; width: 4.8rem;"></ion-icon>
                     <div class="col">
                         <p>{{ review.student }}</p>
-                        <p class="mr-3">{{ review.rating }}</p>
+                        <p class="mr-3">{{ review.rating }}/5</p>
                         <p class="mr-3">{{ review.body }}</p>
                     </div>
                 </div>

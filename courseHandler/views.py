@@ -4,9 +4,7 @@ from dj_shop_cart.cart import get_cart_class
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
 from django.db.models import Max, Count
-from django.template import RequestContext
 from django.views.generic.edit import FormMixin
-from django.contrib import messages
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import DetailView, DeleteView, UpdateView
@@ -163,7 +161,7 @@ class CourseDetail(FormMixin, DetailView):
         course_no_follow = [course for course in all_courses if course.id != self.object.id]
         context['couseList'] = course_no_follow
         #context['couseList'] = all_courses
-        context['reviews'] = Review.objects.filter(course_id=self.object.id).select_related('student')
+        context['reviews'] = Review.objects.filter(course_id=self.object.id).select_related('student')[:5]
         context['formReview'] = ReviewForm(initial={'post': self.object})
         return context
 

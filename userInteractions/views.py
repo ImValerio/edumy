@@ -1,15 +1,20 @@
 
 # Create your views here.
+import json
+
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 
 from courseHandler.models import Video
 from notifications.signals import notify
 from courseHandler.models import Video, Course
 from userInteractions.forms import AnswerForm
-from userInteractions.models import Question, Answer
+from userInteractions.models import Question, Answer, Review
 from django.shortcuts import render, redirect
+from django.http import  JsonResponse
 
+from django.forms.models import model_to_dict
 
 
 def QuestionList(request, video):
@@ -54,10 +59,20 @@ def AnswerCreate(request, question, video):
     else:
         return HttpResponseRedirect('/')
 
-def listing(request):
-    contact_list = Question.objects.all()
-    paginator = Paginator(contact_list, 25)  # Show 25 contacts per page.
 
+
+def listing_reviews(request):
+    review_list = Review.objects.all()
+    paginator = Paginator(review_list, 5)
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'list.html', {'page_obj': page_obj})
+    data = False
+    if paginator.num_pages >= int(page_number):
+        page_obj = list(paginator.get_page(page_number).object_list)
+        data = [model_to_dict(e) for e in page_obj] #Converto gli oggetti di tipo Review in dizionari
+        print(page_obj)
+        for review in data:
+            review['student'] = User.objects.values_list('username', flat=True).get(id=int(review['student']))
+
+        max_page = paginator.num_pages == int(page_number)
+
+    return JsonResponse({'page_obj': data, 'max_page':max_page})
