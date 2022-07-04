@@ -9,9 +9,9 @@
         <div class="accordion" id="accordionQuestionAnswer{{answer.id}}">
             <div class="card">
                 <div class="card-header" id="question{{ question.id}}">
-                    <button class="btn btn-primary" type="button" class="card-link" data-toggle="collapse" data-target="#answer{{answer.id}}" aria-expanded="false">
+                    <p class="container-fluid font-weight-bold d-flex align-items-center" type="button" class="card-link" data-toggle="collapse" data-target="#answer{{answer.id}}" aria-expanded="false">
                         {{ question.body }}
-                    </button>
+                    </p>
                 </div>
 
                 <div id="answer{{answer.id}}" class="collapse show" data-parent="#accordionQuestionAnswer{{answer.id}}">

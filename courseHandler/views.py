@@ -55,7 +55,7 @@ def VideoUploadDetail(request, course_id, pk):
             form_question = QuestionForm()
             questions = Question.objects.all().filter(video_id=pk)
             answers = Answer.objects.all().filter(video_id=pk)
-            course = Course.objects.filter(pk=course_id)
+            course = Course.objects.get(pk=course_id)
             questions_answer_list = list(zip(questions, answers))
             video = Video.objects.get(pk=pk)
             context = {
@@ -63,7 +63,6 @@ def VideoUploadDetail(request, course_id, pk):
                 "questions_answer_list": questions_answer_list,
                 "video": video,
                 "course": course,
-                "pk": pk
             }
             return render(request, 'courseHandler/video/upload-video-detail.html', context)
     else:

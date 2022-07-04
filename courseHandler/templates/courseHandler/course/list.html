@@ -20,7 +20,6 @@
                     </a>
                     <h3 >{{ course.author.first_name }}</h3>
                     <p >{{ course.category }}</p>
-                    <p><a href="{% url 'courseHandler:course-upload-video' course.pk %}">Guarda i video</a></p>
                     <h3>{{ course.author.first_name }}</h3>
                     <p>{{ course.category }}</p>
                     {% if user.usertype.type == 'teacher' %}
@@ -58,21 +57,14 @@
 
             {% if user.usertype.type == 'teacher' %}
             <div class="d-flex">
-                <p class="mr-3">{{ course.title }}</p>
-                <p class="mr-3">{{ course.author.first_name }}</p>
-                <p class="mr-3">{{ course.category }}</p>
+
                 <p class="mr-3"><a href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a></p>
                 <p class="mr-3"><a href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a></p>
                 <p class="mr-3"><a href="{% url 'courseHandler:course-update' course.pk %}">Update</a></p>
                 <p class="mr-3"><a href="{% url 'courseHandler:course-statistic' course.pk %}">Statistiche</a></p>
                 <p><a href="{% url 'courseHandler:course-upload-video' course.pk %}">Upload Video</a></p>
             </div>
-                <div class="d-flex align-items-center  ml-2">
-                    <a class="mr-3" href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a>
-                    <a class="mr-3" href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a>
-                    <a class="mr-3" href="{% url 'courseHandler:course-update' course.pk %}">Update</a>
 
-                </div>
 
             {% endif %}
         {% endfor %}

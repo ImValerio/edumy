@@ -53,3 +53,11 @@ def AnswerCreate(request, question, video):
             return render(request, 'userInteractions/answer/create.html', context)
     else:
         return HttpResponseRedirect('/')
+
+def listing(request):
+    contact_list = Question.objects.all()
+    paginator = Paginator(contact_list, 25)  # Show 25 contacts per page.
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'list.html', {'page_obj': page_obj})
