@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from crispy_forms.layout import Submit, HTML, Fieldset, Field
-from crispy_forms.helper import FormHelper, Layout
+from crispy_forms.layout import Layout, Submit, Row, Column, Div, HTML, Field
+from crispy_forms.helper import FormHelper
 from userAuth.models import UserType
 
 
@@ -13,7 +13,7 @@ class UserSignup(UserCreationForm):
 
     class Meta:
         model = UserType
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'type')
+        fields = ('username', 'first_name', 'image', 'last_name', 'email', 'password1', 'password2', 'type')
 
     first_name = forms.CharField(max_length=32, help_text='First name')
     last_name = forms.CharField(max_length=32, help_text='Last name')
@@ -24,12 +24,44 @@ class UserSignup(UserCreationForm):
         ('teacher', 'Teacher')
     ))
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML('''<h1>Signup</h1>'''),
+            Row(
+                Column('first_name', css_class='form-group col-md-6'),
+                Column('last_name', css_class='form-group col-md-6'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('username', css_class='form-group col-md-6'),
+                Column('email', css_class='form-group col-md-6'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('password1', css_class='form-group col-md-6'),
+                Column('password2', css_class='form-group col-md-6'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('image', css_class='form-group col-md-6'),
+                Column('type', css_class='form-group col-md-3'),
+                css_class='form-row'
+            ),
+            Row(
+                Submit('submit', 'Submit', css_class="btn btn-success"),
+                css_class=""
+            ),
+        )
+
 
 class UserUpdate(forms.ModelForm):
     helper = FormHelper()
     helper.form_method = 'POST'
     helper.add_input(Submit('submit', 'Submit'))
     helper.inputs[0].field_classes = 'btn btn-success'
+
 
     """layout = Layout(Fieldset(
         Field('first_name'),
@@ -44,7 +76,7 @@ class UserUpdate(forms.ModelForm):
 
     class Meta:
         model = UserType
-        fields = ('username', 'first_name', 'last_name', 'email', 'type')
+        fields = ('username', 'image', 'first_name', 'last_name', 'email', 'type')
 
     type = forms.ChoiceField(choices=(
             ('student', 'Student'),

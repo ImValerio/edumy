@@ -5,7 +5,9 @@
 {% block title %}Signup{% endblock %}
 
 {% block content %}
-    <h1>Signup</h1>
-    {% crispy form %}
-
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="p-4">
+            {% crispy form %}
+        </div>
+    </div>
 {% endblock %}
