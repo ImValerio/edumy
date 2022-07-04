@@ -82,3 +82,29 @@ class UserUpdate(forms.ModelForm):
             ('student', 'Student'),
             ('teacher', 'Teacher')
     ))
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML('''<h1>Update user</h1>'''),
+            Row(
+                Column('first_name', css_class='form-group col-md-6'),
+                Column('last_name', css_class='form-group col-md-6'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('username', css_class='form-group col-md-6'),
+                Column('email', css_class='form-group col-md-6'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('image', css_class='form-group col-md-8'),
+                Column('type', css_class='form-group col-md-4'),
+                css_class='form-row'
+            ),
+            Row(
+                Submit('submit', 'Submit' ,css_class="btn btn-success"),
+                HTML('''<a class="btn btn-info ml-2" href="{% url 'userAuth:password_change' %}">Change password</a>'''),
+                css_class=""
+            ),
+        )

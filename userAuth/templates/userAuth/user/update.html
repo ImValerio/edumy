@@ -5,7 +5,9 @@
 {% block title %}Update user{% endblock %}
 
 {% block content %}
-    <h1>Update user</h1>
-    {% crispy form %}
-    <a href="{% url 'userAuth:password_change' %}">Change password</a>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="p-4">
+            {% crispy form %}
+        </div>
+    </div>
 {% endblock %}
