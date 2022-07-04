@@ -1,10 +1,12 @@
 # Create your views here.index'
 from audioop import avg
-
 from dj_shop_cart.cart import get_cart_class
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.paginator import Paginator
 from django.db.models import Max, Count
+from django.template import RequestContext
 from django.views.generic.edit import FormMixin
-
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import DetailView, DeleteView, UpdateView
@@ -13,7 +15,7 @@ from courseHandler.models import Video, Course, FollowCourse, Payment
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse, HttpRequest
 
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
@@ -63,7 +65,6 @@ def VideoUploadDetail(request, course_id, pk):
                 "questions_answer_list": questions_answer_list,
                 "video": video,
                 "course": course,
-                "pk": pk
             }
             return render(request, 'courseHandler/video/upload-video-detail.html', context)
     else:
@@ -183,16 +184,17 @@ class CourseDetail(FormMixin, DetailView):
         return super(CourseDetail, self).form_valid(formReview)
 
 
-class CourseDelete(DeleteView):
+class CourseDelete(SuccessMessageMixin, DeleteView):
     model = Course
     template_name = 'courseHandler/course/delete.html'
     success_url = reverse_lazy('courseHandler:course-list')
+    success_message = "was created successfully"
 
     def dispatch(self, request, *args, pk, **kwargs):
         if not teacher_is_authorized(request, pk):
             return redirect('homepage')
-
         return super().dispatch(request, *args, **kwargs)
+
 
 
 class CourseUpdate(UpdateView):
@@ -218,13 +220,16 @@ def CourseListView(request):
         return redirect('homepage')
 
     if request.user.usertype.type == 'student':
-        courses = FollowCourse.objects.filter(student_id=request.user.id).select_related('course')
+        courses = FollowCourse.objects.all().filter(student_id=request.user.id).select_related('course')
         courses = [e.course for e in courses]
     else:
-        courses = Course.objects.filter(author_id=request.user.id)
-
+        courses = Course.objects.all().filter(author_id=request.user.id)
+    paginator = Paginator(courses, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context = {
         "courses": courses,
+        'page_obj': page_obj
     }
     return render(request, 'courseHandler/course/list.html', context)
 

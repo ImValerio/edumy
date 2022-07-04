@@ -15,7 +15,6 @@
 
     <a href="{% url 'courseHandler:video-update' pk=video.id course_id=video.course_id %}">Update video</a>
 
-
     {% if course.author_id == user.id %}
         <a href="{% url 'userInteractions:question-list' video=video.id %}">All question</a><br>
     {% endif %}

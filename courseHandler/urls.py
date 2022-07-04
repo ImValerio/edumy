@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 
 from courseHandler.views import VideoUploadView, VideoUploadDetail, CourseCreate, CourseDetail, \
     CourseDelete, CourseUpdate, search, CourseSearchView, VideoUpdateView, CourseListStore, add_product, CartView, \
-     courses_statistic,remove_product, CourseListView, publish_course, read_notifications
+    courses_statistic, remove_product, CourseListView, publish_course, read_notifications
 
 app_name = 'courseHandler'
 

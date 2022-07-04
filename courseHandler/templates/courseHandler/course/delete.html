@@ -1,18 +1,89 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
 
 {% block title %}Delete Course{% endblock %}
 
 {% block content %}
+    <div class="container">
 
-    <h2>You are going to delete this Course, are you sure?</h2>
-    <h1>{{ object.title }}</h1>
-    <p>{{ object.author.first_name }}</p>
-    <p>{{ object.category }}</p>
-    <form method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <a href="{% url 'courseHandler:course-list' %}">annulla</a>
-        <input type="submit" value="Confirm">
-    </form>
+        <fieldset>
+            <legend class="border-bottom">Delete Course</legend>
+            <h2>You are going to delete this course, are you sure?</h2>
+        </fieldset>
+
+        <div class="flex-col mt-2">
+            <div class="col mb-3">
+                <img class="img-fluid rounded" src="{% get_media_prefix %}{{ object.image }}" style="width: 500px; height: 250px">
+            </div>
+            <div class="col mb-3">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="">
+                                <h6>Title</h6>
+                                <div class="rounded border p-2">
+                                    <p class="card-text">{{ object.title }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% if user.usertype.type == 'student' %}
+                            <div class="col-md-6 mb-3">
+                                <div class="">
+                                    <h6>Author</h6>
+                                    <div class="rounded border p-2">
+                                        <p class="card-text">{{ object.author.first_name }} {{ object.author.last_name }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="">
+                                <h6>Category</h6>
+                                <div class="rounded border p-2">
+                                    <p class="card-text">{{ object.category }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="">
+                                <h6>Price</h6>
+                                <div class="rounded border p-2">
+                                    <p class="card-text">{{ object.price }}$</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="">
+                                <h6>Creation Date</h6>
+                                <div class="rounded border p-2">
+                                    <p class="card-text">{{ object.creation_date }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <div class="">
+                            <h6>Description</h6>
+                            <div class="rounded border p-2">
+                                <p class="card-text">{{ object.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group d-flex justify-content-end mr-3">
+                <button class="btn btn-outline-info mr-2" href="{% url 'courseHandler:course-list' %}">Cancel</button>
+                <button id="btn-delete" class="btn btn-outline-danger" type="submit">Confirm</button>
+            </div>
+        </form>
+
+    </div>
+
+
 {% endblock %}

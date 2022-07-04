@@ -1,80 +1,284 @@
 {% extends 'base.html' %}
-{% load static %}
 {% load crispy_forms_filters %}
+{% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Course Detail{% endblock %}
+{% block title %}Course List{% endblock %}
 
 {% block content %}
+    <div class="container">
 
-    <h1>Course List</h1>
+        <div class="border-bottom border-dark">
+            <h2 class="">My courses</h2>
+        </div>
 
-    <ul>
-        {% for course in courses %}
-            <div class="d-flex m-1">
-                <img src="{% get_media_prefix %}{{ course.image }} " width="400" class="mr-3">
-                <div>
+        <nav class="blog-pagination justify-content-center d-flex">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.previous_page_number }}" class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">
+                                <span class="ti-arrow-left"></span>
+                            </span>
+                        </a>
+                    </li>
+                {% endif %}
 
-                    <a href="{% url 'courseHandler:course-upload-video' course.id %}">
-                        <h1>{{ course.title }}</h1>
-                    </a>
-                    <h3 >{{ course.author.first_name }}</h3>
-                    <p >{{ course.category }}</p>
-                    <p><a href="{% url 'courseHandler:course-upload-video' course.pk %}">Guarda i video</a></p>
-                    <h3>{{ course.author.first_name }}</h3>
-                    <p>{{ course.category }}</p>
-                    {% if user.usertype.type == 'teacher' %}
-                        {% if course.is_active %}
-                            <p class="mr-3 text-success font-weight-bold">published</p>
-                        {% else %}
-                            <button type="button" class="mr-3 btn btn-primary font-weight-bold button-modal"
-                               data-toggle="modal" data-target="#exampleModal">publish</button>
-                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                                 aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            You sure you want to publish this course?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
-                                            </button>
-                                            <button type="button" class="btn btn-primary publish-course" data-course={{ course.id }}>Confirm
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                        </li>
                     {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.next_page_number }}" class="page-link" aria-label="Next">
+                        <span aria-hidden="true">
+                            <span class="ti-arrow-right"></span>
+                        </span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <div class="d-flex justify-content-start flex-wrap ml-5" style="gap: 1.25rem">
+            {% for course in page_obj %}
+                <div class="card bg-light shadow d-flex flex-col align-items-stretch" style="width: 20rem; border-radius: 1rem 1rem 1rem 1rem;">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-10">
+                                <img class="img-fluid rounded" src="{% get_media_prefix %}{{ course.image }}" style="width: 250px; height: 125px">
+                            </div>
+                            <div class="col">
+                                <a class="text-info" href="{% url 'courseHandler:course-detail' course.pk %}">
+                                    <ion-icon name="search-outline" style="height: 1.3rem; width: 1.3rem;"></ion-icon>
+                                </a>
+                                {% if user.usertype.type == 'teacher' %}
+                                    <a class="text-primary" href="{% url 'courseHandler:course-update' course.pk %}">
+                                        <ion-icon name="cog-outline" style="height: 1.3rem; width: 1.3rem;"></ion-icon>
+                                    </a>
+                                    <a class="text-danger" href="{% url 'courseHandler:course-delete' course.pk %}">
+                                        <ion-icon name="trash-outline"
+                                                  style="height: 1.3rem; width: 1.3rem;"></ion-icon>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <a class="card-title" href="{% url 'courseHandler:course-upload-video' course.id %}">
+                            <h1 class="text-body">{{ course.title }}</h1>
+                        </a>
+                        {% if user.usertype.type == 'student' %}
+                            <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
+                        {% endif %}
+                        <h6 class="card-subtitle mb-2 text-muted">{{ course.category }}</h6>
+                        <p class="card-text">{{ course.price }}$</p>
+                        <div class="">
+                            <div class="card_text mb-2"><p>{{ course.description }}</p></div>
+                        </div>
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="d-flex flex-column align-items-start">
+                                <a class="card_btn d-none">See more</a>
+                            </div>
+                            <div class="d-flex flex-column align-items-end">
+                                {% if user.usertype.type == 'teacher' %}
+                                    {% if course.is_active %}
+                                        <p class="mr-3 text-success font-weight-bold">Published</p>
+                                    {% else %}
+                                        <button type="button" class="mr-3 btn btn-primary font-weight-bold button-modal"
+                                                data-toggle="modal" data-target="#exampleModal">Publish
+                                        </button>
+                                        <div class="modal fade" id="exampleModal" tabindex="-1"
+                                             aria-labelledby="exampleModalLabel"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        You sure you want to publish this course?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">
+                                                            Close
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary publish-course"
+                                                                data-course=
+                                                                {{ course.id }}>Confirm
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
+        </div>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} id="alert" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-            {% if user.usertype.type == 'teacher' %}
-            <div class="d-flex">
-                <p class="mr-3">{{ course.title }}</p>
-                <p class="mr-3">{{ course.author.first_name }}</p>
-                <p class="mr-3">{{ course.category }}</p>
-                <p class="mr-3"><a href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a></p>
-                <p class="mr-3"><a href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a></p>
-                <p class="mr-3"><a href="{% url 'courseHandler:course-update' course.pk %}">Update</a></p>
-                <p class="mr-3"><a href="{% url 'courseHandler:course-statistic' course.pk %}">Statistiche</a></p>
-                <p><a href="{% url 'courseHandler:course-upload-video' course.pk %}">Upload Video</a></p>
-            </div>
-                <div class="d-flex align-items-center  ml-2">
-                    <a class="mr-3" href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a>
-                    <a class="mr-3" href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a>
-                    <a class="mr-3" href="{% url 'courseHandler:course-update' course.pk %}">Update</a>
+    </div>
 
-                </div>
 
-            {% endif %}
-        {% endfor %}
-    </ul>
+    <script>
+        setTimeout(function(){$(".messages").hide();},10000);
+
+        const letters = 34;
+
+        function truncateText(text, letters = 34) {
+            let truncatedText = text.slice(0, letters);
+            let truncatedToHTML = `<p class="truncate">${truncatedText}...</p>`;
+            return truncatedToHTML;
+        }
+
+        /* Select all card text containers */
+        let cards = document.getElementsByClassName("card_text");
+        let btns = document.getElementsByClassName("card_btn");
+
+        for (let i = 0; i < cards.length; i++) {
+            if (cards[i].innerText.length > letters) {
+                btns[i].classList.remove('d-none');
+            }
+        }
+
+        /* Save texts within the cards as plain text */
+        let plainText = [];
+        for (let i = 0; i < cards.length; i++) {
+            plainText[i] = cards[i].innerText;
+        }
+
+        /* Save the original card texts */
+        let htmlText = [];
+        for (let i = 0; i < cards.length; i++) {
+            htmlText[i] = cards[i].innerHTML;
+        }
+
+        /* Add truncated text inside the cards */
+        for (let i = 0; i < cards.length; i++) {
+            if (plainText[i].length > letters) {
+                cards[i].innerHTML = truncateText(plainText[i]);
+            } else {
+                cards[i].innerHTML = plainText[i];
+            }
+
+        }
+
+        /* Add events to all buttons */
+
+
+        for (let i = 0; i < cards.length; i++) {
+            btns[i].addEventListener("click", function () {
+                /* If the first child in the card text container has 'truncate' class... */
+
+                if (cards[i].firstChild.className === "truncate") {
+                    /* Add their full text */
+
+
+                    btns[i].innerText = 'See less'
+                    cards[i].innerHTML = htmlText[i];
+                } else {
+                    /* Add their truncated text */
+
+                    btns[i].innerText = 'See more'
+                    cards[i].innerHTML = truncateText(plainText[i]);
+                }
+            });
+        }
+
+    </script>
+
 {% endblock %}
+
+
+<!--    <h1>Course List</h1>
+
+<ul>
+{% for course in courses %}
+<div class="d-flex m-1">
+<img src="{% get_media_prefix %}{{ course.image }} " width="400" class="mr-3">
+<div>
+
+<a href="{% url 'courseHandler:course-upload-video' course.id %}">
+<h1>{{ course.title }}</h1>
+</a>
+<h3 >{{ course.author.first_name }}</h3>
+<p >{{ course.category }}</p>
+<p><a href="{% url 'courseHandler:course-upload-video' course.pk %}">Guarda i video</a></p>
+<h3>{{ course.author.first_name }}</h3>
+<p>{{ course.category }}</p>
+{% if user.usertype.type == 'teacher' %}
+{% if course.is_active %}
+<p class="mr-3 text-success font-weight-bold">published</p>
+{% else %}
+<button type="button" class="mr-3 btn btn-primary font-weight-bold button-modal"
+data-toggle="modal" data-target="#exampleModal">publish</button>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        You sure you want to publish this course?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+        </button>
+        <button type="button" class="btn btn-primary publish-course" data-course=
+{{ course.id }}>Confirm
+        </button>
+    </div>
+</div>
+</div>
+</div>
+{% endif %}
+{% endif %}
+</div>
+</div>
+
+{% if user.usertype.type == 'teacher' %}
+<div class="d-flex">
+<p class="mr-3">{{ course.title }}</p>
+<p class="mr-3">{{ course.author.first_name }}</p>
+<p class="mr-3">{{ course.category }}</p>
+<p class="mr-3"><a href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a></p>
+<p class="mr-3"><a href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a></p>
+<p class="mr-3"><a href="{% url 'courseHandler:course-update' course.pk %}">Update</a></p>
+<p class="mr-3"><a href="{% url 'courseHandler:course-statistic' course.pk %}">Statistiche</a></p>
+<p><a href="{% url 'courseHandler:course-upload-video' course.pk %}">Upload Video</a></p>
+</div>
+<div class="d-flex align-items-center  ml-2">
+<a class="mr-3" href="{% url 'courseHandler:course-detail' course.pk %}">Detail</a>
+<a class="mr-3" href="{% url 'courseHandler:course-delete' course.pk %}">Delete</a>
+<a class="mr-3" href="{% url 'courseHandler:course-update' course.pk %}">Update</a>
+
+</div>
+
+{% endif %}
+{% endfor %}
+</ul> -->

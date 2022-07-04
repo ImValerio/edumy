@@ -27,7 +27,10 @@
 
 <script>
     $('.collapse').collapse();
-    $(document).click(function() {
-        $('.collapse').collapse('hide');
+    console.log($('.collapse').collapse('show'))
+    $(document).click(function(e) {
+        if (!$(e.target).is('.card-body')) {
+            $('.collapse').collapse('hide');
+        }
     });
 </script>
