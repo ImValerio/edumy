@@ -1,4 +1,4 @@
- {% load notifications_tags %}
+{% load notifications_tags %}
 
 
 <nav class="d-flex justify-content-around align-items-center shadow-sm w-100 p-2">
@@ -9,18 +9,23 @@
         {% endif %}
         <a class='h3' href="{% url 'courseHandler:course-list' %}">My courses</a>
 
-
         <a class='h3' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a>
-           <div class="dropdown d-flex justify-content-center align-items-center p-0 m-0">
-            <div class="dropdown-toggle d-flex justify-content-center align-items-center h3 bg-transparent border-0 p-0 m-0" type="button" id="notifications-btn"
-                    data-toggle="dropdown"
-                    data-user="{{ user.id }}"
-                    aria-expanded="false"
-                    style="color: royalblue;"
-            >
-                
+        <a class="d-flex justify-content-center align-items-center " href="{% url 'courseHandler:cart-view' %}">
+            <ion-icon name="cart-outline" class="h2"></ion-icon>
+        </a>
+        <div class="dropdown d-flex justify-content-center align-items-center p-0 m-0">
 
-                <ion-icon name="notifications-outline" class="h3"></ion-icon> <span class="h3">({% live_notify_badge %})</span>
+            <div class="dropdown-toggle d-flex justify-content-center align-items-center h3 bg-transparent border-0 p-0 m-0"
+                 type="button" id="notifications-btn"
+                 data-toggle="dropdown"
+                 data-user="{{ user.id }}"
+                 aria-expanded="false"
+                 style="color: royalblue;"
+            >
+
+
+                <ion-icon name="notifications-outline" class="h3"></ion-icon>
+                <span class="h3">({% live_notify_badge %})</span>
             </div>
             <div id='notify-list' class="dropdown-menu" aria-labelledby="dropdownMenu2">
 

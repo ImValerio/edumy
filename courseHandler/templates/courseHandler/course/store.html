@@ -4,14 +4,14 @@
 {% block content %}
 
     {% load static %}
-    <h1>Store</h1>
-    <a class="btn btn-primary m-1 font-weight-bold" href="{% url 'courseHandler:cart-view' %}">CART</a>
+    <h1 class="font-weight-normal text-uppercase m-1 p-1" style="letter-spacing: 5px; font-size: 3em">Store</h1>
+
 
     
    <ul>
         {% for course in courses %}
             {% if course not in cartProd and course.id not in coursesBought %}
-                <div class="d-flex m-1 p-1 bg-light shadow">
+                <div class="d-flex m-3 p-1 bg-light shadow-sm ">
                     <img src="{% get_media_prefix %}{{ course.image }} " width="400"  class="mr-3">
                     <div>
                         <a href="{% url 'courseHandler:course-detail' pk=course.id %}">
