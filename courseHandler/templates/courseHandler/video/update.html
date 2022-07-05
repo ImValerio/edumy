@@ -5,8 +5,13 @@
 {% block title %}Update Video{% endblock %}
 
 {% block content %}
-    <h1>Video update</h1>
-
-    {% crispy form %}
+    <div class="container">
+        <div class="border-bottom border-dark">
+            <h1>Update Video</h1>
+        </div>
+        <div class="p-2 mt-2">
+            {% crispy form %}
+        </div>
+    </div>
 
 {% endblock %}

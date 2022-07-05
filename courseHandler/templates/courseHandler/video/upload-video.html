@@ -5,19 +5,21 @@
 {% block title %}Upload Video{% endblock %}
 
 {% block content %}
-    <ul class="my-3">
-        {% if videos %}
-            {% for video in videos %}
-                <a class="h3"
-                   href="{% url 'courseHandler:course-upload-video-detail' course_id=pk pk=video.id %}">{{ forloop.counter }}) {{ video.title }}</a>
-                <br>
-            {% endfor %}
-        {% endif %}
-
-    </ul>
-
-    <h1 class="font-weight-light">Upload Video</h1>
-    <div class="m-3">
-        {% crispy form %}
+    <div class="container">
+        <ul class="my-3">
+            {% if videos %}
+                {% for video in videos %}
+                    <a class="h3"
+                       href="{% url 'courseHandler:course-upload-video-detail' course_id=pk pk=video.id %}">{{ forloop.counter }}) {{ video.title }}</a>
+                    <br>
+                {% endfor %}
+            {% endif %}
+        </ul>
+        <div class="border-bottom border-dark">
+            <h1 class="font-weight-light">Upload Video</h1>
+        </div>
+        <div class="p-2 mt-2">
+            {% crispy form %}
+        </div>
     </div>
 {% endblock %}
