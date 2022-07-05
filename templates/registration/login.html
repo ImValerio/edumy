@@ -6,7 +6,7 @@
 
 {% block content %}
 
-        <div class="d-flex justify-content-center align-items-center">
+        <div class="d-flex justify-content-center align-items-center h-100">
             <form method="post" style="width: 20rem">{% csrf_token %}
                 <fieldset class="form-group">
                     <legend class="border-bottom mb-4">Log In</legend>
@@ -19,5 +19,6 @@
                     </small>
                 </div>
             </form>
+
         </div>
 {% endblock %}
