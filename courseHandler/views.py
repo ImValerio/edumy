@@ -159,10 +159,12 @@ class CourseDetail(FormMixin, DetailView):
         all_courses = Course.objects.filter(category=self.object.category, price__range=(min_price,max_price))
         #ids = [course.pk for course in userCourses]
         course_no_follow = [course for course in all_courses if course.id != self.object.id]
+        videos_count = len(Video.objects.filter(course_id=self.object.id))
         context['couseList'] = course_no_follow
         #context['couseList'] = all_courses
         context['reviews'] = Review.objects.filter(course_id=self.object.id).select_related('student')[:5]
         context['formReview'] = ReviewForm(initial={'post': self.object})
+        context['videosCount'] = videos_count
         return context
 
     def post(self, request, *args, **kwargs):
