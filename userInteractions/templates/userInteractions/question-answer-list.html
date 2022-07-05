@@ -4,31 +4,41 @@
 {% block title %}{% endblock %}
 
 {% block content %}
-    <div class="container">
-    {% for question, answer in questions_answer_list %}
-        <div class="accordion" id="accordionQuestionAnswer{{answer.id}}">
-            <div class="card">
-                <div class="card-header" id="question{{ question.id}}">
-                    <p class="container-fluid font-weight-bold d-flex align-items-center" type="button" class="card-link" data-toggle="collapse" data-target="#answer{{answer.id}}" aria-expanded="false">
-                        {{ question.body }}
-                    </p>
-                </div>
+    <div class="container" id="qa-container">
+        {% for question, answer in questions_answer_list %}
+            <div class="accordion" id="accordionQuestionAnswer{{ answer.id }}">
+                <div class="card">
+                    <div class="card-header" id="question{{ question.id }}">
+                        <p class="container-fluid font-weight-bold d-flex align-items-center" type="button"
+                           class="card-link" data-toggle="collapse" data-target="#answer{{ answer.id }}"
+                           aria-expanded="false">
+                            {{ question.body }}
+                        </p>
+                    </div>
 
-                <div id="answer{{answer.id}}" class="collapse show" data-parent="#accordionQuestionAnswer{{answer.id}}">
-                    <div class="card-body">
-                        {{ answer.body }}
+                    <div id="answer{{ answer.id }}" class="collapse show"
+                         data-parent="#accordionQuestionAnswer{{ answer.id }}">
+                        <div class="card-body">
+                            {{ answer.body }}
+                        </div>
                     </div>
                 </div>
             </div>
+        {% endfor %}
+        {% if questions_answer_list|length > 5 %}
+        <div class="w-100 d-flex justify-content-center mt-2">
+            <button id="load-qa" class="btn btn-light text-muted" style="border: 1px solid ">Read
+                more...
+            </button>
         </div>
-    {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}
 
 <script>
     $('.collapse').collapse();
     console.log($('.collapse').collapse('show'))
-    $(document).click(function(e) {
+    $(document).click(function (e) {
         if (!$(e.target).is('.card-body')) {
             $('.collapse').collapse('hide');
         }

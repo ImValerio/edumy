@@ -4,6 +4,9 @@ window.onload = () => {
     let loadCommentsBtn = document.getElementById('load-comments');
     let reviewContainer= document.getElementById('review-container');
 
+    let loadQA = document.getElementById('load-qa');
+    let qaContainer= document.getElementById('qa-container');
+
     let publishBtns = document.getElementsByClassName('publish-course');
     const notificationsBtn = document.getElementById('notifications-btn');
     const notifyListElem = document.querySelector('#notify-list');
@@ -58,6 +61,8 @@ window.onload = () => {
         notifyUnreadElem.innerText = '0';
     })
     let page = 1;
+    if(loadCommentsBtn){
+
     loadCommentsBtn.addEventListener('click',async ()=>{
         page += 1
         const data = await fetch(`/reviews?page=${page}`)
@@ -77,6 +82,38 @@ window.onload = () => {
         }
         if(max_page)
             loadCommentsBtn.classList.add('d-none')
+
+    })
+    }
+
+    loadQA.addEventListener('click',async ()=>{
+        page += 1
+        const videoId = document.querySelector('#video').dataset.id
+        const data = await fetch(`/question-answer?video=${videoId}&page=${page}`)
+        const {page_obj, max_page} = await data.json()
+        console.log(page_obj)
+        if(page_obj){
+            page_obj.forEach(qa =>{
+
+                qaContainer.innerHTML += `<div class="accordion" id="accordionQuestionAnswer{{answer.id}}">
+            <div class="card">
+                <div class="card-header" id="question{{ question.id}}">
+                    <p class="container-fluid font-weight-bold d-flex align-items-center" type="button" class="card-link" data-toggle="collapse" data-target="#answer{{answer.id}}" aria-expanded="false">
+                        ${ qa[0].body }
+                    </p>
+                </div>
+
+                <div id="answer{{answer.id}}" class="collapse show" data-parent="#accordionQuestionAnswer{{answer.id}}">
+                    <div class="card-body">
+                        ${ qa[1].body }
+                    </div>
+                </div>
+            </div>
+        </div>`
+            })
+        }
+        if(max_page)
+            loadQA.classList.add('d-none')
 
     })
 }

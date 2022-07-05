@@ -249,7 +249,7 @@ def CourseListStore(request):
         courses = Course.objects.all().filter(is_active=True)
         courses_bought_id = []
         print(request.user)
-        if hasattr(request.user,'usertype') and request.user.usertype.type == 'student':
+        if hasattr(request.user, 'usertype') and request.user.usertype.type == 'student':
             courses_bought = FollowCourse.objects.filter(student_id=request.user.id)
             courses_bought_id = [e.course_id for e in courses_bought]
         cart = Cart.new(request)
