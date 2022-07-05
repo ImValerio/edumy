@@ -23,7 +23,7 @@ def QuestionList(request, video):
     ids = [answer.question_id for answer in answer_list]  # id che vogliamo escludere dalle question
     question_no_answer = [question for question in question_list if
                           question.id not in ids]  # seleziono le question che non hanno una risposta
-    context["list"] = question_no_answer
+    context["list"] = question_no_answer[:5]
     return render(request, "userInteractions/question/list.html", context)
 
 
