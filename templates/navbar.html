@@ -32,7 +32,11 @@
 
             </div>
         </div>
-        <a class='h3' href="{% url 'logout' %}">Logout</a>
+
+        <a class='d-flex justify-content-center align-items-center' href="{% url 'logout' %}">
+        <ion-icon name="log-out-outline" class="h2"></ion-icon>
+        <h4>Logout</h4>
+        </a>
     {% else %}
         <a class='h3' href="{% url 'login' %}">Login</a>
         <a class='h3' href="{% url 'userAuth:signup' %}">Signup</a>
