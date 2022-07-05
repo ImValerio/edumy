@@ -1,7 +1,7 @@
  {% load notifications_tags %}
 
 
-<nav class="d-flex justify-content-around w-100">
+<nav class="d-flex justify-content-around align-items-center shadow-sm w-100 p-2">
     <a class='h3' href="{% url 'courseHandler:course-list-store' %}">Store</a>
     {% if user.is_authenticated %}
         {% if user.usertype.type == 'teacher' %}
@@ -9,19 +9,24 @@
         {% endif %}
         <a class='h3' href="{% url 'courseHandler:course-list' %}">My courses</a>
 
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="notifications-btn"
+
+        <a class='h3' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a>
+           <div class="dropdown d-flex justify-content-center align-items-center p-0 m-0">
+            <div class="dropdown-toggle d-flex justify-content-center align-items-center h3 bg-transparent border-0 p-0 m-0" type="button" id="notifications-btn"
                     data-toggle="dropdown"
                     data-user="{{ user.id }}"
-                    aria-expanded="false">
-                Notifications ({% live_notify_badge %})
-            </button>
+                    aria-expanded="false"
+                    style="color: royalblue;"
+            >
+                
+
+                <ion-icon name="notifications-outline" class="h3"></ion-icon> <span class="h3">({% live_notify_badge %})</span>
+            </div>
             <div id='notify-list' class="dropdown-menu" aria-labelledby="dropdownMenu2">
 
 
             </div>
         </div>
-        <a class='h3' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a>
         <a class='h3' href="{% url 'logout' %}">Logout</a>
     {% else %}
         <a class='h3' href="{% url 'login' %}">Login</a>
