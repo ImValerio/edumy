@@ -8,11 +8,11 @@
 {% block content %}
     <div class="container">
 
-        <div class="border-bottom border-dark">
+        <div class="border-bottom border-dark my-3">
             <h1 class="">My courses</h1>
         </div>
-
-        <nav class="blog-pagination justify-content-center d-flex">
+        {% if is_paginated %}
+            <nav class="blog-pagination justify-content-center d-flex">
             <ul class="pagination">
                 {% if page_obj.has_previous %}
                     <li class="page-item">
@@ -47,7 +47,7 @@
                 {% endif %}
             </ul>
         </nav>
-
+        {% endif %}
         <div class="d-flex justify-content-start flex-wrap ml-5" style="gap: 1.25rem">
             {% for course in page_obj %}
                 <div class="card bg-light shadow d-flex flex-col align-items-stretch"
