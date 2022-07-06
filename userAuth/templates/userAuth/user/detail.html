@@ -1,14 +1,35 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-    <h1>Profile</h1>
-    <p><b>Name:</b> {{ usertype.first_name }}</p>
-    <p><b>Last Name:</b> {{ usertype.last_name }}</p>
-    <p><b>Email:</b> {{ usertype.email }}</p>
-    <p><b>Username:</b> {{ usertype.username }}</p>
 
-    <a href="{% url 'userAuth:update-profile' pk=usertype.id %}">Update user</a><br>
-    <a href="{% url 'homepage' %}">Home</a>
+        <div class="container mt-5 w-100">
+            <div class="d-flex flex-column w-100">
+                <div class="d-flex justify-content-center">
+                    <h1>Your Profile</h1>
+                </div>
+                <div class="d-flex justify-content-center mt-2 w-100">
+                        <img class="img-fluid rounded-circle" style="width:250px; height:250px;object-fit: cover" src="{% get_media_prefix %}{{ usertype.image }}">
+                </div>
+                <div class="d-flex flex-column align-items-center w-auto" style="width: fit-content">
+                    <div class="d-flex flex-row justify-content-center mt-2">
+                        <h2>{{ usertype.first_name }} {{ usertype.last_name }}</h2>
+                    </div>
+                    <div class="d-flex justify-content-center mt-2">
+                        <h3>{{ usertype.username }}</h3>
+                    </div>
+                    <div class="d-flex justify-content-center mt-2">
+                        <h4>{{ usertype.email }}</h4>
+                    </div>
+                    <div class="d-flex mt-2">
+                        <a class="btn btn-light mr-2" href="{% url 'homepage' %}">Home</a>
+                        <a class="btn btn-primary ml-2" href="{% url 'userAuth:update-profile' pk=usertype.id %}">Update</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
 {% endblock %}

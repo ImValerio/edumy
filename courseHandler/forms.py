@@ -6,28 +6,58 @@ from courseHandler.models import Video
 
 
 class CreateVideo(forms.ModelForm):
-
     helper = FormHelper()
+    helper.form_id = "create_video_crispy_form"
     helper.form_method = 'POST'
-    helper.add_input(Submit('submit', 'UPLOAD'))
-    helper.inputs[0].field_classes = 'btn btn-success'
 
     class Meta:
         model = Video
         fields = ['title', 'description', 'file']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Row(
+                Column('title', css_class='form-group col-md-6'),
+                Column('description', css_class='form-group col-md-6'),
+                css_class='form-row'
+            ),
+                Row(
+                    Column('file', css_class='form-group col-md-6'),
+                    Submit('submit', 'UPLOAD', css_class="btn btn-success ml-1 col-md-1"),
+                    css_class="d-flex align-items-center"
+                ),
+
+        )
+
+
 
 class UpdateVideoForm(forms.ModelForm):
     helper = FormHelper()
-    helper.form_id = "add_course_crispy_form"
+    helper.form_id = "update_video_crispy_form"
     helper.form_method = 'POST'
-    helper.add_input(Submit('submit', 'Submit'))
-    helper.inputs[0].field_classes = 'btn btn-success'
 
     class Meta:
         model = Video
         fields = ('title', 'description', 'file')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            Row(
+                Column('title', css_class='form-group col-md-6'),
+                Column('description', css_class='form-group col-md-6'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('file', css_class='form-group col-md-6'),
+            ),
+            Row(
+                Submit('submit', 'Update', css_class="btn btn-success col-md-1"),
+                css_class="d-flex justify-content-start"
+            )
+
+    )
 
 
 class CourseForm(forms.ModelForm):
@@ -63,7 +93,7 @@ class CourseForm(forms.ModelForm):
             ),
             'description',
             Row(
-                Submit('submit', 'Submit', css_class="btn btn-success"),
+                Submit('submit', 'Submit', css_class="btn btn-success col-md-1"),
                 css_class="d-flex justify-content-end mr-1"
             )
         )
