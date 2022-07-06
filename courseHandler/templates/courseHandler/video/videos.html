@@ -3,13 +3,53 @@
 {% block title %}Videos{% endblock %}
 
 {% block content %}
-    <h1 class="m-3">Video list</h1>
-    <div class="list-group">
-    {% if videos %}
-        {% for video in videos %}
-            <a href="{% url 'courseHandler:course-upload-video-detail' course_id=pk pk=video.id %}" class="list-group-item h2"> {{ forloop.counter}} - {{ video.title }} </a><br>
-        {% endfor %}
-    {% endif %}
+    <div class="container">
+        <h1 class="m-3">Video list</h1>
+        <div class="list-group ">
+                {% for video in page_obj %}
+                    <a href="{% url 'courseHandler:course-upload-video-detail' course_id=pk pk=video.id %}"
+                       class="list-group-item h2 border-top-0 border-right-0 border-left-0"> {{ forloop.counter }}
+                        - {{ video.title }} </a><br>
+                {% endfor %}
+        </div>
+        <nav class="blog-pagination justify-content-center d-flex">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.previous_page_number }}" class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">
+                                <span class="ti-arrow-left"></span>
+                            </span>
+                        </a>
+                    </li>
+                {% endif %}
 
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.next_page_number }}" class="page-link" aria-label="Next">
+                        <span aria-hidden="true">
+                            <span class="ti-arrow-right"></span>
+                        </span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% if form %}
+            {% include "courseHandler/video/upload-video.html" %}
+        {% endif %}
     </div>
+
 {% endblock %}

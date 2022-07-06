@@ -85,8 +85,8 @@ window.onload = () => {
 
     })
     }
-
-    loadQA.addEventListener('click',async ()=>{
+    if(loadQA){
+        loadQA.addEventListener('click',async ()=>{
         page += 1
         const videoId = document.querySelector('#video').dataset.id
         const data = await fetch(`/question-answer?video=${videoId}&page=${page}`)
@@ -115,7 +115,9 @@ window.onload = () => {
         if(max_page)
             loadQA.classList.add('d-none')
 
-    })
+        })
+    }
+
 }
 
 const my_special_notification_callback = data => {

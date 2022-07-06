@@ -41,6 +41,7 @@ def teacher_is_authorized(request, pk):
 
     return True
 
+
 def VideoUploadDetail(request, course_id, pk):
     if request.user.is_authenticated:
         if request.method == 'POST':
@@ -71,31 +72,37 @@ def VideoUploadDetail(request, course_id, pk):
 
 def VideoUploadView(request, pk):
     if request.user.is_authenticated:
-
-        if request.method == 'POST' and teacher_is_authorized(request,pk):
+        is_author = teacher_is_authorized(request, pk)
+        if request.method == 'POST' and is_author:
             form = CreateVideo(request.POST, request.FILES)
             if form.is_valid():
                 instance = form.save(commit=False)
                 instance.course_id = int(pk)
                 instance.save()
                 return redirect('courseHandler:course-upload-video', pk)
-        else:
-            if(teacher_is_authorized(request,pk)):
+
+        user_follow_course = False
+        if not is_author:
+            user_follow_course = FollowCourse.objects.get(student_id=request.user.id, course_id=pk)
+        if is_author or user_follow_course:
+            videos = Video.objects.filter(course_id=pk)
+            paginator = Paginator(videos, 6)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+
+            context = {
+                "page_obj": page_obj,
+                "pk": pk
+            }
+
+            if is_author:
                 form = CreateVideo()
-                videos = Video.objects.filter(course_id=pk)
-                context = {
-                    "form": form,
-                    "videos": videos,
-                    "pk": pk
-                }
-                return render(request, 'courseHandler/video/upload-video.html', context)
-            else:
-                videos = Video.objects.filter(course_id=pk)
-                context = {
-                    "videos": videos,
-                    "pk": pk
-                }
-                return render(request, 'courseHandler/video/videos.html', context)
+                context['form'] = form
+
+            return render(request, 'courseHandler/video/videos.html', context)
+        else:
+            return HttpResponseRedirect('/')
+
     else:
         return HttpResponseRedirect('/')
 
@@ -128,7 +135,7 @@ class CourseCreate(LoginRequiredMixin, CreateView):
 class CourseDetail(FormMixin, DetailView):
     model = Course
     template_name = "courseHandler/course/detail.html"
-    form_class= ReviewForm
+    form_class = ReviewForm
 
     def dispatch(self, request, *args, pk, **kwargs):
         course_check = Course.objects.get(pk=pk)
@@ -141,27 +148,27 @@ class CourseDetail(FormMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CourseDetail, self).get_context_data(**kwargs)
-        #se userCourses è vuoto fare una ricerca totale dei corsi
-        #userCourses = FollowCourse.objects.filter(student_id=self.request.user.id).select_related('course')
-        #courses = [course.course for course in userCourses]
-        #listPrice = [c.price for c in courses]
-        #listcategory = [c.category for c in courses]
-        #avg = sum(listPrice) / len(listcategory)
-        #percentage = avg * 0.3
-        #minAvg = avg - percentage
-        #maxAvg = avg + percentage
-        #popularCategory = list(Counter(listcategory))[0]
-        #fare la ricerca su corso preso in dettaglio(utilizzare self)
-        #all_courses = Course.objects.filter(category=popularCategory, price__range=(minAvg,maxAvg))
+        # se userCourses è vuoto fare una ricerca totale dei corsi
+        # userCourses = FollowCourse.objects.filter(student_id=self.request.user.id).select_related('course')
+        # courses = [course.course for course in userCourses]
+        # listPrice = [c.price for c in courses]
+        # listcategory = [c.category for c in courses]
+        # avg = sum(listPrice) / len(listcategory)
+        # percentage = avg * 0.3
+        # minAvg = avg - percentage
+        # maxAvg = avg + percentage
+        # popularCategory = list(Counter(listcategory))[0]
+        # fare la ricerca su corso preso in dettaglio(utilizzare self)
+        # all_courses = Course.objects.filter(category=popularCategory, price__range=(minAvg,maxAvg))
         percentage = self.object.price * 0.3
         min_price = self.object.price - percentage
         max_price = self.object.price + percentage
-        all_courses = Course.objects.filter(category=self.object.category, price__range=(min_price,max_price))
-        #ids = [course.pk for course in userCourses]
+        all_courses = Course.objects.filter(category=self.object.category, price__range=(min_price, max_price))
+        # ids = [course.pk for course in userCourses]
         course_no_follow = [course for course in all_courses if course.id != self.object.id]
         videos_count = len(Video.objects.filter(course_id=self.object.id))
         context['couseList'] = course_no_follow
-        #context['couseList'] = all_courses
+        # context['couseList'] = all_courses
         context['reviews'] = Review.objects.filter(course_id=self.object.id).select_related('student')[:5]
         context['formReview'] = ReviewForm(initial={'post': self.object})
         context['videosCount'] = videos_count
@@ -194,7 +201,6 @@ class CourseDelete(SuccessMessageMixin, DeleteView):
         if not teacher_is_authorized(request, pk):
             return redirect('homepage')
         return super().dispatch(request, *args, **kwargs)
-
 
 
 class CourseUpdate(UpdateView):
@@ -236,15 +242,7 @@ def CourseListView(request):
 
 def CourseListStore(request):
     if request.method == 'POST':
-
-        """
-         form = CreateVideo(request.POST, request.FILES)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.course_id = int(pk)
-            instance.save()
-            return redirect('courseHandler:course-upload-video', pk)
-        """
+        return
     else:
         courses = Course.objects.all().filter(is_active=True)
         courses_bought_id = []
@@ -296,19 +294,21 @@ class CourseSearchView(CourseList):
 
         # return super().form_valid(form)
 
+
 def courses_statistic(request, pk):
-        context = {}
-        courses = Course.objects.filter(author_id = request.user.id)
-        courses_id = [course.id for course in courses ]
-        bests_sellers = FollowCourse.objects.filter(course_id__in=courses_id).values('course').annotate(Count('course'))
-        print(bests_sellers[0]['course'])
-        courses = courses.values()
-        for c in courses:
-            for c1 in bests_sellers:
-                if c['id'] == c1['course']:
-                    c['course_sold'] = c1['course__count']
-        context['courses'] = courses
-        return render(request, "courseHandler/course/statistic.html")
+    context = {}
+    courses = Course.objects.filter(author_id=request.user.id)
+    courses_id = [course.id for course in courses]
+    bests_sellers = FollowCourse.objects.filter(course_id__in=courses_id).values('course').annotate(Count('course'))
+    print(bests_sellers[0]['course'])
+    courses = courses.values()
+    for c in courses:
+        for c1 in bests_sellers:
+            if c['id'] == c1['course']:
+                c['course_sold'] = c1['course__count']
+    context['courses'] = courses
+    return render(request, "courseHandler/course/statistic.html")
+
 
 def CartView(request):
     if request.user.is_authenticated:
@@ -359,12 +359,14 @@ def remove_product(request, pk):
 def empty_cart(request: HttpRequest):
     Cart.new(request).empty()
 
+
 @require_GET
 def publish_course(request, pk):
     course = Course.objects.get(id=pk)
     course.is_active = True
     course.save()
     return JsonResponse({'msg': 'Now the course is visible'})
+
 
 @require_GET
 def read_notifications(request, pk):
