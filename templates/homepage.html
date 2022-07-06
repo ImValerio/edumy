@@ -62,9 +62,7 @@
                             </div>
                         </div>
                         <div class="">
-                            <a class="card-title" href="{% url 'courseHandler:course-upload-video' course.id %}">
-                                <h1 class="text-body">{{ course.title }}</h1>
-                            </a>
+                            <h1 class="text-body">{{ course.title }}</h1>
                             <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
                             <h6 class="card-subtitle mb-2 text-muted">{{ course.category }}</h6>
                             <p class="card-text">{{ course.price }}$</p>
