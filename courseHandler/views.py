@@ -154,10 +154,7 @@ class CourseDetail(FormMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(CourseDetail, self).get_context_data(**kwargs)
         if teacher_is_authorized(self.request, self.object.id):
-            courses = Course.objects.filter(author_id=self.request.user.id)
-            #courses_id = [course.id for course in courses]
             student_count = FollowCourse.objects.filter(course_id=self.object.id)
-            print(len(student_count))
             context['student_count'] = len(student_count)
         # se userCourses è vuoto fare una ricerca totale dei corsi
         # userCourses = FollowCourse.objects.filter(student_id=self.request.user.id).select_related('course')
