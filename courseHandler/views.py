@@ -322,6 +322,7 @@ def CartView(request):
 
                     FollowCourse.objects.create(course_id=int(item.product.id), student_id=request.user.id)
 
+                empty_cart(request)
                 return redirect('courseHandler:course-list')
         else:
             cart = Cart.new(request)
