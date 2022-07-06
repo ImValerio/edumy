@@ -89,7 +89,6 @@ def listing_question_answer(request):
     max_page = True
     if paginator.num_pages >= int(page_number):
         page_obj = list(paginator.get_page(page_number).object_list)
-
         data = []
         for qa in page_obj:
             data.append([model_to_dict(qa[0]), model_to_dict(qa[1])])
