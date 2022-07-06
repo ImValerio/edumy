@@ -85,14 +85,19 @@ def VideoUploadView(request, pk):
         if not is_author:
             user_follow_course = FollowCourse.objects.get(student_id=request.user.id, course_id=pk)
         if is_author or user_follow_course:
+            max_video_page = 6
             videos = Video.objects.filter(course_id=pk)
-            paginator = Paginator(videos, 6)
+            paginator = Paginator(videos, max_video_page)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
-
+            video_index = 0
+            if page_number:
+                video_index = (int(page_number) - 1) * max_video_page
             context = {
                 "page_obj": page_obj,
-                "pk": pk
+                "video_index": video_index,
+                "pk": pk,
+
             }
 
             if is_author:

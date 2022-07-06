@@ -8,7 +8,7 @@
         <div class="list-group ">
                 {% for video in page_obj %}
                     <a href="{% url 'courseHandler:course-upload-video-detail' course_id=pk pk=video.id %}"
-                       class="list-group-item h2 border-top-0 border-right-0 border-left-0"> {{ forloop.counter }}
+                       class="list-group-item h2 border-top-0 border-right-0 border-left-0"> {{ forloop.counter|add:video_index }}
                         - {{ video.title }} </a><br>
                 {% endfor %}
         </div>
