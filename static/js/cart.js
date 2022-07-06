@@ -117,7 +117,17 @@ window.onload = () => {
 
         })
     }
-
+    const delAccountBtn = document.querySelector("#del-account");
+    if(delAccountBtn){
+       delAccountBtn.addEventListener('click', async ()=>{
+           const userID = delAccountBtn.dataset.id;
+           await fetch(`/delete-account/${userID}`);
+           document.querySelector("#del-modal").dataset.target = ''
+           $('#exampleModal').modal('hide');
+           document.querySelector('#alert').innerHTML = `<div class="alert alert-danger"> Account deleted successfully! You will be redirected in 3 seconds...</div>`
+            setTimeout(()=>document.location.href='/',3000)
+       })
+    }
 }
 
 const my_special_notification_callback = data => {
