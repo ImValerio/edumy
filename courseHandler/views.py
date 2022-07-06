@@ -223,7 +223,7 @@ class CourseUpdate(UpdateView):
 
 class CourseList(ListView):
     model = Course
-    template_name = 'courseHandler/course/list.html'
+    template_name = 'courseHandler/course/search_result.html'
 
 
 def CourseListView(request):
@@ -247,7 +247,11 @@ def CourseListView(request):
 
 def CourseListStore(request):
     if request.method == 'POST':
-        return
+        form = SearchCourseForm(request.POST)
+        if form.is_valid():
+            sstring = form.cleaned_data.get("search_string")
+            where = form.cleaned_data.get("search_where")
+            return redirect("courseHandler:course-search-result", sstring, where)
     else:
         courses = Course.objects.all().filter(is_active=True)
         courses_bought_id = []
@@ -256,10 +260,12 @@ def CourseListStore(request):
             courses_bought = FollowCourse.objects.filter(student_id=request.user.id)
             courses_bought_id = [e.course_id for e in courses_bought]
         cart = Cart.new(request)
+        form = SearchCourseForm()
         context = {
             "courses": courses,
             "cartProd": cart.products,
-            "coursesBought": courses_bought_id
+            "coursesBought": courses_bought_id,
+            "form": form
         }
         return render(request, 'courseHandler/course/store.html', context)
 
