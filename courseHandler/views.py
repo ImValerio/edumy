@@ -43,7 +43,8 @@ def teacher_is_authorized(request, pk):
 
 
 def VideoUploadDetail(request, course_id, pk):
-    if request.user.is_authenticated:
+    check_follow = FollowCourse.objects.filter(course_id=course_id, student_id=request.user.id)
+    if (request.user.is_authenticated and check_follow) or teacher_is_authorized(request, course_id) :
         if request.method == 'POST':
             form_question = QuestionForm(request.POST, request.FILES)
             if form_question.is_valid():
@@ -99,7 +100,6 @@ def VideoUploadView(request, pk):
                 "pk": pk,
 
             }
-
             if is_author:
                 form = CreateVideo()
                 context['form'] = form
@@ -153,6 +153,12 @@ class CourseDetail(FormMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CourseDetail, self).get_context_data(**kwargs)
+        if teacher_is_authorized(self.request, self.object.id):
+            courses = Course.objects.filter(author_id=self.request.user.id)
+            #courses_id = [course.id for course in courses]
+            student_count = FollowCourse.objects.filter(course_id=self.object.id)
+            print(len(student_count))
+            context['student_count'] = len(student_count)
         # se userCourses è vuoto fare una ricerca totale dei corsi
         # userCourses = FollowCourse.objects.filter(student_id=self.request.user.id).select_related('course')
         # courses = [course.course for course in userCourses]
@@ -175,7 +181,10 @@ class CourseDetail(FormMixin, DetailView):
         context['couseList'] = course_no_follow
         # context['couseList'] = all_courses
         context['reviews'] = Review.objects.filter(course_id=self.object.id).select_related('student')[:5]
-        context['formReview'] = ReviewForm(initial={'post': self.object})
+        if self.request.user.is_authenticated:
+            check_follow = FollowCourse.objects.filter(course_id=self.object.id, student_id=self.request.user.id)
+            if check_follow:
+                context['formReview'] = ReviewForm(initial={'post': self.object})
         context['videosCount'] = videos_count
         return context
 
@@ -203,7 +212,8 @@ class CourseDelete(SuccessMessageMixin, DeleteView):
     success_message = "was created successfully"
 
     def dispatch(self, request, *args, pk, **kwargs):
-        if not teacher_is_authorized(request, pk):
+        course = Course.objects.get(id=pk)
+        if not teacher_is_authorized(request, pk) or course.is_active:
             return redirect('homepage')
         return super().dispatch(request, *args, **kwargs)
 
@@ -297,7 +307,7 @@ class CourseSearchView(CourseList):
             qq = self.model.objects.filter(category__icontains=sstring)
         return qq
 
-        # return super().form_valid(form)
+        return super().form_valid(form)
 
 
 def courses_statistic(request, pk):

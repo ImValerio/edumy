@@ -22,11 +22,11 @@ class CreateVideo(forms.ModelForm):
                 Column('description', css_class='form-group col-md-6'),
                 css_class='form-row'
             ),
-                Row(
-                    Column('file', css_class='form-group col-md-6'),
-                    Submit('submit', 'UPLOAD', css_class="btn btn-success ml-1 col-md-1"),
-                    css_class="d-flex align-items-center"
-                ),
+            Row(
+                Column('file', css_class='form-group col-md-6'),
+                Submit('submit', 'UPLOAD', css_class="btn btn-success ml-1 col-md-1"),
+                css_class="d-flex align-items-center"
+            ),
 
         )
 
@@ -54,7 +54,7 @@ class UpdateVideoForm(forms.ModelForm):
             ),
             Row(
                 Submit('submit', 'Update', css_class="btn btn-success col-md-1"),
-                css_class="d-flex justify-content-start"
+                css_class="d-flex justify-content-end"
             )
 
     )
@@ -109,6 +109,17 @@ class SearchCourseForm(forms.Form):
     search_string = forms.CharField(label="Cerca qualcosa",max_length=100, min_length=3, required=True)
     search_where = forms.ChoiceField(label="Dove?", required=True, choices=CHOICE_LIST)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column('search_string', css_class='form-group'),
+                Column('search_where', css_class='form-group'),
+                Submit('submit', 'Submit', css_class="btn btn-success"),
+                css_class='d-flex align-items-center'
+            ),
+        )
 
 PAYMENTS_OPTIONS = [(method, method) for method in ["Paypal", "Paysafecard", "Credit card"]]
 

@@ -56,11 +56,9 @@ class UserSignup(UserCreationForm):
         )
 
 
-class UserUpdate(forms.ModelForm):
+class UserUpdate(UserCreationForm):
     helper = FormHelper()
     helper.form_method = 'POST'
-    helper.add_input(Submit('submit', 'Submit'))
-    helper.inputs[0].field_classes = 'btn btn-success'
 
 
     """layout = Layout(Fieldset(
@@ -104,7 +102,16 @@ class UserUpdate(forms.ModelForm):
             ),
             Row(
                 Submit('submit', 'Submit' ,css_class="btn btn-success"),
-                HTML('''<a class="btn btn-info ml-2" href="{% url 'userAuth:password_change' %}">Change password</a>'''),
+                HTML('''
+                <div class="d-flex w-75 justify-content-around">
+                    <div>
+                        <a class="btn btn-info" href="{% url 'userAuth:password_change' %}">Change password</a>
+                    </div>
+                    <div class="">    
+                        <button class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" id="del-modal" >DELETE ACCOUNT</button>
+                    </div>
+                </div>
+                '''),
                 css_class=""
             ),
         )

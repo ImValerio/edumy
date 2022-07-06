@@ -66,10 +66,12 @@
                                     <a class="text-primary" href="{% url 'courseHandler:course-update' course.pk %}">
                                         <ion-icon name="cog-outline" style="height: 1.3rem; width: 1.3rem;"></ion-icon>
                                     </a>
-                                    <a class="text-danger" href="{% url 'courseHandler:course-delete' course.pk %}">
-                                        <ion-icon name="trash-outline"
-                                                  style="height: 1.3rem; width: 1.3rem;"></ion-icon>
-                                    </a>
+                                    {% if not course.is_active %}
+                                        <a class="text-danger" href="{% url 'courseHandler:course-delete' course.pk %}">
+                                            <ion-icon name="trash-outline"
+                                                      style="height: 1.3rem; width: 1.3rem;"></ion-icon>
+                                        </a>
+                                    {% endif %}
                                 {% endif %}
                             </div>
                         </div>
