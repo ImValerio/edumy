@@ -76,10 +76,6 @@ class UserUpdate(UserCreationForm):
         model = UserType
         fields = ('username', 'image', 'first_name', 'last_name', 'email', 'type')
 
-    type = forms.ChoiceField(choices=(
-            ('student', 'Student'),
-            ('teacher', 'Teacher')
-    ))
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
