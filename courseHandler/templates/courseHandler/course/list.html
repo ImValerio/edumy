@@ -11,8 +11,7 @@
         <div class="border-bottom border-dark my-3">
             <h1 class="">My courses</h1>
         </div>
-        {% if is_paginated %}
-            <nav class="blog-pagination justify-content-center d-flex">
+        <nav class="blog-pagination justify-content-center d-flex">
             <ul class="pagination">
                 {% if page_obj.has_previous %}
                     <li class="page-item">
@@ -47,6 +46,12 @@
                 {% endif %}
             </ul>
         </nav>
+        {% if messages %}
+            <div class="messages mb-3">
+                {% for message in messages %}
+                    <div {% if message.tags %} id="alert" class="alert alert-success {{ message.tags }}"{% endif %}>{{ message }}</div>
+                {% endfor %}
+            </div>
         {% endif %}
         <div class="d-flex justify-content-start flex-wrap ml-5" style="gap: 1.25rem">
             {% for course in page_obj %}
@@ -136,13 +141,7 @@
                 </div>
             {% endfor %}
         </div>
-    {% if messages %}
-        <div class="messages mt-3">
-            {% for message in messages %}
-                <div {% if message.tags %} id="alert" class="alert alert-success {{ message.tags }}"{% endif %}>{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
+
 
     </div>
 
@@ -150,7 +149,7 @@
     <script>
         setTimeout(function () {
             $(".messages").hide();
-        }, 10000);
+        }, 5000);
 
         const letters = 34;
 

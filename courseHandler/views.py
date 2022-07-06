@@ -125,8 +125,10 @@ class VideoUpdateView(LoginRequiredMixin, UpdateView):
 
 class CourseCreate(LoginRequiredMixin, CreateView):
     template_name = 'courseHandler/course/create.html'
-    success_url = reverse_lazy('homepage')
+
     form_class = CourseForm
+    success_url = reverse_lazy('courseHandler:course-list')
+    success_message = "The course was delete successfully"
 
     def form_valid(self, form):
         # author = get_object_or_404(UserType, pk=form.instance.author_id)
@@ -206,7 +208,7 @@ class CourseDelete(SuccessMessageMixin, DeleteView):
     model = Course
     template_name = 'courseHandler/course/delete.html'
     success_url = reverse_lazy('courseHandler:course-list')
-    success_message = "was created successfully"
+    success_message = "The course was delete successfully"
 
     def dispatch(self, request, *args, pk, **kwargs):
         course = Course.objects.get(id=pk)
@@ -224,7 +226,6 @@ class CourseUpdate(UpdateView):
     def dispatch(self, request, *args, pk, **kwargs):
         if not teacher_is_authorized(request, pk):
             return redirect('homepage')
-
         return super().dispatch(request, *args, **kwargs)
 
 

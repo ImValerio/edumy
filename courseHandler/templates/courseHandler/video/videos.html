@@ -12,7 +12,6 @@
                         - {{ video.title }} </a><br>
                 {% endfor %}
         </div>
-        {% if is_paginated %}
             <nav class="blog-pagination justify-content-center d-flex">
             <ul class="pagination">
                 {% if page_obj.has_previous %}
@@ -48,7 +47,6 @@
                 {% endif %}
             </ul>
         </nav>
-        {% endif %}
         {% if form %}
             {% include "courseHandler/video/upload-video.html" %}
         {% endif %}

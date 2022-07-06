@@ -8,8 +8,7 @@
         <div class="border-bottom border-dark my-3">
             <h1>Edumy</h1>
         </div>
-        {% if is_paginated %}
-            <nav class="blog-pagination justify-content-center d-flex">
+        <nav class="blog-pagination justify-content-center d-flex">
                 <ul class="pagination">
                     {% if page_obj.has_previous %}
                         <li class="page-item">
@@ -44,7 +43,6 @@
                     {% endif %}
                 </ul>
             </nav>
-        {% endif %}
         <div class="d-flex justify-content-start flex-wrap ml-5" style="gap: 1.25rem">
             {% for course in page_obj %}
                 <div class="card bg-light shadow d-flex flex-col align-items-stretch"
