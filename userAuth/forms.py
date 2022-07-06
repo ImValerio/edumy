@@ -59,8 +59,7 @@ class UserSignup(UserCreationForm):
 class UserUpdate(forms.ModelForm):
     helper = FormHelper()
     helper.form_method = 'POST'
-    helper.add_input(Submit('submit', 'Submit'))
-    helper.inputs[0].field_classes = 'btn btn-success'
+
 
 
     """layout = Layout(Fieldset(
@@ -103,7 +102,7 @@ class UserUpdate(forms.ModelForm):
                 css_class='form-row'
             ),
             Row(
-                Submit('submit', 'Submit' ,css_class="btn btn-success"),
+                Submit('submit', 'Save' ,css_class="btn btn-success"),
                 HTML('''<a class="btn btn-info ml-2" href="{% url 'userAuth:password_change' %}">Change password</a>'''),
                 css_class=""
             ),

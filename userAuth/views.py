@@ -31,6 +31,8 @@ class UserUpdateView(UpdateView):
 
     def form_valid(self, form):
         pk = str(form.instance.pk)
+        instance = form.instance
+        instance.save()
         return redirect('userAuth:profile', pk)
 
 
