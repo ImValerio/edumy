@@ -23,7 +23,11 @@ def QuestionList(request, video):
     ids = [answer.question_id for answer in answer_list]  # id che vogliamo escludere dalle question
     question_no_answer = [question for question in question_list if
                           question.id not in ids]  # seleziono le question che non hanno una risposta
-    context["list"] = question_no_answer[:5]
+    paginator = Paginator(question_no_answer, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context["page_obj"] = page_obj
     return render(request, "userInteractions/question/list.html", context)
 
 

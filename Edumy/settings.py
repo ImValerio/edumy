@@ -138,4 +138,4 @@ LOGIN_REDIRECT_URL = 'homepage'
 
 MEDIA_ROOT = 'static/media'
 
-
+#MEDIA_URL='/media/'

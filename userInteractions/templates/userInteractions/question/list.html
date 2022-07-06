@@ -8,7 +8,7 @@
     <div class="container">
     <h1>Question List</h1>
 
-        {% for question in list %}
+        {% for question in page_obj %}
             <div class="accordion" id="accordionQuestionList{{question.id}}">
                 <div class="card">
                     <div class="card-header" id="question{{ question.id}}">
@@ -26,6 +26,41 @@
                 </div>
             </div>
         {% endfor %}
+     <nav class="blog-pagination justify-content-center d-flex my-3">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.previous_page_number }}" class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">
+                                <span class="ti-arrow-left"></span>
+                            </span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ page_obj.next_page_number }}" class="page-link" aria-label="Next">
+                        <span aria-hidden="true">
+                            <span class="ti-arrow-right"></span>
+                        </span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
 <script>
     $('.collapse').collapse();
