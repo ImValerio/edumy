@@ -4,6 +4,7 @@ import json
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
+from django.views.decorators.http import require_POST
 
 from courseHandler.models import Video, FollowCourse
 from notifications.signals import notify
@@ -103,3 +104,11 @@ def listing_question_answer(request):
         max_page = paginator.num_pages == int(page_number)
 
     return JsonResponse({'page_obj': data, 'max_page': max_page})
+
+@require_POST
+def add_answer(request, video_id, question_id):
+    course_id = Video.objects.filter(id=video_id)
+    if course_id and teacher_is_authorized(request, course_id):
+        json_data = json.loads(request.body)
+        Answer.objects.create(author_id=request.user.id, video_id=video_id, question_id=question_id,body=json_data['answer'])
+        return JsonResponse({'msg': 'Answer added'})
