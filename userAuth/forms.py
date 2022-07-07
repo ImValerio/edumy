@@ -98,7 +98,7 @@ class UserUpdate(UserCreationForm):
                 Column('type', css_class='form-group col-md-4 disabled'),
                 css_class='form-row'
             ),
-            ButtonHolder(
+            Row(
                 Submit('save', 'Save', css_class="btn btn-success col-3 mb-2 col-md-2"),
                 HTML('''
                     <div>

@@ -202,3 +202,7 @@ const my_special_notification_callback = data => {
 
 
 }
+
+setTimeout(function () {
+            $(".messages").hide();
+        }, 5000);

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect
-
+from django.urls import reverse_lazy, reverse
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET
@@ -15,26 +15,27 @@ from django.contrib import messages
 
 from django.http import HttpResponseRedirect
 
-class UserCreationView(CreateView):
+class UserCreationView(SuccessMessageMixin, CreateView):
     form_class = UserSignup
     template_name = 'userAuth/user/signup.html'
     success_url = reverse_lazy('homepage')
+    success_message = "Successfully Created Your User Profile"
 
 class UserDetailView(DetailView):
     model = UserType
     template_name = 'userAuth/user/detail.html'
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(SuccessMessageMixin, UpdateView):
     model = UserType
     form_class = UserUpdate
     template_name = 'userAuth/user/update.html'
+    success_message = "Successfully Updated Your User Profile"
 
     def form_valid(self, form):
         pk = str(form.instance.pk)
+        print(pk)
         instance = form.instance
         instance.save()
-        return redirect('userAuth:profile', pk)
-
 
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'userAuth/user/change_password.html'

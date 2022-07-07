@@ -12,7 +12,7 @@ from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm, 
 from courseHandler.models import Video, Course, FollowCourse, Payment
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse, HttpRequest
-
+from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView
@@ -52,6 +52,7 @@ def VideoUploadDetail(request, course_id, pk):
                 instance.student_id = request.user.id
                 instance.video_id = int(pk)
                 instance.save()
+                messages.add_message(request, messages.INFO, 'The question was created successfully')
                 return redirect('courseHandler:course-upload-video-detail', course_id, pk)
         else:
             form_question = QuestionForm()
@@ -80,6 +81,7 @@ def VideoUploadView(request, pk):
                 instance = form.save(commit=False)
                 instance.course_id = int(pk)
                 instance.save()
+                messages.add_message(request, messages.INFO, 'The video was created successfully')
                 return redirect('courseHandler:course-upload-video', pk)
 
         user_follow_course = False
@@ -112,10 +114,11 @@ def VideoUploadView(request, pk):
         return HttpResponseRedirect('/')
 
 
-class VideoUpdateView(LoginRequiredMixin, UpdateView):
+class VideoUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = Video
     form_class = UpdateVideoForm
     template_name = 'courseHandler/video/update.html'
+    success_message = "The video was updated successfully"
 
     def form_valid(self, form):
         form.instance.save()
@@ -123,12 +126,11 @@ class VideoUpdateView(LoginRequiredMixin, UpdateView):
         return redirect('courseHandler:course-upload-video', pk)
 
 
-class CourseCreate(LoginRequiredMixin, CreateView):
+class CourseCreate(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     template_name = 'courseHandler/course/create.html'
-
     form_class = CourseForm
     success_url = reverse_lazy('courseHandler:course-list')
-    success_message = "The course was delete successfully"
+    success_message = "The course was created successfully"
 
     def form_valid(self, form):
         # author = get_object_or_404(UserType, pk=form.instance.author_id)
@@ -208,7 +210,7 @@ class CourseDelete(SuccessMessageMixin, DeleteView):
     model = Course
     template_name = 'courseHandler/course/delete.html'
     success_url = reverse_lazy('courseHandler:course-list')
-    success_message = "The course was delete successfully"
+    success_message = "The course was deleted successfully"
 
     def dispatch(self, request, *args, pk, **kwargs):
         course = Course.objects.get(id=pk)
@@ -217,11 +219,12 @@ class CourseDelete(SuccessMessageMixin, DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class CourseUpdate(UpdateView):
+class CourseUpdate(SuccessMessageMixin, UpdateView):
     model = Course
     template_name = 'courseHandler/course/update.html'
     success_url = reverse_lazy('courseHandler:course-list')
     form_class = CourseForm
+    success_message = "The course was updated successfully"
 
     def dispatch(self, request, *args, pk, **kwargs):
         if not teacher_is_authorized(request, pk):
