@@ -56,10 +56,9 @@ class UserSignup(UserCreationForm):
         )
 
 
-class UserUpdate(UserCreationForm):
+class UserUpdate(forms.ModelForm):
     helper = FormHelper()
     helper.form_method = 'POST'
-
 
     """layout = Layout(Fieldset(
         Field('first_name'),
@@ -69,13 +68,16 @@ class UserUpdate(UserCreationForm):
         Field('type'),
     ))
     layout.insert(3, HTML(""<a href="{% url 'userAuth:password_change' %}">Change password</a>""))
-
     helper.layout = layout """
 
     class Meta:
         model = UserType
         fields = ('username', 'image', 'first_name', 'last_name', 'email', 'type')
 
+    type = forms.ChoiceField(choices=(
+        ('student', 'Student'),
+        ('teacher', 'Teacher')
+    ))
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -98,18 +100,14 @@ class UserUpdate(UserCreationForm):
             ),
             Row(
                 Submit('submit', 'Save' ,css_class="btn btn-success"),
-                HTML('''<a class="btn btn-info ml-2" href="{% url 'userAuth:password_change' %}">Change password</a>'''),
-                Submit('submit', 'Submit' ,css_class="btn btn-success"),
-                HTML('''
-                <div class="d-flex w-75 justify-content-around">
+                HTML('''      <div class="d-flex w-75 justify-content-around">
                     <div>
                         <a class="btn btn-info" href="{% url 'userAuth:password_change' %}">Change password</a>
                     </div>
                     <div class="">    
-                        <button class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" id="del-modal" >DELETE ACCOUNT</button>
+                        <input  type='button' class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" id="del-modal" value="DELETE ACCOUNT"/ >
                     </div>
-                </div>
-                '''),
+                </div>'''),
                 css_class=""
             ),
         )
