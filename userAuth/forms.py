@@ -98,8 +98,6 @@ class UserUpdate(UserCreationForm):
             ),
             Row(
                 Submit('submit', 'Save' ,css_class="btn btn-success"),
-                HTML('''<a class="btn btn-info ml-2" href="{% url 'userAuth:password_change' %}">Change password</a>'''),
-                Submit('submit', 'Submit' ,css_class="btn btn-success"),
                 HTML('''
                 <div class="d-flex w-75 justify-content-around">
                     <div>
