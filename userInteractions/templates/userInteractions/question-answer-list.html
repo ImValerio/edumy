@@ -4,7 +4,7 @@
 {% block title %}{% endblock %}
 
 {% block content %}
-    <div class="container" >
+    <div class="container my-3" >
     <div id="qa-container">
          {% for question, answer in questions_answer_list %}
             <div class="accordion" id="accordionQuestionAnswer{{ answer.id }}">
@@ -15,13 +15,19 @@
                            aria-expanded="false">
                             {{ question.body }}
                         </p>
+
                     </div>
 
-                    <div id="answer{{ answer.id }}" class="collapse show"
+                    <div id="answer{{ answer.id }}" class="collapse show "
                          data-parent="#accordionQuestionAnswer{{ answer.id }}">
                         <div class="card-body">
                             {{ answer.body }}
                         </div>
+                        {% if user.usertype.type == 'teacher' %}
+                            <div class="w-100 d-flex justify-content-end">
+                                <a href="{% url 'courseHandler:userInteractions:answer-update' answer.id %}" class="mb-3 mr-3 btn btn-outline-primary">Update</a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -30,7 +36,7 @@
     </div>
        {% if questions_answer_list|length >= 5 %}
         <div class="w-100 d-flex justify-content-center mt-2">
-            <button id="load-qa" class="btn btn-light text-muted" style="border: 1px solid ">Read
+            <button id="load-qa" class="btn btn-light bg-transparent  text-muted border-left-0 border-right-0 border-top-0" style="border: 1px solid ">Read
                 more...
             </button>
         </div>

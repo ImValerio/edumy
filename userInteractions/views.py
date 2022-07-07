@@ -4,7 +4,9 @@ import json
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
+from django.urls import reverse_lazy,reverse
 from django.views.decorators.http import require_POST
+from django.views.generic import UpdateView
 
 from courseHandler.models import Video, FollowCourse
 from notifications.signals import notify
@@ -35,6 +37,21 @@ def QuestionList(request, video):
         return render(request, "userInteractions/question/list.html", context)
     return HttpResponseRedirect('/')
 
+class AnswerUpdate(UpdateView):
+    model = Answer
+    template_name = 'userInteractions/answer/update.html'
+    form_class = AnswerForm
+
+    def dispatch(self, request, *args, pk, **kwargs):
+        answer = Answer.objects.get(id=pk)
+        video = Video.objects.get(id=answer.video_id)
+        if not teacher_is_authorized(request, video.course_id):
+            return redirect('homepage')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self, **kwargs):
+        video = Video.objects.get(id=self.object.video_id)
+        return reverse("courseHandler:course-upload-video-detail", kwargs={'course_id':video.course_id, 'pk': self.object.video_id})
 
 def listing_reviews(request):
     review_list = Review.objects.all()

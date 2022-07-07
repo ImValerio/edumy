@@ -22,9 +22,9 @@
 
                         <div id="questionAnswer{{ question.id }}" class="collapse show"
                              data-parent="#accordionQuestionList{{ question.id }}">
-                            <form class="card-body form-answer" data-question="{{ question.id }}" data-video="{{ question.video_id }}" >
+                            <form class="d-flex  card-body form-answer w-100" data-question="{{ question.id }}" data-video="{{ question.video_id }}" >
                                     {% csrf_token %}
-                                    <input type="text" class="p-1 mr-2" placeholder="Answer..."/>
+                                    <input type="text" class="p-1 mr-2 flex-grow-1" placeholder="Answer..."/>
                                     <button class="btn btn-primary btn-answer" >Confirm</button>
                             </form>
                         </div>

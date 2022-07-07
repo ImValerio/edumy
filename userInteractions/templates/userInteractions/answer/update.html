@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
 
-</body>
-</html>
+{% block title %}Update Course{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="border-bottom border-dark">
+            <h1>Update your answer</h1>
+        </div>
+        <div class="p-2 mt-2">
+            {% crispy form %}
+        </div>
+    </div>
+
+{% endblock %}
