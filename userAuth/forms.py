@@ -56,10 +56,9 @@ class UserSignup(UserCreationForm):
         )
 
 
-class UserUpdate(UserCreationForm):
+class UserUpdate(forms.ModelForm):
     helper = FormHelper()
     helper.form_method = 'POST'
-
 
     """layout = Layout(Fieldset(
         Field('first_name'),
@@ -69,7 +68,6 @@ class UserUpdate(UserCreationForm):
         Field('type'),
     ))
     layout.insert(3, HTML(""<a href="{% url 'userAuth:password_change' %}">Change password</a>""))
-
     helper.layout = layout """
 
     class Meta:
@@ -95,19 +93,13 @@ class UserUpdate(UserCreationForm):
             ),
             Row(
                 Column('image', css_class='form-group col-md-8'),
-                Column('type', css_class='form-group col-md-4 disabled'),
+                Column('type', css_class='form-group col-md-4'),
                 css_class='form-row'
             ),
             Row(
-                Submit('save', 'Save', css_class="btn btn-success col-3 mb-2 col-md-2"),
-                HTML('''
-                    <div>
-                        <a class="btn btn-info mb-2" href="{% url 'userAuth:password_change' %}">Change password</a>
-                    </div>
-                    <div class="">    
-                        <button class="btn btn-danger mb-2" data-toggle="modal" data-target="#exampleModal" id="del-modal">Delete account</button>
-                    </div>
-                '''),
-                css_class="d-flex flex-sm-row flex-column justify-content-sm-between"
+                Submit('submit', 'Save', css_class="btn btn-success"),
+                HTML(
+                    '''<a class="btn btn-info ml-2" href="{% url 'userAuth:password_change' %}">Change password</a>'''),
+                css_class=""
             ),
         )

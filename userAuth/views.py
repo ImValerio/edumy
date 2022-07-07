@@ -33,9 +33,9 @@ class UserUpdateView(SuccessMessageMixin, UpdateView):
 
     def form_valid(self, form):
         pk = str(form.instance.pk)
-        print(pk)
         instance = form.instance
         instance.save()
+        return redirect('userAuth:profile', pk)
 
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'userAuth/user/change_password.html'
