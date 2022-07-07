@@ -2,30 +2,36 @@
 
 {% block content %}
     {% load static %}
-    <div>
-    {% for item in cart %}
-         <div class="d-flex m-1">
-                <img src="{% get_media_prefix %}{{ item.product.image }} " width="400" class="mr-3">
-                <div>
-                    <h1 >{{ item.product.title }}</h1>
-                    <h3 >{{ item.product.author.first_name }}</h3>
-                    <p >{{ item.product.category }}</p>
-                    <p >
-                        <span class="course-price">{{ item.product.price }}</span>$
-                    </p>
-                    <button data-product="{{ item.product.id }}" data-price="{{ item.product.price }}" data-action="remove" class="btn btn-danger cart-update">Remove</button>
+    <div class="container">
+        <div class="border-bottom border-dark">
+            <h1>Your Cart</h1>
+        </div>
+        <div class="p-2">
+            {% for item in cart %}
+                 <div class="d-flex flex-column flex-md-row m-1 mt-2">
+                    <div>
+                        <img class="img-fluid" src="{% get_media_prefix %}{{ item.product.image }}" style="width:300px; height:150px; object-fit: cover">
+                    </div>
+                    <div>
+                        <h1 >{{ item.product.title }}</h1>
+                        <h3 >{{ item.product.author.first_name }}</h3>
+                        <p >{{ item.product.category }}</p>
+                        <p >
+                            <span class="course-price">{{ item.product.price }}</span>$
+                        </p>
+                        <button data-product="{{ item.product.id }}" data-price="{{ item.product.price }}" data-action="remove" class="btn btn-danger cart-update">Remove</button>
+                    </div>
                 </div>
-            </div>
-    {% endfor %}
-        <hr>
-    {% if totPrice != 0 %}
-        <h2 >Total price: <span id="tot-price">{{ totPrice }}</span>$</h2>
-        {% include "payments.html" %}
+            {% endfor %}
+                <hr>
+            {% if totPrice != 0 %}
+                <h2 >Total price: <span id="tot-price">{{ totPrice }}</span>$</h2>
+                {% include "payments.html" %}
 
-        {% else %}
-            <h2 >The cart is empty... </h2>
-    {% endif %}
-    <a href="{% url 'courseHandler:course-list-store' %}">back to store</a>
+                {% else %}
+                    <h2 >The cart is empty... </h2>
+            {% endif %}
+            <a href="{% url 'courseHandler:course-list-store' %}">back to store</a>
+        </div>
     </div>
-
 {% endblock %}
