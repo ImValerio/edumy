@@ -28,6 +28,8 @@ class AnswerForm(forms.ModelForm):
         model = Answer
         fields = ['body']
 
+    
+
 class ReviewForm(forms.ModelForm):
     helper = FormHelper()
     helper.form_id = "add_review_crispy_form"

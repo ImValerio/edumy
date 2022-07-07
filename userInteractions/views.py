@@ -3,9 +3,9 @@ import json
 
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect, HttpResponseBadRequest
-from django.urls import reverse_lazy,reverse
-from django.views.decorators.http import require_POST
+from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponse
+from django.urls import reverse_lazy, reverse
+from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import UpdateView
 
 from courseHandler.models import Video, FollowCourse
@@ -18,6 +18,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 
 from django.forms.models import model_to_dict
+from django.contrib import messages
 
 
 def QuestionList(request, video):
@@ -37,6 +38,7 @@ def QuestionList(request, video):
         return render(request, "userInteractions/question/list.html", context)
     return HttpResponseRedirect('/')
 
+
 class AnswerUpdate(UpdateView):
     model = Answer
     template_name = 'userInteractions/answer/update.html'
@@ -51,7 +53,9 @@ class AnswerUpdate(UpdateView):
 
     def get_success_url(self, **kwargs):
         video = Video.objects.get(id=self.object.video_id)
-        return reverse("courseHandler:course-upload-video-detail", kwargs={'course_id':video.course_id, 'pk': self.object.video_id})
+        return reverse("courseHandler:course-upload-video-detail",
+                       kwargs={'course_id': video.course_id, 'pk': self.object.video_id})
+
 
 def listing_reviews(request):
     review_list = Review.objects.all()
@@ -89,12 +93,29 @@ def listing_question_answer(request):
 
     return JsonResponse({'page_obj': data, 'max_page': max_page})
 
+
 @require_POST
 def add_answer(request, video_id, question_id):
     course_id = (get_object_or_404(Video, id=video_id)).course_id
     if course_id and teacher_is_authorized(request, course_id):
         json_data = json.loads(request.body)
-        Answer.objects.create(author_id=request.user.id, video_id=video_id, question_id=question_id,body=json_data['answer'])
+        Answer.objects.create(author_id=request.user.id, video_id=video_id, question_id=question_id,
+                              body=json_data['answer'])
         return JsonResponse({'msg': 'Answer added'})
 
     return HttpResponseBadRequest()
+
+
+@require_GET
+def delete_answer(request, answer_id):
+    video_id = Answer.objects.get(id=answer_id).video_id
+    course_id = Video.objects.get(id=video_id).course_id
+    if teacher_is_authorized(request, course_id):
+        try:
+            answer = Answer.objects.get(id=answer_id)
+            answer.delete()
+            return HttpResponse()
+        except:
+            return HttpResponseBadRequest()
+
+    return render(request, 'homepage.html')

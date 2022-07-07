@@ -5,7 +5,8 @@
 
 {% block content %}
     <div class="container my-3" >
-    <div id="qa-container">
+
+    <div id="qa-container my-3">
          {% for question, answer in questions_answer_list %}
             <div class="accordion" id="accordionQuestionAnswer{{ answer.id }}">
                 <div class="card">
@@ -35,7 +36,7 @@
 
     </div>
        {% if questions_answer_list|length >= 5 %}
-        <div class="w-100 d-flex justify-content-center mt-2">
+        <div class="w-100 d-flex justify-content-center my-3">
             <button id="load-qa" class="btn btn-light bg-transparent  text-muted border-left-0 border-right-0 border-top-0" style="border: 1px solid ">Read
                 more...
             </button>

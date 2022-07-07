@@ -136,6 +136,23 @@ window.onload = () => {
             setTimeout(() => document.location.href = '/', 3000)
         })
     }
+    const delAnswerBtn = document.querySelector("#del-answer");
+    if (delAnswerBtn) {
+        delAnswerBtn.addEventListener('click', async () => {
+            const answerID = delAnswerBtn.dataset.id;
+            const res = await fetch(`/answer/${answerID}/delete`);
+            document.querySelector("#del-modal").dataset.target = ''
+            $('#exampleModal').modal('hide');
+            if (res.ok){
+
+                document.querySelector('#alert').innerHTML = `<div class="alert alert-success"> Answer deleted successfully! You will be redirected in 3 seconds...</div>`
+            }else{
+                document.querySelector('#alert').innerHTML = `<div class="alert alert-danger"> Error: Bad request! You will be redirected in 3 seconds...</div>`
+            }
+            setTimeout(() =>
+                window.location=document.referrer,3000)
+        })
+    }
 
     const answerForms = document.getElementsByClassName("form-answer");
     if (answerForms) {
