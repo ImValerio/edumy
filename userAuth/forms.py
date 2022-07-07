@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from crispy_forms.layout import Layout, Submit, Row, Column, Div, HTML, Field
+from crispy_forms.layout import Layout, Submit, Row, Column, Div, HTML, Field, ButtonHolder
 from crispy_forms.helper import FormHelper
 from userAuth.models import UserType
 
@@ -22,7 +22,7 @@ class UserSignup(UserCreationForm):
     type = forms.ChoiceField(choices=(
         ('student', 'Student'),
         ('teacher', 'Teacher')
-    ))
+        ), help_text='Type')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -76,6 +76,8 @@ class UserUpdate(UserCreationForm):
         model = UserType
         fields = ('username', 'image', 'first_name', 'last_name', 'email', 'type')
 
+    type = forms.CharField(disabled=True)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -93,21 +95,19 @@ class UserUpdate(UserCreationForm):
             ),
             Row(
                 Column('image', css_class='form-group col-md-8'),
-                Column('type', css_class='form-group col-md-4'),
+                Column('type', css_class='form-group col-md-4 disabled'),
                 css_class='form-row'
             ),
-            Row(
-                Submit('submit', 'Save' ,css_class="btn btn-success"),
+            ButtonHolder(
+                Submit('save', 'Save', css_class="btn btn-success col-3 mb-2 col-md-2"),
                 HTML('''
-                <div class="d-flex w-75 justify-content-around">
                     <div>
-                        <a class="btn btn-info" href="{% url 'userAuth:password_change' %}">Change password</a>
+                        <a class="btn btn-info mb-2" href="{% url 'userAuth:password_change' %}">Change password</a>
                     </div>
                     <div class="">    
-                        <button class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" id="del-modal" >DELETE ACCOUNT</button>
+                        <button class="btn btn-danger mb-2" data-toggle="modal" data-target="#exampleModal" id="del-modal">Delete account</button>
                     </div>
-                </div>
                 '''),
-                css_class=""
+                css_class="d-flex flex-sm-row flex-column justify-content-sm-between"
             ),
         )
