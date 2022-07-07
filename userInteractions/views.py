@@ -3,7 +3,7 @@ import json
 
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.views.decorators.http import require_POST
 
 from courseHandler.models import Video, FollowCourse
@@ -12,7 +12,7 @@ from courseHandler.models import Video, Course
 from courseHandler.views import teacher_is_authorized
 from userInteractions.forms import AnswerForm
 from userInteractions.models import Question, Answer, Review
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 
 from django.forms.models import model_to_dict
@@ -34,39 +34,6 @@ def QuestionList(request, video):
         context["page_obj"] = page_obj
         return render(request, "userInteractions/question/list.html", context)
     return HttpResponseRedirect('/')
-
-def AnswerCreate(request, question, video):
-    video_course = Video.objects.filter(pk=video).select_related('course')
-    course_author_id = [c.course.author_id for c in video_course]
-    if request.user.is_authenticated and request.user.id == course_author_id[0]:
-
-        if request.method == 'POST':
-            form_answer = AnswerForm(request.POST, request.FILES)
-            if form_answer.is_valid():
-                instance = form_answer.save(commit=False)
-                instance.author_id = course_author_id[0]
-                instance.question_id = question
-                instance.video_id = video
-                instance.save()
-                sender = User.objects.get(id=request.user.id)
-                question_row = Question.objects.get(id=question)
-                recipient = User.objects.get(id=question_row.student_id)
-                video_id = Video.objects.values_list('id').get(id=question_row.video_id)
-                course_title = Course.objects.values_list('title').get(id=video_id[0])
-                message = f"[{course_title[0]}] {request.user.first_name} answered your question"
-                notify.send(sender, recipient=recipient, verb='Message',
-                            description=message)
-                return redirect('courseHandler:userInteractions:question-list', video)
-        else:
-            form_answer = AnswerForm()
-            context = {
-                "form_answer": form_answer,
-                "question": question,
-                "video": video
-            }
-            return render(request, 'userInteractions/answer/create.html', context)
-    else:
-        return HttpResponseRedirect('/')
 
 
 def listing_reviews(request):
@@ -107,8 +74,10 @@ def listing_question_answer(request):
 
 @require_POST
 def add_answer(request, video_id, question_id):
-    course_id = Video.objects.filter(id=video_id)
+    course_id = (get_object_or_404(Video, id=video_id)).course_id
     if course_id and teacher_is_authorized(request, course_id):
         json_data = json.loads(request.body)
         Answer.objects.create(author_id=request.user.id, video_id=video_id, question_id=question_id,body=json_data['answer'])
         return JsonResponse({'msg': 'Answer added'})
+
+    return HttpResponseBadRequest()

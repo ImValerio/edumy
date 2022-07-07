@@ -100,21 +100,24 @@ window.onload = () => {
             if (page_obj) {
                 page_obj.forEach(qa => {
 
-                    qaContainer.innerHTML += `<div class="accordion" id="accordionQuestionAnswer{{answer.id}}">
-            <div class="card">
-                <div class="card-header" id="question{{ question.id}}">
-                    <p class="container-fluid font-weight-bold d-flex align-items-center" type="button" class="card-link" data-toggle="collapse" data-target="#answer{{answer.id}}" aria-expanded="false">
-                        ${qa[0].body}
-                    </p>
-                </div>
+                    qaContainer.innerHTML += `
+                    <div class="accordion" id="accordionQuestionAnswer${qa[1].id}">
+                        <div class="card">
+                            <div class="card-header" id="question${qa[0].id}">
+                                <p class="container-fluid font-weight-bold d-flex align-items-center" type="button" class="card-link" data-toggle="collapse" data-target="#answer${qa[1].id}" aria-expanded="false">
+                                    ${qa[0].body}
+                                </p>
+                            </div>
 
-                <div id="answer{{answer.id}}" class="collapse show" data-parent="#accordionQuestionAnswer{{answer.id}}">
-                    <div class="card-body">
-                        ${qa[1].body}
+                            <div id="answer${qa[1].id}" class="collapse show" data-parent="#accordionQuestionAnswer${qa[1].id}">
+                                <div class="card-body">
+                                    ${qa[1].body}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>`
+                    `
+                    $('.collapse').collapse('hide');
                 })
             }
             if (max_page)
@@ -161,8 +164,8 @@ window.onload = () => {
                          <span aria-hidden="true">&times;</span>
                       </button>
                     </div> `
-                }else{
-                     document.querySelector('#alert').innerHTML += `
+                } else {
+                    document.querySelector('#alert').innerHTML += `
                     <div class="alert alert-danger" role="alert"> Something went wrong...
                       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                          <span aria-hidden="true">&times;</span>
