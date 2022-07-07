@@ -8,9 +8,9 @@
 {% block content %}
 
     <div class="container">
-        <fieldset>
-            <legend class="border-bottom">Detail Course</legend>
-        </fieldset>
+        <div class="border-bottom border-dark my-3">
+            <h1 class="">Detail Course</h1>
+        </div>
 
         <div class="mb-3">
             <div class="d-flex flex-column flex-md-row mb-3">
@@ -25,7 +25,8 @@
                             <h5 class="font-weight-normal text-muted">({{ object.category }})</h5>
                         </div>
                         <h4 class="font-weight-normal"> {{ videosCount }} videos!</h4>
-                        <h3 class="">{{ object.price }} $</h3>
+                        <h4 class="font-weight-normal"> Number of students who have bought the course: {{student_count}}</h4>
+                        <h3 class="font-weight-normal">{{ object.price }} $</h3>
                     </div>
                     <div class="d-flex justify-content-end align-items-center">
                         <h5 class=" font-weight-normal">{{ object.author.first_name }} {{ object.author.last_name }}
@@ -60,13 +61,15 @@
                             Update
                         </div>
                     </a>
-                    <a class="btn btn-danger" href="{% url 'courseHandler:course-delete' course.pk %}">
-                        <div class="d-flex">
-                            <ion-icon class="mr-1 mt-0.5" name="trash-outline"
-                                      style="height: 1.3rem; width: 1.3rem;"></ion-icon>
-                            Delete
-                        </div>
-                    </a>
+                    {% if not course.is_active %}
+                        <a class="btn btn-danger" href="{% url 'courseHandler:course-delete' course.pk %}">
+                            <div class="d-flex">
+                                <ion-icon class="mr-1 mt-0.5" name="trash-outline"
+                                          style="height: 1.3rem; width: 1.3rem;"></ion-icon>
+                                Delete
+                            </div>
+                        </a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -85,7 +88,7 @@
                     {% endif %}
                 </div>
             {% endif %}
-            {% if user.usertype.type == 'student' %}
+            {% if user.usertype.type == 'student' and formReview %}
                 <div>
                     {% include "userInteractions/review/create.html" %}
                 </div>
@@ -93,16 +96,44 @@
 
         </div>
 
-
-
-        {% for course in couseList %}
-            <div class="d-flex">
-                <p class="mr-3 text-danger">{{ course.image }} </p>
-                <p class="mr-3">{{ course.price }}</p>
-            </div>
-        {% endfor %}
-
-
+        {% if couseList and user.userType == 'student' %}
+            <div class="my-3">
+                <div class="">
+                    <h3>Other courses you might be interested</h3>
+                </div>
+                <div class="d-flex justify-content-start flex-wrap ml-5 mb-3" style="gap: 1.25rem">
+                    {% for course in couseList %}
+                        <div class="card bg-light shadow d-flex flex-col align-items-stretch"
+                             style="width: 20rem; border-radius: 1rem 1rem 1rem 1rem;">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div class="row">
+                                    <div class="col-10 d-flex">
+                                        <img class="img-fluid rounded" src="{% get_media_prefix %}{{ course.image }}"
+                                             style="width:250px; height:150px; object-fit: cover">
+                                    </div>
+                                    <div class="col">
+                                        <a class="text-info" href="{% url 'courseHandler:course-detail' course.pk %}">
+                                            <ion-icon name="search-outline" style="height: 1.3rem; width: 1.3rem;"></ion-icon>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <h1 class="text-body">{{ course.title }}</h1>
+                                    <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ course.category }}</h6>
+                                    <p class="card-text">{{ course.price }}$</p>
+                                </div>
+                                {% if user.is_authenticated %}
+                                    <div class="d-flex flex-row justify-content-end">
+                                        <button data-product="{{ course.id }}" data-action="add" class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add to cart</button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
     </div>
 
 

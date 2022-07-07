@@ -5,9 +5,10 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 
-from courseHandler.models import Video
+from courseHandler.models import Video, FollowCourse
 from notifications.signals import notify
 from courseHandler.models import Video, Course
+from courseHandler.views import teacher_is_authorized
 from userInteractions.forms import AnswerForm
 from userInteractions.models import Question, Answer, Review
 from django.shortcuts import render, redirect
@@ -17,19 +18,21 @@ from django.forms.models import model_to_dict
 
 
 def QuestionList(request, video):
-    context = {}
-    answer_list = Answer.objects.filter(video_id=video)
-    question_list = Question.objects.filter(video_id=video)
-    ids = [answer.question_id for answer in answer_list]  # id che vogliamo escludere dalle question
-    question_no_answer = [question for question in question_list if
-                          question.id not in ids]  # seleziono le question che non hanno una risposta
-    paginator = Paginator(question_no_answer, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    course_id = Video.objects.get(id=video).course_id
+    if teacher_is_authorized(request, course_id):
+        context = {}
+        answer_list = Answer.objects.filter(video_id=video)
+        question_list = Question.objects.filter(video_id=video)
+        ids = [answer.question_id for answer in answer_list]  # id che vogliamo escludere dalle question
+        question_no_answer = [question for question in question_list if
+                              question.id not in ids]  # seleziono le question che non hanno una risposta
 
-    context["page_obj"] = page_obj
-    return render(request, "userInteractions/question/list.html", context)
-
+        paginator = Paginator(question_no_answer, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context["page_obj"] = page_obj
+        return render(request, "userInteractions/question/list.html", context)
+    return HttpResponseRedirect('/')
 
 def AnswerCreate(request, question, video):
     video_course = Video.objects.filter(pk=video).select_related('course')

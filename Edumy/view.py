@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.db.models import Avg
 from django.views.generic import TemplateView
 from courseHandler.models import FollowCourse, Course
@@ -25,25 +26,24 @@ def recomandation(request):
             min_avg = avg - price_percentage
             max_avg = avg + price_percentage
             popular_category = list(Counter(list_category))[0]
-            all_courses = Course.objects.filter(category=popular_category, price__range=(min_avg,max_avg))
+            all_courses = Course.objects.filter(category=popular_category, price__range=(min_avg,max_avg), is_active='True')
             ids = [course.pk for course in user_courses]
             course_list = [course for course in all_courses if course.id not in ids]
             context['courseList'] = course_list
-            return render(request, "homepage.html", context)
-        else:
-            # query che prende tutte le recensioni che hanno almento un corso, le raggruppa per id e fa la media dei rating per quell'id
-            reviews_courses = Review.objects.select_related('course') \
-                                  .values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg")[:10]
-            id_courses = [course for course in reviews_courses.values_list('course', flat=True)]
-            all_courses = Course.objects.all()
-            courses_list = [course for course in all_courses if course.id in id_courses]
-            context['courseList'] = courses_list
+            paginator = Paginator(course_list, 6)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            context['page_obj'] = page_obj
             return render(request, "homepage.html", context)
     #query che prende tutte le recensioni che hanno almento un corso, le raggruppa per id e fa la media dei rating per quell'id
     reviews_courses = Review.objects.select_related('course')\
-        .values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg")[:10]
+        .values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg")
     id_courses = [course for course in reviews_courses.values_list('course', flat=True)]
-    all_courses = Course.objects.all()
+    all_courses = Course.objects.filter(is_active='True')
     courses_list = [course for course in all_courses if course.id in id_courses]
     context['courseList'] = courses_list
+    paginator = Paginator(courses_list, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['page_obj'] = page_obj
     return render(request, "homepage.html", context)
