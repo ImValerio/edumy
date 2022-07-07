@@ -233,6 +233,21 @@ class CourseList(ListView):
     model = Course
     template_name = 'courseHandler/course/search_result.html'
 
+    def get_context_data(self, **kwargs):
+        courses_bought_id = []
+        if hasattr(self.request.user, 'usertype') and self.request.user.usertype.type == 'student':
+            courses_bought = FollowCourse.objects.filter(student_id=self.request.user.id)
+            courses_bought_id = [e.course_id for e in courses_bought]
+        cart = Cart.new(self.request)
+
+        context = {
+            "object_list": self.object_list,
+            "cartProd": cart.products,
+            "coursesBought": courses_bought_id,
+        }
+
+        return context
+
 
 def CourseListView(request):
     if not request.user.is_authenticated:

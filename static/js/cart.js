@@ -38,11 +38,13 @@ window.onload = () => {
             btn.addEventListener('click', async (e) => {
                 const courseId = btn.dataset.course;
                 await fetch(`${courseId}/publish`);
-
-                document.querySelector('.button-modal').innerText = 'published';
-                document.querySelector('.button-modal').classList = 'mr-3 text-success font-weight-bold bg-transparent border-0';
-                $('#exampleModal').modal('hide');
-
+                $(`#publishModal${courseId}`).modal('hide');
+                const btnModal = document.querySelector(`#modal${courseId}`)
+                const parent = btnModal.parentElement;
+                btnModal.remove();
+                parent.innerHTML += `<p class="mr-3 text-success font-weight-bold bg-transparent border-0">Published</p>`
+                console.log(`#publishModal${courseId}`);
+                location.reload()
             })
         }
     }
