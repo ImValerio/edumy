@@ -1,19 +1,32 @@
 from django.core.paginator import Paginator
 from django.db.models import Avg
+from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView
+
+from courseHandler.forms import SearchCourseForm
 from courseHandler.models import FollowCourse, Course
 from collections import Counter
 
 from userInteractions.models import Review
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 
 class Homepage(TemplateView):
     template_name = 'homepage.html'
 
+
 def recomandation(request):
     context = {}
     # se userCourses è vuoto fare una ricerca totale dei corsi
+    if request.method == 'POST':
+        form = SearchCourseForm(request.POST)
+        if form.is_valid():
+            sstring = form.cleaned_data.get("search_string")
+            where = form.cleaned_data.get("search_where")
+            return redirect("homepage-search-result", sstring, where)
+    else:
+        form = SearchCourseForm()
+        context['form'] = form
     if request.user.is_authenticated:
         user_courses = FollowCourse.objects.filter(student_id=request.user.id).select_related('course')
         courses = [course.course for course in user_courses]
@@ -46,3 +59,4 @@ def recomandation(request):
     page_obj = paginator.get_page(page_number)
     context['page_obj'] = page_obj
     return render(request, "homepage.html", context)
+

@@ -1,5 +1,7 @@
 # Create your views here.index'
-from audioop import avg
+from collections import Counter
+from django.db.models import Avg
+
 from dj_shop_cart.cart import get_cart_class
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
@@ -8,6 +10,7 @@ from django.views.generic.edit import FormMixin
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import DetailView, DeleteView, UpdateView
+
 from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm, PaymentsForm
 from courseHandler.models import Video, Course, FollowCourse, Payment
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -236,6 +239,48 @@ class CourseList(ListView):
     model = Course
     template_name = 'courseHandler/course/search_result.html'
 
+class CourseListHomepage(ListView):
+    model = Course
+    template_name = 'search_result_homepage.html'
+    def get_context_data(self, **kwargs):
+        context = {}
+        if self.request.user.is_authenticated:
+            user_courses = FollowCourse.objects.filter(student_id=self.request.user.id).select_related('course')
+            courses = [course.course for course in user_courses]
+            list_price = [c.price for c in courses]
+            list_category = [c.category for c in courses]
+            avg = sum(list_price) / len(list_category)
+            price_percentage = avg * 0.3
+            min_avg = avg - price_percentage
+            max_avg = avg + price_percentage
+            popular_category = list(Counter(list_category))[0]
+            all_courses = Course.objects.filter(category=popular_category, price__range=(min_avg, max_avg),
+                                                is_active='True')
+            ids = [course.pk for course in user_courses]
+            course_list = [course for course in all_courses if course.id not in ids]
+            context['courseList'] = course_list
+            if len(course_list):
+                paginator = Paginator(course_list, 6)
+                page_number = self.request.GET.get('page')
+                page_obj = paginator.get_page(page_number)
+                print(page_number)
+                context['page_obj'] = page_obj
+                return context
+        # query che prende tutte le recensioni che hanno almento un corso, le raggruppa per id e fa la media dei rating per quell'id
+        reviews_courses = Review.objects.select_related('course') \
+            .values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg")
+        id_courses = [course for course in reviews_courses.values_list('course', flat=True)]
+        all_courses = Course.objects.filter(is_active='True')
+        courses_list = [course for course in all_courses if course.id in id_courses]
+        context['courseList'] = courses_list
+        paginator = Paginator(courses_list, 6)
+        page_number = self.request.GET.get('page')
+        print(page_number)
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
+        return context
+
+
 
 def CourseListView(request):
     if not request.user.is_authenticated:
@@ -307,12 +352,29 @@ class CourseSearchView(CourseList):
         sstring = self.request.resolver_match.kwargs["sstring"]
         where = self.request.resolver_match.kwargs["where"]
         if "Title" in where:
-            qq = self.model.objects.filter(title__icontains=sstring)
+            res = self.model.objects.filter(title__icontains=sstring)
         elif "Author" in where:
-            qq = self.model.objects.filter(author__username__icontains=sstring)
+            res = self.model.objects.filter(author__username__icontains=sstring)
         else:
-            qq = self.model.objects.filter(category__icontains=sstring)
-        return qq
+            res = self.model.objects.filter(category__icontains=sstring)
+        return res
+
+        return super().form_valid(form)
+
+
+class CourseSearchViewHompage(CourseListHomepage):
+    titolo = "La tua ricerca ha dato come risultato"
+
+    def get_queryset(self):
+        sstring = self.request.resolver_match.kwargs["sstring"]
+        where = self.request.resolver_match.kwargs["where"]
+        if "Title" in where:
+            res = self.model.objects.filter(title__icontains=sstring)
+        elif "Author" in where:
+            res = self.model.objects.filter(author__username__icontains=sstring)
+        else:
+            res = self.model.objects.filter(category__icontains=sstring)
+        return res
 
         return super().form_valid(form)
 
