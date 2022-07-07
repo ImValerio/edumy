@@ -22,8 +22,8 @@ from django.contrib import messages
 
 
 def QuestionList(request, video):
-    course_id = Video.objects.get(id=video).course_id
-    if teacher_is_authorized(request, course_id):
+    video = Video.objects.get(id=video)
+    if teacher_is_authorized(request, video.course_id):
         context = {}
         answer_list = Answer.objects.filter(video_id=video)
         question_list = Question.objects.filter(video_id=video)
@@ -35,6 +35,8 @@ def QuestionList(request, video):
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         context["page_obj"] = page_obj
+        context["course_id"] = video.course_id
+        context["video_id"] = video.id
         return render(request, "userInteractions/question/list.html", context)
     return HttpResponseRedirect('/')
 
