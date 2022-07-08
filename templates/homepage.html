@@ -76,13 +76,5 @@
                 </div>
             {% endfor %}
         </div>
-
-        {% if messages %}
-            <div class="messages mt-3">
-                {% for message in messages %}
-                    <div {% if message.tags %} id="alert" class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
     </div>
 {% endblock %}

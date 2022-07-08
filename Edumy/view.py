@@ -14,7 +14,6 @@ from django.shortcuts import render, redirect
 class Homepage(TemplateView):
     template_name = 'homepage.html'
 
-
 def recomandation(request):
     context = {}
     # se userCourses è vuoto fare una ricerca totale dei corsi
@@ -53,6 +52,7 @@ def recomandation(request):
     #query che prende tutte le recensioni che hanno almento un corso, le raggruppa per id e fa la media dei rating per quell'id
     reviews_courses = Review.objects.select_related('course')\
         .values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg")
+    print(reviews_courses.values_list('course', 'rating__avg'))
     id_courses = [course for course in reviews_courses.values_list('course', flat=True)]
     all_courses = Course.objects.filter(is_active='True')
     courses_list = [course for course in all_courses if course.id in id_courses]
