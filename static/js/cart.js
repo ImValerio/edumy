@@ -79,7 +79,8 @@ window.onload = () => {
                 page_obj.forEach(review => {
 
                     reviewContainer.innerHTML += `<div class="row border-bottom">
-                        <ion-icon name="person-circle-outline" style="height: 4.8rem; width: 4.8rem;"></ion-icon>
+
+                        <img class="img-fluid rounded-circle" style="width:65px; height:64px;object-fit: cover" src="${review.img}">
                         <div class="col">
                             <p>${review.student}</p>
                             <p class="mr-3">${review.rating}/5</p>

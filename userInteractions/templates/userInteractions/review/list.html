@@ -6,22 +6,27 @@
 {% load static %}
 {% block content %}
     <div class="container" id="review-container">
-
-        <h3 class="font-weight-light text-uppercase mb-3" style="letter-spacing: 5px">Reviews({{ rating_avg }}/5)</h3>
+        {% if rating_avg %}
+            <h3 class="font-weight-light text-uppercase mb-3" style="letter-spacing: 5px">
+                Reviews({{ rating_avg }}/5)</h3>
+        {% else %}
+            <h3 class="font-weight-light text-uppercase mb-3" style="letter-spacing: 5px">Reviews</h3>
+        {% endif %}
         {% if reviews %}
-        {% for review in reviews %}
+            {% for review in reviews %}
                 <div class="row border-bottom">
-                    <img class="img-fluid rounded-circle" style="width:64px; height:64px;object-fit: cover" src="{% get_media_prefix %}{{ review.student.usertype.image }}">
+                    <img class="img-fluid rounded-circle" style="width:64px; height:64px;object-fit: cover"
+                         src="{% get_media_prefix %}{{ review.student.usertype.image }}">
                     <div class="col">
                         <p>{{ review.student }}</p>
                         <p class="mr-3">{{ review.rating }}/5</p>
                         <p class="mr-3">{{ review.body }}</p>
                     </div>
                 </div>
-        {% endfor %}
-            {% else %}
-                <h3 class="m-3 font-weight-normal">There are no reviews...</h3>
-    {% endif %}
+            {% endfor %}
+        {% else %}
+            <h3 class="m-3 font-weight-normal">There are no reviews...</h3>
+        {% endif %}
     </div>
 
 {% endblock %}

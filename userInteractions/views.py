@@ -8,10 +8,12 @@ from django.urls import reverse_lazy, reverse
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import UpdateView
 
+from Edumy.settings import MEDIA_URL
 from courseHandler.models import Video, FollowCourse
 from notifications.signals import notify
 from courseHandler.models import Video, Course
 from courseHandler.views import teacher_is_authorized
+from userAuth.models import UserType
 from userInteractions.forms import AnswerForm
 from userInteractions.models import Question, Answer, Review
 from django.shortcuts import render, redirect, get_object_or_404
@@ -68,6 +70,7 @@ def listing_reviews(request):
         page_obj = list(paginator.get_page(page_number).object_list)
         data = [model_to_dict(e) for e in page_obj]  # Converto gli oggetti di tipo Review in dizionari
         for review in data:
+            review['img'] = MEDIA_URL+'/'+UserType.objects.values_list('image', flat=True).get(id=int(review['student']))
             review['student'] = User.objects.values_list('username', flat=True).get(id=int(review['student']))
 
         max_page = paginator.num_pages == int(page_number)
