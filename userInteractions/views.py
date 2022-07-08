@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.views.decorators.http import require_POST, require_GET
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, DeleteView
 
 from Edumy.settings import MEDIA_URL
 from courseHandler.models import Video, FollowCourse
@@ -124,3 +124,19 @@ def delete_answer(request, answer_id):
             return HttpResponseBadRequest()
 
     return render(request, 'homepage.html')
+
+@require_GET
+def delete_question(request, question_id):
+    video_id = Question.objects.get(id=question_id).video_id
+    course_id = Video.objects.get(id=video_id).course_id
+    print(question_id)
+    if teacher_is_authorized(request, course_id):
+        try:
+            question = Question.objects.get(id=question_id)
+            question.delete()
+            return HttpResponse()
+        except:
+            return HttpResponseBadRequest()
+
+    return render(request, 'homepage.html')
+

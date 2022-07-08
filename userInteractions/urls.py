@@ -1,7 +1,7 @@
 from django.urls import path
 
 from userInteractions.views import QuestionList, listing_reviews, listing_question_answer, add_answer, AnswerUpdate, \
-    delete_answer
+    delete_answer, delete_question
 
 app_name = 'userInteractions'
 
@@ -12,4 +12,5 @@ urlpatterns = [
     path('question/list/<int:video>', QuestionList, name='question-list'),
     path('answer/<int:pk>/update', AnswerUpdate.as_view(), name='answer-update'),
     path('answer/<int:answer_id>/delete', delete_answer, name='answer-delete'),
+    path('question/<int:question_id>/delete', delete_question, name='question-delete'),
 ]
