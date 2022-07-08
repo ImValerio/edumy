@@ -22,7 +22,7 @@ class UserSignup(UserCreationForm):
     type = forms.ChoiceField(choices=(
         ('student', 'Student'),
         ('teacher', 'Teacher')
-        ), help_text='Type')
+        ))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
