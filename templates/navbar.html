@@ -3,6 +3,8 @@
 
 <nav class="d-flex flex-column flex-md-row justify-content-around align-items-center shadow-sm w-100 p-2">
 
+
+    <a class='h3 text-decoration-none' style="color: #a103ff" href="{% url 'homepage' %}">Edumy</a>
     <a class='h3' href="{% url 'courseHandler:course-list-store' %}">Store</a>
     {% if user.is_authenticated %}
         {% if user.usertype.type == 'teacher' %}
