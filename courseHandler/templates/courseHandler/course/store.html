@@ -25,7 +25,9 @@
                         <p>{{ course.description }}</p>
                         <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
                         <p class="text-muted">{{ course.category }}</p>
-                        <button data-product="{{ course.id }}" data-action="add" class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add to cart</button>
+                        {% if user.usertype.type == 'student' %}
+                            <button data-product="{{ course.id }}" data-action="add" class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add to cart</button>
+                        {% endif %}
                     </div>
 
                 </div>
