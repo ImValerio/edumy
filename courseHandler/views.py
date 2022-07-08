@@ -312,10 +312,10 @@ def CourseListView(request):
         return redirect('homepage')
 
     if request.user.usertype.type == 'student':
-        courses = FollowCourse.objects.all().filter(student_id=request.user.id).select_related('course')
+        courses = FollowCourse.objects.all().filter(student_id=request.user.id).select_related('course').order_by('-price')
         courses = [e.course for e in courses]
     else:
-        courses = Course.objects.all().filter(author_id=request.user.id)
+        courses = Course.objects.all().filter(author_id=request.user.id).order_by('-price')
     paginator = Paginator(courses, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
