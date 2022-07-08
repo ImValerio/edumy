@@ -17,7 +17,7 @@ window.onload = () => {
             btn.addEventListener('click', async (e) => {
                 const prodId = btn.dataset.product;
                 const op = btn.dataset.action;
-                await fetch(`../cart/${op}/${prodId}`);
+                await fetch(`/cart/${op}/${prodId}`);
 
                 if (op === 'remove') {
                     const priceElement = document.getElementById('tot-price');
