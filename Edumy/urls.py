@@ -23,12 +23,15 @@ from Edumy.view import Homepage, recomandation
 from django.conf import settings
 from django.conf.urls.static import static
 
+from courseHandler.views import CourseSearchView, CourseSearchViewHompage
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', recomandation, name='homepage'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout', auth_views.LogoutView.as_view(), name='logout'),
     path('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
+    path("search/result/<str:sstring>/<str:where>/", CourseSearchViewHompage.as_view(), name="homepage-search-result"),
     path('', include('userAuth.urls')),
     path('', include('courseHandler.urls')),
     path('', include('userInteractions.urls')),

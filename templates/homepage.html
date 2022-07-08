@@ -43,9 +43,16 @@
                     {% endif %}
                 </ul>
             </nav>
-        <div class="d-flex justify-content-start flex-wrap ml-5" style="gap: 1.25rem">
+
+        <div class="my-3 flex-md-row flex-column justify-content-center">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="">The most popular courses</h3>
+                {% include 'courseHandler/course/search.html' %}
+            </div>
+        </div>
+        <div class="d-flex justify-content-start flex-wrap ml-md-5" style="gap: 1.25rem">
             {% for course in page_obj %}
-                <div class="card bg-light shadow d-flex flex-col align-items-stretch"
+                <div class="card bg-light shadow d-flex align-items-stretch"
                      style="width: 20rem; border-radius: 1rem 1rem 1rem 1rem;">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <div class="row">

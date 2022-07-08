@@ -1,5 +1,7 @@
 # Create your views here.index'
-from audioop import avg
+from collections import Counter
+from django.db.models import Avg
+
 from dj_shop_cart.cart import get_cart_class
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
@@ -8,11 +10,12 @@ from django.views.generic.edit import FormMixin
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import DetailView, DeleteView, UpdateView
+
 from courseHandler.forms import CreateVideo, SearchCourseForm, UpdateVideoForm, PaymentsForm
 from courseHandler.models import Video, Course, FollowCourse, Payment
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse, HttpRequest
-
+from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView
@@ -52,6 +55,7 @@ def VideoUploadDetail(request, course_id, pk):
                 instance.student_id = request.user.id
                 instance.video_id = int(pk)
                 instance.save()
+                messages.add_message(request, messages.INFO, 'The question was created successfully')
                 return redirect('courseHandler:course-upload-video-detail', course_id, pk)
         else:
             form_question = QuestionForm()
@@ -80,6 +84,7 @@ def VideoUploadView(request, pk):
                 instance = form.save(commit=False)
                 instance.course_id = int(pk)
                 instance.save()
+                messages.add_message(request, messages.INFO, 'The video was created successfully')
                 return redirect('courseHandler:course-upload-video', pk)
 
         user_follow_course = False
@@ -112,10 +117,11 @@ def VideoUploadView(request, pk):
         return HttpResponseRedirect('/')
 
 
-class VideoUpdateView(LoginRequiredMixin, UpdateView):
+class VideoUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = Video
     form_class = UpdateVideoForm
     template_name = 'courseHandler/video/update.html'
+    success_message = "The video was updated successfully"
 
     def form_valid(self, form):
         form.instance.save()
@@ -123,12 +129,11 @@ class VideoUpdateView(LoginRequiredMixin, UpdateView):
         return redirect('courseHandler:course-upload-video', pk)
 
 
-class CourseCreate(LoginRequiredMixin, CreateView):
+class CourseCreate(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     template_name = 'courseHandler/course/create.html'
-
     form_class = CourseForm
     success_url = reverse_lazy('courseHandler:course-list')
-    success_message = "The course was delete successfully"
+    success_message = "The course was created successfully"
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.usertype.type == 'teacher':
@@ -219,7 +224,7 @@ class CourseDelete(SuccessMessageMixin, DeleteView):
     model = Course
     template_name = 'courseHandler/course/delete.html'
     success_url = reverse_lazy('courseHandler:course-list')
-    success_message = "The course was delete successfully"
+    success_message = "The course was deleted successfully"
 
     def dispatch(self, request, *args, pk, **kwargs):
         course = Course.objects.get(id=pk)
@@ -228,11 +233,12 @@ class CourseDelete(SuccessMessageMixin, DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class CourseUpdate(UpdateView):
+class CourseUpdate(SuccessMessageMixin, UpdateView):
     model = Course
     template_name = 'courseHandler/course/update.html'
     success_url = reverse_lazy('courseHandler:course-list')
     form_class = CourseForm
+    success_message = "The course was updated successfully"
 
     def dispatch(self, request, *args, pk, **kwargs):
         if not teacher_is_authorized(request, pk):
@@ -258,6 +264,48 @@ class CourseList(ListView):
         }
 
         return context
+
+class CourseListHomepage(ListView):
+    model = Course
+    template_name = 'search_result_homepage.html'
+    def get_context_data(self, **kwargs):
+        context = {}
+        if self.request.user.is_authenticated:
+            user_courses = FollowCourse.objects.filter(student_id=self.request.user.id).select_related('course')
+            courses = [course.course for course in user_courses]
+            list_price = [c.price for c in courses]
+            list_category = [c.category for c in courses]
+            avg = sum(list_price) / len(list_category)
+            price_percentage = avg * 0.3
+            min_avg = avg - price_percentage
+            max_avg = avg + price_percentage
+            popular_category = list(Counter(list_category))[0]
+            all_courses = Course.objects.filter(category=popular_category, price__range=(min_avg, max_avg),
+                                                is_active='True')
+            ids = [course.pk for course in user_courses]
+            course_list = [course for course in all_courses if course.id not in ids]
+            context['courseList'] = course_list
+            if len(course_list):
+                paginator = Paginator(course_list, 6)
+                page_number = self.request.GET.get('page')
+                page_obj = paginator.get_page(page_number)
+                print(page_number)
+                context['page_obj'] = page_obj
+                return context
+        # query che prende tutte le recensioni che hanno almento un corso, le raggruppa per id e fa la media dei rating per quell'id
+        reviews_courses = Review.objects.select_related('course') \
+            .values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg")
+        id_courses = [course for course in reviews_courses.values_list('course', flat=True)]
+        all_courses = Course.objects.filter(is_active='True')
+        courses_list = [course for course in all_courses if course.id in id_courses]
+        context['courseList'] = courses_list
+        paginator = Paginator(courses_list, 6)
+        page_number = self.request.GET.get('page')
+        print(page_number)
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
+        return context
+
 
 
 def CourseListView(request):
@@ -330,12 +378,29 @@ class CourseSearchView(CourseList):
         sstring = self.request.resolver_match.kwargs["sstring"]
         where = self.request.resolver_match.kwargs["where"]
         if "Title" in where:
-            qq = self.model.objects.filter(title__icontains=sstring)
+            res = self.model.objects.filter(title__icontains=sstring)
         elif "Author" in where:
-            qq = self.model.objects.filter(author__username__icontains=sstring)
+            res = self.model.objects.filter(author__username__icontains=sstring)
         else:
-            qq = self.model.objects.filter(category__icontains=sstring)
-        return qq
+            res = self.model.objects.filter(category__icontains=sstring)
+        return res
+
+        return super().form_valid(form)
+
+
+class CourseSearchViewHompage(CourseListHomepage):
+    titolo = "La tua ricerca ha dato come risultato"
+
+    def get_queryset(self):
+        sstring = self.request.resolver_match.kwargs["sstring"]
+        where = self.request.resolver_match.kwargs["where"]
+        if "Title" in where:
+            res = self.model.objects.filter(title__icontains=sstring)
+        elif "Author" in where:
+            res = self.model.objects.filter(author__username__icontains=sstring)
+        else:
+            res = self.model.objects.filter(category__icontains=sstring)
+        return res
 
         return super().form_valid(form)
 

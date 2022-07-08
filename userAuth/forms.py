@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from crispy_forms.layout import Layout, Submit, Row, Column, Div, HTML, Field
+from crispy_forms.layout import Layout, Submit, Row, Column, Div, HTML, Field, ButtonHolder
 from crispy_forms.helper import FormHelper
 from userAuth.models import UserType
 
@@ -22,7 +22,7 @@ class UserSignup(UserCreationForm):
     type = forms.ChoiceField(choices=(
         ('student', 'Student'),
         ('teacher', 'Teacher')
-    ))
+        ), help_text='Type')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -74,10 +74,15 @@ class UserUpdate(forms.ModelForm):
         model = UserType
         fields = ('username', 'image', 'first_name', 'last_name', 'email', 'type')
 
+<<<<<<< HEAD
     type = forms.ChoiceField(choices=(
         ('student', 'Student'),
         ('teacher', 'Teacher')
     ))
+=======
+    type = forms.CharField(disabled=True)
+
+>>>>>>> 130204b78859b9bbbb008fc16e1622e5bf87d148
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -99,6 +104,7 @@ class UserUpdate(forms.ModelForm):
                 css_class='form-row'
             ),
             Row(
+<<<<<<< HEAD
                 Submit('submit', 'Save' ,css_class="btn btn-success"),
                 HTML('''      <div class="d-flex w-75 justify-content-around">
                     <div>
@@ -108,6 +114,11 @@ class UserUpdate(forms.ModelForm):
                         <input  type='button' class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" id="del-modal" value="DELETE ACCOUNT"/ >
                     </div>
                 </div>'''),
+=======
+                Submit('submit', 'Save', css_class="btn btn-success"),
+                HTML(
+                    '''<a class="btn btn-info ml-2" href="{% url 'userAuth:password_change' %}">Change password</a>'''),
+>>>>>>> 130204b78859b9bbbb008fc16e1622e5bf87d148
                 css_class=""
             ),
         )

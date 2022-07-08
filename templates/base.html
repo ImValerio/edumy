@@ -26,7 +26,15 @@
     {% register_notify_callbacks callbacks='my_special_notification_callback,fill_notification_badge' %}
 
     {% include 'navbar.html' %}
-
+    <div class="container mt-4">
+        {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div {% if message.tags %} id="alert" class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+                    {% endfor %}
+                </div>
+        {% endif %}
+    </div>
     {% block content %}
 
     {% endblock %}
