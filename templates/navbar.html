@@ -1,25 +1,25 @@
 {% load notifications_tags %}
 
 
-<nav class="d-flex flex-column flex-md-row justify-content-around align-items-center shadow-sm w-100 p-2">
+<nav class="d-flex flex-column flex-md-row justify-content-around align-items-center shadow-sm w-100 p-2" style="background-color: #4b4b4b">
 
 
-    <a class='h3 text-decoration-none' style="color: #a103ff" href="{% url 'homepage' %}">Edumy</a>
-    <a class='h3' href="{% url 'courseHandler:course-list-store' %}">Store</a>
+    <a class='h3 text-decoration-none font-weight-bold text-uppercase' style="color: #a103ff; letter-spacing: 5px" href="{% url 'homepage' %}">Edumy</a>
+    <a class='h3 text-white' href="{% url 'courseHandler:course-list-store' %}">Store</a>
     {% if user.is_authenticated %}
         {% if user.usertype.type == 'teacher' %}
-            <a class='h3' href="{% url 'courseHandler:course-create' %}">Create course</a>
+            <a class='h3 text-white' href="{% url 'courseHandler:course-create' %}">Create course</a>
         {% endif %}
-        <a class='h3' href="{% url 'courseHandler:course-list' %}">My courses</a>
+        <a class='h3 text-white' href="{% url 'courseHandler:course-list' %}">My courses</a>
 
-        <a class='h3' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a>
+        <a class='h3 text-white' href=" {% url 'userAuth:profile' pk=user.id %}">Profile</a>
         <div class="d-flex  justify-content-around ">
-            <a class="d-flex justify-content-center align-items-center " href="{% url 'courseHandler:cart-view' %}">
+            <a class="d-flex justify-content-center align-items-center  text-white" href="{% url 'courseHandler:cart-view' %}">
                 <ion-icon name="cart-outline" class="h2"></ion-icon>
             </a>
             <div class="dropdown mx-5 d-flex justify-content-center align-items-center p-0 m-0">
 
-                <div class="dropdown-toggle d-flex justify-content-center align-items-center h3 bg-transparent border-0 p-0 m-0"
+                <div class="dropdown-toggle d-flex justify-content-center align-items-center h3 text-white bg-transparent border-0 p-0 m-0"
                      type="button" id="notifications-btn"
                      data-toggle="dropdown"
                      data-user="{{ user.id }}"
@@ -28,8 +28,8 @@
                 >
 
 
-                    <ion-icon name="notifications-outline" class="h3"></ion-icon>
-                    <span class="h3">({% live_notify_badge %})</span>
+                    <ion-icon name="notifications-outline" class="h3 text-white"></ion-icon>
+                    <span class="h3 text-white">({% live_notify_badge %})</span>
                 </div>
                 <div id='notify-list' class="dropdown-menu" aria-labelledby="dropdownMenu2">
 
@@ -37,7 +37,7 @@
                 </div>
             </div>
 
-            <a class='d-flex justify-content-center align-items-center' href="{% url 'logout' %}">
+            <a class='d-flex justify-content-center align-items-center text-white' href="{% url 'logout' %}">
                 <ion-icon name="log-out-outline" class="h2"></ion-icon>
                 <h4 class="d-none d-sm-flex">Logout</h4>
             </a>
