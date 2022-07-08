@@ -193,6 +193,9 @@ class CourseDetail(FormMixin, DetailView):
         ratings = [review.rating for review in reviews]
         cart = Cart.new(self.request)
         context['prodInCart'] = self.object in cart.products
+        is_student  = FollowCourse.objects.filter(student_id=self.request.user.id,course_id=self.object.id)
+        if is_student:
+            context['prodInCart'] = True
         if ratings:
             context['rating_avg'] = round(sum(ratings) / len(ratings), 1)
             context['reviews'] = reviews[:5]
