@@ -24,8 +24,12 @@ window.onload = () => {
                     const priceElement = document.getElementById('tot-price');
                     const totPrice = Number(priceElement.innerText);
                     const newPrice = totPrice - Number(btn.dataset.price);
-                    newPrice > 0 ?
-                        priceElement.innerText = newPrice.toString() : priceElement.parentElement.innerText = 'The cart is empty...';
+                    if (newPrice > 0)
+                        priceElement.innerText = newPrice.toString();
+                    else{
+                        priceElement.parentElement.innerText = 'The cart is empty...';
+                        document.querySelector('form').remove()
+                    }
                 }
 
                 btn.parentElement.parentElement.remove();
