@@ -28,7 +28,6 @@ def recomandation(request):
         context['form'] = form
     if request.user.is_authenticated and request.user.usertype.type != 'teacher':
         user_courses = FollowCourse.objects.filter(student_id=request.user.id).select_related('course')
-        print(user_courses)
         if len(user_courses):
             courses = [course.course for course in user_courses]
             list_price = [c.price for c in courses]
@@ -38,8 +37,7 @@ def recomandation(request):
             min_avg = avg - price_percentage
             max_avg = avg + price_percentage
             popular_category = list(Counter(list_category))[0]
-            all_courses = Course.objects.filter(category=popular_category, price__range=(min_avg,max_avg), is_active='True')
-            print(all_courses.values_list())
+            all_courses = Course.objects.filter(category=popular_category, price__range=(min_avg,max_avg), is_active='True').order_by('-price')
             ids = [course.pk for course in user_courses]
             course_list = [course for course in all_courses if course.id not in ids]
             context['courseList'] = course_list
@@ -52,7 +50,6 @@ def recomandation(request):
     #query che prende tutte le recensioni che hanno almento un corso, le raggruppa per id e fa la media dei rating per quell'id
     reviews_courses = Review.objects.select_related('course')\
         .values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg")
-    print(reviews_courses.values_list('course', 'rating__avg'))
     id_courses = [course for course in reviews_courses.values_list('course', flat=True)]
     all_courses = Course.objects.filter(is_active='True')
     courses_list = [course for course in all_courses if course.id in id_courses]
