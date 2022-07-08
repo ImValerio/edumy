@@ -55,7 +55,7 @@ def VideoUploadDetail(request, course_id, pk):
                 instance.student_id = request.user.id
                 instance.video_id = int(pk)
                 instance.save()
-                messages.add_message(request, messages.INFO, 'The question was created successfully')
+                messages.add_message(request, messages.SUCCESS, 'The question was created successfully')
                 return redirect('courseHandler:course-upload-video-detail', course_id, pk)
         else:
             form_question = QuestionForm()
@@ -84,7 +84,7 @@ def VideoUploadView(request, pk):
                 instance = form.save(commit=False)
                 instance.course_id = int(pk)
                 instance.save()
-                messages.add_message(request, messages.INFO, 'The video was created successfully')
+                messages.add_message(request, messages.SUCCESS, 'The video was created successfully')
                 return redirect('courseHandler:course-upload-video', pk)
 
         user_follow_course = False

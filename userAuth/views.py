@@ -29,12 +29,12 @@ class UserUpdateView(SuccessMessageMixin, UpdateView):
     model = UserType
     form_class = UserUpdate
     template_name = 'userAuth/user/update.html'
-    success_message = "Successfully Updated Your User Profile"
 
     def form_valid(self, form):
         pk = str(form.instance.pk)
         instance = form.instance
         instance.save()
+        messages.add_message(self.request, messages.SUCCESS, 'Successfully Updated Your User Profile')
         return redirect('userAuth:profile', pk)
 
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
