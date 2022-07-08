@@ -14,6 +14,8 @@ class CreateVideo(forms.ModelForm):
         model = Video
         fields = ['title', 'description', 'file']
 
+
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
@@ -75,6 +77,8 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = ('title', 'description', 'category', 'image', 'price', 'creation_date')
+
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
