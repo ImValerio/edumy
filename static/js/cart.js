@@ -13,6 +13,7 @@ window.onload = () => {
     const notifyUnreadElem = document.querySelector('.live_notify_badge');
 
     if (updateBtns) {
+
         for (let btn of updateBtns) {
             btn.addEventListener('click', async (e) => {
                 const prodId = btn.dataset.product;

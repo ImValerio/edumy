@@ -186,7 +186,9 @@ class CourseDetail(FormMixin, DetailView):
         # context['couseList'] = all_courses
         reviews = Review.objects.filter(course_id=self.object.id).select_related('student')
         ratings = [review.rating for review in reviews]
-        context['rating_avg'] = sum(ratings) / len(ratings)
+        cart = Cart.new(self.request)
+        context['prodInCart'] = self.object in cart.products
+        context['rating_avg'] = round(sum(ratings) / len(ratings), 1)
         context['reviews'] = reviews[:5]
         if self.request.user.is_authenticated:
             check_follow = FollowCourse.objects.filter(course_id=self.object.id, student_id=self.request.user.id)
