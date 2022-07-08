@@ -130,6 +130,11 @@ class CourseCreate(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('courseHandler:course-list')
     success_message = "The course was delete successfully"
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.usertype.type == 'teacher':
+            return redirect('homepage')
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         # author = get_object_or_404(UserType, pk=form.instance.author_id)
         # if author.type == "Teacher":

@@ -13,7 +13,6 @@ def validate_image(image):
     height = image.height
     width = image.width
     if (width != correct_width) or height != correct_height:
-        print('ciao')
         raise ValidationError("Image must have 1920x1080 resolution")
 
 
