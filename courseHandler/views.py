@@ -1,11 +1,12 @@
 # Create your views here.index'
 from collections import Counter
-from django.db.models import Avg
+from django.db.models import Avg, Prefetch
 
 from dj_shop_cart.cart import get_cart_class
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
 from django.db.models import Max, Count
+from django.forms import model_to_dict
 from django.views.generic.edit import FormMixin
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET, require_POST
@@ -193,7 +194,7 @@ class CourseDetail(FormMixin, DetailView):
         ratings = [review.rating for review in reviews]
         cart = Cart.new(self.request)
         context['prodInCart'] = self.object in cart.products
-        is_student  = FollowCourse.objects.filter(student_id=self.request.user.id,course_id=self.object.id)
+        is_student = FollowCourse.objects.filter(student_id=self.request.user.id,course_id=self.object.id)
         if is_student:
             context['prodInCart'] = True
         if ratings:
@@ -338,7 +339,6 @@ def CourseListStore(request):
             where = form.cleaned_data.get("search_where")
             return redirect("courseHandler:course-search-result", sstring, where)
     else:
-        courses = Course.objects.all().filter(is_active=True)
         courses_bought_id = []
         print(request.user)
         if hasattr(request.user, 'usertype') and request.user.usertype.type == 'student':
@@ -347,11 +347,30 @@ def CourseListStore(request):
         cart = Cart.new(request)
         form = SearchCourseForm()
         context = {
-            "courses": courses,
             "cartProd": cart.products,
             "coursesBought": courses_bought_id,
             "form": form
         }
+
+        id_courses_follow = [course for course in FollowCourse.objects.filter(student_id=request.user.id).values_list('course_id', flat=True)]
+        all_courses = Course.objects.filter(is_active='True').exclude(id__in=id_courses_follow)
+        avg_courses = Review.objects.select_related('course').values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg").exclude(course_id__in=id_courses_follow)
+        all_courses = all_courses.values()
+
+        for course in all_courses:
+            course['avg']= -1
+
+        for course in all_courses:
+            for avg in avg_courses:
+                if course['id'] == avg['course']:
+                    course['avg'] = avg['rating__avg']
+
+        sort_course = sorted(all_courses, key=lambda x: x['avg'])
+        paginator = Paginator(sort_course[::-1], 6)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
+
         return render(request, 'courseHandler/course/store.html', context)
 
 
