@@ -184,7 +184,10 @@ class CourseDetail(FormMixin, DetailView):
         videos_count = len(Video.objects.filter(course_id=self.object.id))
         context['couseList'] = course_no_follow
         # context['couseList'] = all_courses
-        context['reviews'] = Review.objects.filter(course_id=self.object.id).select_related('student')[:5]
+        reviews = Review.objects.filter(course_id=self.object.id).select_related('student')
+        ratings = [review.rating for review in reviews]
+        context['rating_avg'] = sum(ratings) / len(ratings)
+        context['reviews'] = reviews[:5]
         if self.request.user.is_authenticated:
             check_follow = FollowCourse.objects.filter(course_id=self.object.id, student_id=self.request.user.id)
             if check_follow:

@@ -75,7 +75,6 @@
         </div>
 
         <div class="d-flex justify-content-between mt-3">
-            {% if reviews %}
                 <div>
                     {% include "userInteractions/review/list.html" %}
 
@@ -87,7 +86,6 @@
                     </div>
                     {% endif %}
                 </div>
-            {% endif %}
             {% if user.usertype.type == 'student' and formReview %}
                 <div>
                     {% include "userInteractions/review/create.html" %}
