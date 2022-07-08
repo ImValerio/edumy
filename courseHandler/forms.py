@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, Div, HTML, Field
 from courseHandler.models import Course, Payment
 from courseHandler.models import Video
-
+import datetime
 
 class CreateVideo(forms.ModelForm):
     helper = FormHelper()
@@ -13,6 +13,8 @@ class CreateVideo(forms.ModelForm):
     class Meta:
         model = Video
         fields = ['title', 'description', 'file']
+
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -75,6 +77,12 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = ('title', 'description', 'category', 'image', 'price', 'creation_date')
+
+    def clean_creation_date(self):
+        date = self.cleaned_data['creation_date']
+        if date > datetime.date.today():
+            raise forms.ValidationError("The date cannot be in the future!")
+        return date
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

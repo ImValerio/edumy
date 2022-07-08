@@ -13,18 +13,23 @@ window.onload = () => {
     const notifyUnreadElem = document.querySelector('.live_notify_badge');
 
     if (updateBtns) {
+
         for (let btn of updateBtns) {
             btn.addEventListener('click', async (e) => {
                 const prodId = btn.dataset.product;
                 const op = btn.dataset.action;
-                await fetch(`../cart/${op}/${prodId}`);
+                await fetch(`/cart/${op}/${prodId}`);
 
                 if (op === 'remove') {
                     const priceElement = document.getElementById('tot-price');
                     const totPrice = Number(priceElement.innerText);
                     const newPrice = totPrice - Number(btn.dataset.price);
-                    newPrice > 0 ?
-                        priceElement.innerText = newPrice.toString() : priceElement.parentElement.innerText = 'The cart is empty...';
+                    if (newPrice > 0)
+                        priceElement.innerText = newPrice.toString();
+                    else{
+                        priceElement.parentElement.innerText = 'The cart is empty...';
+                        document.querySelector('form').remove()
+                    }
                 }
 
                 btn.parentElement.parentElement.remove();
@@ -38,11 +43,13 @@ window.onload = () => {
             btn.addEventListener('click', async (e) => {
                 const courseId = btn.dataset.course;
                 await fetch(`${courseId}/publish`);
-
-                document.querySelector('.button-modal').innerText = 'published';
-                document.querySelector('.button-modal').classList = 'mr-3 text-success font-weight-bold bg-transparent border-0';
-                $('#exampleModal').modal('hide');
-
+                $(`#publishModal${courseId}`).modal('hide');
+                const btnModal = document.querySelector(`#modal${courseId}`)
+                const parent = btnModal.parentElement;
+                btnModal.remove();
+                parent.innerHTML += `<p class="mr-3 text-success font-weight-bold bg-transparent border-0">Published</p>`
+                console.log(`#publishModal${courseId}`);
+                location.reload()
             })
         }
     }
@@ -76,7 +83,8 @@ window.onload = () => {
                 page_obj.forEach(review => {
 
                     reviewContainer.innerHTML += `<div class="row border-bottom">
-                        <ion-icon name="person-circle-outline" style="height: 4.8rem; width: 4.8rem;"></ion-icon>
+
+                        <img class="img-fluid rounded-circle" style="width:65px; height:64px;object-fit: cover" src="${review.img}">
                         <div class="col">
                             <p>${review.student}</p>
                             <p class="mr-3">${review.rating}/5</p>
@@ -131,7 +139,7 @@ window.onload = () => {
             const userID = delAccountBtn.dataset.id;
             await fetch(`/delete-account/${userID}`);
             document.querySelector("#del-modal").dataset.target = ''
-            $('#exampleModal').modal('hide');
+            $('#deleteModal').modal('hide');
             document.querySelector('#alert').innerHTML = `<div class="alert alert-danger"> Account deleted successfully! You will be redirected in 3 seconds...</div>`
             setTimeout(() => document.location.href = '/', 3000)
         })
@@ -142,7 +150,7 @@ window.onload = () => {
             const answerID = delAnswerBtn.dataset.id;
             const res = await fetch(`/answer/${answerID}/delete`);
             document.querySelector("#del-modal").dataset.target = ''
-            $('#exampleModal').modal('hide');
+            $('#deleteModal').modal('hide');
             if (res.ok){
 
                 document.querySelector('#alert').innerHTML = `<div class="alert alert-success"> Answer deleted successfully! You will be redirected in 3 seconds...</div>`

@@ -97,15 +97,15 @@
                                         <p class="mr-3 text-success font-weight-bold">Published</p>
                                     {% else %}
                                         <button type="button" class="mr-3 btn btn-primary font-weight-bold button-modal"
-                                                data-toggle="modal" data-target="#exampleModal">Publish
+                                                data-toggle="modal" data-target="#publishModal{{ course.id }}" id="modal{{ course.id }}">Publish
                                         </button>
-                                        <div class="modal fade" id="exampleModal" tabindex="-1"
-                                             aria-labelledby="exampleModalLabel"
+                                        <div class="modal fade" id="publishModal{{ course.id }}"  tabindex="-1"
+                                             aria-labelledby="publishModal{{ course.id }}"
                                              aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                                        <h5 class="modal-title" id="publishModalLabel{{ course.id }}">Publish course</h5>
                                                         <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>

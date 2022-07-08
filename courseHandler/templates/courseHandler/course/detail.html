@@ -25,79 +25,92 @@
                             <h5 class="font-weight-normal text-muted">({{ object.category }})</h5>
                         </div>
                         <h4 class="font-weight-normal"> {{ videosCount }} videos!</h4>
-                        <h4 class="font-weight-normal text-muted"> Number of students who have bought the course: {{student_count}}</h4>
+                        <h4 class="font-weight-normal text-muted"> Number of students who have bought the
+                            course: {{ student_count }}</h4>
                         <h3 class="font-weight-normal">{{ object.price }} $</h3>
                     </div>
-                    <div class="d-flex justify-content-end align-items-center">
-                        <h5 class=" font-weight-normal">{{ object.author.first_name }} {{ object.author.last_name }}
-                            | {{ object.creation_date }}</h5>
-                        <h5 class=" font-weight-light"></h5>
+                    {% if prodInCart %}
+                        <div class="d-flex justify-content-end align-items-center">
+                    {% else %}
+                        <div class="d-flex justify-content-between align-items-center">
+                    {% endif %}
+                    {% if user.usertype.type == 'student' and not prodInCart %}
+                        <div>
+                            <div>
+                                <button data-product="{{ course.id }}" data-action="add"
+                                        class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add to cart
+                                </button>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <h5 class=" font-weight-normal">{{ object.author.first_name }} {{ object.author.last_name }}
+                        | {{ object.creation_date }}</h5>
+                    <h5 class=" font-weight-light"></h5>
+                    </div>
                     </div>
                 </div>
-            </div>
-            <div class="">
-                <h5 class="card-text font-weight-normal">{{ object.description }}</h5>
-            </div>
-        </div>
-
-        <div class="d-flex justify-content-between">
-            <div class="">
-                <a class="btn btn-light align-self-center" href="{% url 'courseHandler:course-list-store' %}">
-                    <div class="d-flex">
-                        <ion-icon class="mr-1 mt-0.5" name="storefront-outline"
-                                  style="height: 1.3rem; width: 1.3rem;"></ion-icon>
-                        Store
-                    </div>
-                </a>
+                <div class="">
+                    <h5 class="card-text font-weight-normal">{{ object.description }}</h5>
+                </div>
             </div>
 
-            <div class="">
-                {% if user.usertype.type == 'teacher' %}
-                    <a class="btn btn-primary align-self-center"
-                       href="{% url 'courseHandler:course-update' course.pk %}">
+            <div class="d-flex justify-content-between">
+                <div class="">
+                    <a class="btn btn-light align-self-center" href="{% url 'courseHandler:course-list-store' %}">
                         <div class="d-flex">
-                            <ion-icon class="mr-1 mt-0.5" name="cog-outline"
+                            <ion-icon class="mr-1 mt-0.5" name="storefront-outline"
                                       style="height: 1.3rem; width: 1.3rem;"></ion-icon>
-                            Update
+                            Store
                         </div>
                     </a>
-                    {% if not course.is_active %}
-                        <a class="btn btn-danger" href="{% url 'courseHandler:course-delete' course.pk %}">
+                </div>
+
+                <div class="">
+                    {% if user.usertype.type == 'teacher' %}
+                        <a class="btn btn-primary align-self-center"
+                           href="{% url 'courseHandler:course-update' course.pk %}">
                             <div class="d-flex">
-                                <ion-icon class="mr-1 mt-0.5" name="trash-outline"
+                                <ion-icon class="mr-1 mt-0.5" name="cog-outline"
                                           style="height: 1.3rem; width: 1.3rem;"></ion-icon>
-                                Delete
+                                Update
                             </div>
                         </a>
+                        {% if not course.is_active %}
+                            <a class="btn btn-danger" href="{% url 'courseHandler:course-delete' course.pk %}">
+                                <div class="d-flex">
+                                    <ion-icon class="mr-1 mt-0.5" name="trash-outline"
+                                              style="height: 1.3rem; width: 1.3rem;"></ion-icon>
+                                    Delete
+                                </div>
+                            </a>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
+                </div>
             </div>
-        </div>
 
-        <div class="d-flex justify-content-between mt-3">
-            {% if reviews %}
+            <div class="d-flex justify-content-between mt-3">
                 <div>
                     {% include "userInteractions/review/list.html" %}
 
                     {% if reviews|length >= 5 %}
-                    <div class="w-100 d-flex justify-content-center mt-2">
-                        <button id="load-comments" class="btn btn-light text-muted" style="border: 1px solid ">Read
-                            more...
-                        </button>
-                    </div>
+                        <div class="w-100 d-flex justify-content-center mt-2">
+                            <button id="load-comments" class="btn btn-light text-muted" style="border: 1px solid ">Read
+                                more...
+                            </button>
+                        </div>
                     {% endif %}
                 </div>
-            {% endif %}
-            {% if user.usertype.type == 'student' and formReview %}
-                <div>
-                    {% include "userInteractions/review/create.html" %}
-                </div>
-            {% endif %}
+                {% if user.usertype.type == 'student' and formReview %}
+                    <div>
+                        {% include "userInteractions/review/create.html" %}
+                    </div>
+                {% endif %}
 
-        </div>
+            </div>
 
-        {% if couseList and user.userType == 'student' %}
-            <div class="my-3">
+            {% if couseList and user.userType == 'student' %}
+                <div class="my-3">
                 <div class="">
                     <h3>Other courses you might be interested</h3>
                 </div>
@@ -113,7 +126,8 @@
                                     </div>
                                     <div class="col">
                                         <a class="text-info" href="{% url 'courseHandler:course-detail' course.pk %}">
-                                            <ion-icon name="search-outline" style="height: 1.3rem; width: 1.3rem;"></ion-icon>
+                                            <ion-icon name="search-outline"
+                                                      style="height: 1.3rem; width: 1.3rem;"></ion-icon>
                                         </a>
                                     </div>
                                 </div>
@@ -125,7 +139,10 @@
                                 </div>
                                 {% if user.is_authenticated %}
                                     <div class="d-flex flex-row justify-content-end">
-                                        <button data-product="{{ course.id }}" data-action="add" class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add to cart</button>
+                                        <button data-product="{{ course.id }}" data-action="add"
+                                                class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add
+                                            to cart
+                                        </button>
                                     </div>
                                 {% endif %}
                             </div>
@@ -133,8 +150,8 @@
                     {% endfor %}
                 </div>
             {% endif %}
+            </div>
         </div>
-    </div>
 
 
 {% endblock %}

@@ -135,6 +135,11 @@ class CourseCreate(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('courseHandler:course-list')
     success_message = "The course was created successfully"
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.usertype.type == 'teacher':
+            return redirect('homepage')
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         # author = get_object_or_404(UserType, pk=form.instance.author_id)
         # if author.type == "Teacher":
@@ -184,7 +189,13 @@ class CourseDetail(FormMixin, DetailView):
         videos_count = len(Video.objects.filter(course_id=self.object.id))
         context['couseList'] = course_no_follow
         # context['couseList'] = all_courses
-        context['reviews'] = Review.objects.filter(course_id=self.object.id).select_related('student')[:5]
+        reviews = Review.objects.filter(course_id=self.object.id).select_related('student')
+        ratings = [review.rating for review in reviews]
+        cart = Cart.new(self.request)
+        context['prodInCart'] = self.object in cart.products
+        if ratings:
+            context['rating_avg'] = round(sum(ratings) / len(ratings), 1)
+            context['reviews'] = reviews[:5]
         if self.request.user.is_authenticated:
             check_follow = FollowCourse.objects.filter(course_id=self.object.id, student_id=self.request.user.id)
             if check_follow:
@@ -238,6 +249,21 @@ class CourseUpdate(SuccessMessageMixin, UpdateView):
 class CourseList(ListView):
     model = Course
     template_name = 'courseHandler/course/search_result.html'
+
+    def get_context_data(self, **kwargs):
+        courses_bought_id = []
+        if hasattr(self.request.user, 'usertype') and self.request.user.usertype.type == 'student':
+            courses_bought = FollowCourse.objects.filter(student_id=self.request.user.id)
+            courses_bought_id = [e.course_id for e in courses_bought]
+        cart = Cart.new(self.request)
+
+        context = {
+            "object_list": self.object_list,
+            "cartProd": cart.products,
+            "coursesBought": courses_bought_id,
+        }
+
+        return context
 
 class CourseListHomepage(ListView):
     model = Course
