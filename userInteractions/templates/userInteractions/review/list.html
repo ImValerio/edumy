@@ -3,12 +3,13 @@
 
 {% block title %}{% endblock %}
 
+{% load static %}
 {% block content %}
     <div class="container" id="review-container">
         <h3 class="font-weight-light text-uppercase mb-3" style="letter-spacing: 5px">Reviews</h3>
         {% for review in reviews %}
                 <div class="row border-bottom">
-                    <ion-icon name="person-circle-outline" style="height: 4.8rem; width: 4.8rem;"></ion-icon>
+                    <img class="img-fluid rounded-circle" style="width:64px; height:64px;object-fit: cover" src="{% get_media_prefix %}{{ user.usertype.image }}">
                     <div class="col">
                         <p>{{ review.student }}</p>
                         <p class="mr-3">{{ review.rating }}/5</p>
