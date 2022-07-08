@@ -25,7 +25,7 @@
                             <h5 class="font-weight-normal text-muted">({{ object.category }})</h5>
                         </div>
                         <h4 class="font-weight-normal"> {{ videosCount }} videos!</h4>
-                        {% if user.usertype.type == 'teacher' %}
+                        {% if user.usertype.type == 'teacher' and student_count %}
                             <h4 class="font-weight-normal text-muted"> Number of students who have bought the
                                 course: {{ student_count }}</h4>
                         {% endif %}

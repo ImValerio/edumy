@@ -197,7 +197,7 @@ class CourseDetail(FormMixin, DetailView):
             context['rating_avg'] = round(sum(ratings) / len(ratings), 1)
             context['reviews'] = reviews[:5]
         check_follow = FollowCourse.objects.filter(course_id=self.object.id, student_id=self.request.user.id)
-        if check_follow and teacher_is_authorized(self.request, self.object.id):
+        if check_follow :
             context['formReview'] = ReviewForm(initial={'post': self.object})
         context['videosCount'] = videos_count
         return context
@@ -256,8 +256,29 @@ class CourseList(ListView):
             courses_bought_id = [e.course_id for e in courses_bought]
         cart = Cart.new(self.request)
 
+        id_courses_follow = [course for course in FollowCourse.objects.filter(student_id=self.request.user.id).values_list('course_id',
+                                                                                                 flat=True)]
+
+        self.object_list = self.object_list.values()
+        print(self.object_list)
+        all_courses = [course for course in self.object_list if course['id'] not in id_courses_follow]
+        student_count = FollowCourse.objects.select_related('course').values('course')\
+            .annotate(student__count=Count('student_id'))
+
+
+        student_count = student_count.values()
+        for course in all_courses:
+            course['student__count'] = -1
+
+        for course in all_courses:
+            for count in student_count:
+                if course['id'] == count['course_id']:
+                    course['student__count'] = count['student__count']
+
+        sort_course = sorted(all_courses, key=lambda x: x['student__count'])[::-1]
+
         context = {
-            "object_list": self.object_list,
+            "object_list": sort_course,
             "cartProd": cart.products,
             "coursesBought": courses_bought_id,
         }
@@ -312,10 +333,10 @@ def CourseListView(request):
         return redirect('homepage')
 
     if request.user.usertype.type == 'student':
-        courses = FollowCourse.objects.all().filter(student_id=request.user.id).select_related('course').order_by('-price')
+        courses = FollowCourse.objects.all().filter(student_id=request.user.id).select_related('course').order_by('-start_date')
         courses = [e.course for e in courses]
     else:
-        courses = Course.objects.all().filter(author_id=request.user.id).order_by('-price')
+        courses = Course.objects.all().filter(author_id=request.user.id).order_by('-creation_date')
     paginator = Paginator(courses, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
