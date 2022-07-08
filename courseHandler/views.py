@@ -196,10 +196,9 @@ class CourseDetail(FormMixin, DetailView):
         if ratings:
             context['rating_avg'] = round(sum(ratings) / len(ratings), 1)
             context['reviews'] = reviews[:5]
-        if self.request.user.is_authenticated:
-            check_follow = FollowCourse.objects.filter(course_id=self.object.id, student_id=self.request.user.id)
-            if check_follow:
-                context['formReview'] = ReviewForm(initial={'post': self.object})
+        check_follow = FollowCourse.objects.filter(course_id=self.object.id, student_id=self.request.user.id)
+        if check_follow and teacher_is_authorized(self.request, self.object.id):
+            context['formReview'] = ReviewForm(initial={'post': self.object})
         context['videosCount'] = videos_count
         return context
 
