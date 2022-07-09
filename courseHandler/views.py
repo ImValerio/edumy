@@ -1,11 +1,8 @@
-# Create your views here.index'
-from collections import Counter
 from django.db.models import Avg
 
 from dj_shop_cart.cart import get_cart_class
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
-from django.db.models import  Count
 from django.views.generic.edit import FormMixin
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET, require_POST
@@ -26,6 +23,7 @@ from userInteractions.models import Question, Answer, Review
 
 Cart = get_cart_class()
 
+
 def teacher_is_authorized(request, pk):
     if not request.user.is_authenticated:
         return False
@@ -38,7 +36,7 @@ def teacher_is_authorized(request, pk):
 
 def VideoUploadDetail(request, course_id, pk):
     check_follow = FollowCourse.objects.filter(course_id=course_id, student_id=request.user.id)
-    if (request.user.is_authenticated and check_follow) or teacher_is_authorized(request, course_id) :
+    if (request.user.is_authenticated and check_follow) or teacher_is_authorized(request, course_id):
         if request.method == 'POST':
             form_question = QuestionForm(request.POST, request.FILES)
             if form_question.is_valid():
@@ -158,7 +156,8 @@ class CourseDetail(FormMixin, DetailView):
         percentage = self.object.price * 0.3
         min_price = self.object.price - percentage
         max_price = self.object.price + percentage
-        all_courses = Course.objects.filter(category=self.object.category, price__range=(min_price, max_price), is_active='True')[:4]
+        all_courses = Course.objects.filter(category=self.object.category, price__range=(min_price, max_price),
+                                            is_active='True')[:4]
         course_no_follow = [course for course in all_courses if course.id != self.object.id]
         videos_count = len(Video.objects.filter(course_id=self.object.id))
         context['couseList'] = course_no_follow
@@ -166,7 +165,7 @@ class CourseDetail(FormMixin, DetailView):
         ratings = [review.rating for review in reviews]
         cart = Cart.new(self.request)
         context['prodInCart'] = self.object in cart.products
-        is_student = FollowCourse.objects.filter(student_id=self.request.user.id,course_id=self.object.id)
+        is_student = FollowCourse.objects.filter(student_id=self.request.user.id, course_id=self.object.id)
         if is_student:
             context['prodInCart'] = True
         if ratings:
@@ -241,48 +240,6 @@ class CourseList(ListView):
 
         return context
 
-class CourseListHomepage(ListView):
-    model = Course
-    template_name = 'search_result_homepage.html'
-    def get_context_data(self, **kwargs):
-        context = {}
-        if self.request.user.is_authenticated:
-            user_courses = FollowCourse.objects.filter(student_id=self.request.user.id).select_related('course')
-            courses = [course.course for course in user_courses]
-            list_price = [c.price for c in courses]
-            list_category = [c.category for c in courses]
-            avg = sum(list_price) / len(list_category)
-            price_percentage = avg * 0.3
-            min_avg = avg - price_percentage
-            max_avg = avg + price_percentage
-            popular_category = list(Counter(list_category))[0]
-            all_courses = Course.objects.filter(category=popular_category, price__range=(min_avg, max_avg),
-                                                is_active='True')
-            ids = [course.pk for course in user_courses]
-            course_list = [course for course in all_courses if course.id not in ids]
-            context['courseList'] = course_list
-            if len(course_list):
-                paginator = Paginator(course_list, 6)
-                page_number = self.request.GET.get('page')
-                page_obj = paginator.get_page(page_number)
-                print(page_number)
-                context['page_obj'] = page_obj
-                return context
-        # query che prende tutte le recensioni che hanno almento un corso, le raggruppa per id e fa la media dei rating per quell'id
-        reviews_courses = Review.objects.select_related('course') \
-            .values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg")
-        id_courses = [course for course in reviews_courses.values_list('course', flat=True)]
-        all_courses = Course.objects.filter(is_active='True')
-        courses_list = [course for course in all_courses if course.id in id_courses]
-        context['courseList'] = courses_list
-        paginator = Paginator(courses_list, 6)
-        page_number = self.request.GET.get('page')
-        print(page_number)
-        page_obj = paginator.get_page(page_number)
-        context['page_obj'] = page_obj
-        return context
-
-
 
 def CourseListView(request):
     if not request.user.is_authenticated:
@@ -324,13 +281,16 @@ def CourseListStore(request):
             "form": form
         }
 
-        id_courses_follow = [course for course in FollowCourse.objects.filter(student_id=request.user.id).values_list('course_id', flat=True)]
+        id_courses_follow = [course for course in
+                             FollowCourse.objects.filter(student_id=request.user.id).values_list('course_id',
+                                                                                                 flat=True)]
         all_courses = Course.objects.filter(is_active='True').exclude(id__in=id_courses_follow)
-        avg_courses = Review.objects.select_related('course').values('course').annotate(rating__avg=Avg('rating')).order_by("-rating__avg").exclude(course_id__in=id_courses_follow)
+        avg_courses = Review.objects.select_related('course').values('course').annotate(
+            rating__avg=Avg('rating')).order_by("-rating__avg").exclude(course_id__in=id_courses_follow)
         all_courses = all_courses.values()
 
         for course in all_courses:
-            course['avg']= -1
+            course['avg'] = -1
 
         for course in all_courses:
             for avg in avg_courses:
@@ -344,19 +304,6 @@ def CourseListStore(request):
         context['page_obj'] = page_obj
 
         return render(request, 'courseHandler/course/store.html', context)
-
-
-
-def search(request):
-    if request.method == "POST":
-        form = SearchCourseForm(request.POST)
-        if form.is_valid():
-            sstring = form.cleaned_data.get("search_string")
-            where = form.cleaned_data.get("search_where")
-            return redirect("courseHandler:course-search-result", sstring, where)
-    else:
-        form = SearchCourseForm()
-    return render(request, template_name="courseHandler/course/search.html", context={"form": form})
 
 
 class CourseSearchView(CourseList):
@@ -374,38 +321,6 @@ class CourseSearchView(CourseList):
         return res
 
         return super().form_valid(form)
-
-
-class CourseSearchViewHompage(CourseListHomepage):
-    titolo = "La tua ricerca ha dato come risultato"
-
-    def get_queryset(self):
-        sstring = self.request.resolver_match.kwargs["sstring"]
-        where = self.request.resolver_match.kwargs["where"]
-        if "Title" in where:
-            res = self.model.objects.filter(title__icontains=sstring)
-        elif "Author" in where:
-            res = self.model.objects.filter(author__username__icontains=sstring)
-        else:
-            res = self.model.objects.filter(category__icontains=sstring)
-        return res
-
-        return super().form_valid(form)
-
-
-def courses_statistic(request, pk):
-    context = {}
-    courses = Course.objects.filter(author_id=request.user.id)
-    courses_id = [course.id for course in courses]
-    bests_sellers = FollowCourse.objects.filter(course_id__in=courses_id).values('course').annotate(Count('course'))
-    print(bests_sellers[0]['course'])
-    courses = courses.values()
-    for c in courses:
-        for c1 in bests_sellers:
-            if c['id'] == c1['course']:
-                c['course_sold'] = c1['course__count']
-    context['courses'] = courses
-    return render(request, "courseHandler/course/statistic.html")
 
 
 def CartView(request):

@@ -33,6 +33,8 @@
         </div>
         {% endfor %}
     </ul>
+
+    {% if page_obj.paginator.num_pages > 1 %}
     <nav class="blog-pagination justify-content-center d-flex">
         <ul class="pagination">
             {% if page_obj.has_previous %}
@@ -68,6 +70,7 @@
             {% endif %}
         </ul>
     </nav>
+{% endif %}
 </div>
 
 {% endblock %}

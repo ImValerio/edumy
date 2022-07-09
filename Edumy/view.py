@@ -8,24 +8,11 @@ from courseHandler.models import FollowCourse, Course
 from collections import Counter
 
 from userInteractions.models import Review
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
-
-class Homepage(TemplateView):
-    template_name = 'homepage.html'
-
-def recomandation(request):
+def homepage(request):
     context = {}
     # se userCourses è vuoto fare una ricerca totale dei corsi
-    if request.method == 'POST':
-        form = SearchCourseForm(request.POST)
-        if form.is_valid():
-            sstring = form.cleaned_data.get("search_string")
-            where = form.cleaned_data.get("search_where")
-            return redirect("homepage-search-result", sstring, where)
-    else:
-        form = SearchCourseForm()
-        context['form'] = form
     if request.user.is_authenticated and request.user.usertype.type != 'teacher':
         user_courses = FollowCourse.objects.filter(student_id=request.user.id).select_related('course')
         if user_courses:

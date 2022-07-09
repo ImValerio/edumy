@@ -18,6 +18,5 @@ class Review(models.Model):
     title = models.CharField(max_length=120)
     body = models.CharField(max_length=1024)
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-    #evaluation_author = models.IntegerField(default=0)
     student = models.ForeignKey(UserType, related_name='review_user', on_delete=models.PROTECT)
     course = models.ForeignKey(Course, related_name='review_course', on_delete=models.PROTECT)

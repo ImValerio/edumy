@@ -16,6 +16,7 @@ class QuestionForm(forms.ModelForm):
         model = Question
         fields = ['body']
 
+
 class AnswerForm(forms.ModelForm):
     helper = FormHelper()
     helper.form_id = "add_answer_crispy_form"
@@ -23,12 +24,10 @@ class AnswerForm(forms.ModelForm):
     helper.add_input(Submit('submit', 'Submit'))
     helper.inputs[0].field_classes = 'btn btn-success'
 
-
     class Meta:
         model = Answer
         fields = ['body']
 
-    
 
 class ReviewForm(forms.ModelForm):
     helper = FormHelper()

@@ -4,22 +4,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from courseHandler.views import VideoUploadView, VideoUploadDetail, CourseCreate, CourseDetail, \
-    CourseDelete, CourseUpdate, search, CourseSearchView, VideoUpdateView, CourseListStore, add_product, CartView, \
-    courses_statistic, remove_product, CourseListView, publish_course, read_notifications
+    CourseDelete, CourseUpdate, CourseSearchView, VideoUpdateView, CourseListStore, add_product, CartView, remove_product, CourseListView, publish_course, read_notifications
 
 app_name = 'courseHandler'
 
 urlpatterns = [
     path('<int:pk>/readNotifications', read_notifications, name='read-notifications'),
-    path('user/course/<int:pk>', VideoUploadView, name='course-upload-video'),
-    path('user/course/<int:course_id>/video/<int:pk>', VideoUploadDetail, name='course-upload-video-detail'),
-    path('user/course/<int:course_id>/video/<int:pk>/update', VideoUpdateView.as_view(), name='video-update'),
+    path('course/<int:pk>', VideoUploadView, name='course-upload-video'),
+    path('course/<int:course_id>/video/<int:pk>', VideoUploadDetail, name='course-upload-video-detail'),
+    path('course/<int:course_id>/video/<int:pk>/update', VideoUpdateView.as_view(), name='video-update'),
     path('course/create', CourseCreate.as_view(), name='course-create'),
     path('course/<int:pk>/detail', CourseDetail.as_view(), name='course-detail'),
     path('course/<int:pk>/delete', CourseDelete.as_view(), name='course-delete'),
     path('course/<int:pk>/update', CourseUpdate.as_view(), name='course-update'),
-    path('course/<int:pk>/statistic', courses_statistic, name='course-statistic'),
-    path("course/search", search, name="course-search"),
     path("course/search/result/<str:sstring>/<str:where>/", CourseSearchView.as_view(), name="course-search-result"),
     path('course/list', CourseListView, name='course-list'),
     path('course/<int:pk>/publish', publish_course, name='course-publish'),

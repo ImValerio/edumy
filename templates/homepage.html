@@ -8,7 +8,50 @@
         <div class="border-bottom border-dark my-3">
             <h1>Edumy </h1>
         </div>
-        <nav class="blog-pagination justify-content-center d-flex">
+
+        <div class="my-3 flex-md-row flex-column justify-content-center">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="">The most popular courses</h3>
+            </div>
+        </div>
+        <div class="d-flex justify-content-start flex-wrap ml-md-5" style="gap: 1.25rem">
+            {% for course in page_obj %}
+                <div class="card bg-light shadow d-flex align-items-stretch"
+                     style="width: 20rem; border-radius: 1rem 1rem 1rem 1rem;">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div class="row">
+                            <div class="col-10 d-flex">
+                                <img class="img-fluid rounded" src="{% get_media_prefix %}{{ course.image }}"
+                                     style="width:250px; height:150px; object-fit: cover">
+                            </div>
+                            <div class="col">
+                                <a class="text-info" href="{% url 'courseHandler:course-detail' course.id %}">
+                                    <ion-icon name="search-outline" style="height: 1.3rem; width: 1.3rem;"></ion-icon>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="">
+                            <h1 class="text-body">{{ course.title }}</h1>
+                            <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ course.category }}</h6>
+                            <p class="card-text">{{ course.price }}$</p>
+                        </div>
+                        {% if user.is_authenticated and user.userType == 'student' %}
+                            <div class="d-flex flex-row justify-content-end">
+                                <button data-product="{{ course.id }}" data-action="add"
+                                        class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add to cart
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+
+            <nav class="blog-pagination justify-content-center d-flex">
+
                 <ul class="pagination">
                     {% if page_obj.has_previous %}
                         <li class="page-item">
@@ -43,50 +86,7 @@
                     {% endif %}
                 </ul>
             </nav>
-
-        <div class="my-3 flex-md-row flex-column justify-content-center">
-            <div class="d-flex justify-content-between align-items-center">
-                <h3 class="">The most popular courses</h3>
-            </div>
-        </div>
-        <div class="d-flex justify-content-start flex-wrap ml-md-5" style="gap: 1.25rem">
-            {% for course in page_obj %}
-                <div class="card bg-light shadow d-flex align-items-stretch"
-                     style="width: 20rem; border-radius: 1rem 1rem 1rem 1rem;">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <div class="row">
-                            <div class="col-10 d-flex">
-                                <img class="img-fluid rounded" src="{% get_media_prefix %}{{ course.image }}"
-                                     style="width:250px; height:150px; object-fit: cover">
-                            </div>
-                            <div class="col">
-                                <a class="text-info" href="{% url 'courseHandler:course-detail' course.id %}">
-                                    <ion-icon name="search-outline" style="height: 1.3rem; width: 1.3rem;"></ion-icon>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="">
-                            <h1 class="text-body">{{ course.title }}</h1>
-                            <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ course.category }}</h6>
-                            <p class="card-text">{{ course.price }}$</p>
-                        </div>
-                        {% if user.is_authenticated and user.userType == 'student' %}
-                            <div class="d-flex flex-row justify-content-end">
-                                <button data-product="{{ course.id }}" data-action="add" class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add to cart</button>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-
-        {% if messages %}
-            <div class="messages mt-3">
-                {% for message in messages %}
-                    <div {% if message.tags %} id="alert" class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
-                {% endfor %}
-            </div>
         {% endif %}
+
     </div>
 {% endblock %}
