@@ -7,8 +7,10 @@ from model_bakery import baker
 from courseHandler.models import Course
 
 
-class CourseTestModel(TestCase):
+class CourseHandlerTestModel(TestCase):
 
-    def test_using_course(self):
+    def test_create_course(self):
         self.course = baker.make(Course)
         self.assertIsInstance(self.course, Course)
+
+

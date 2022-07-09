@@ -197,7 +197,8 @@ class CourseDetail(FormMixin, DetailView):
             context['rating_avg'] = round(sum(ratings) / len(ratings), 1)
             context['reviews'] = reviews[:5]
         check_follow = FollowCourse.objects.filter(course_id=self.object.id, student_id=self.request.user.id)
-        if check_follow :
+        check_review = Review.objects.filter(student_id=self.request.user.id, course_id=self.object.id)
+        if check_follow and not check_review:
             context['formReview'] = ReviewForm(initial={'post': self.object})
         context['videosCount'] = videos_count
         return context
