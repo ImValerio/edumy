@@ -5,7 +5,6 @@ window.onload = () => {
     let reviewContainer = document.getElementById('review-container');
 
     let loadQA = document.getElementById('load-qa');
-    let qaContainer = document.getElementById('qa-container');
 
     let publishBtns = document.getElementsByClassName('publish-course');
     const notificationsBtn = document.getElementById('notifications-btn');
@@ -30,9 +29,13 @@ window.onload = () => {
                         priceElement.parentElement.innerText = 'The cart is empty...';
                         document.querySelector('form').remove()
                     }
+
+                    btn.parentElement.parentElement.parentElement.remove();
+                }else{
+
+                    btn.parentElement.parentElement.remove();
                 }
 
-                btn.parentElement.parentElement.remove();
 
             })
         }
@@ -99,6 +102,8 @@ window.onload = () => {
         })
     }
     if (loadQA) {
+
+        let qaContainer = document.getElementById('qa-container');
         loadQA.addEventListener('click', async () => {
             page += 1
             const videoId = document.querySelector('#video').dataset.id

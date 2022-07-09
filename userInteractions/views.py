@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpRespon
 from django.urls import  reverse
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import UpdateView
+from notifications.signals import notify
 
 from Edumy.settings import MEDIA_URL
 from courseHandler.models import Video, Course
@@ -103,6 +104,13 @@ def add_answer(request, video_id, question_id):
         json_data = json.loads(request.body)
         Answer.objects.create(author_id=request.user.id, video_id=video_id, question_id=question_id,
                               body=json_data['answer'])
+        sender = User.objects.get(id=request.user.id)
+        question_row = Question.objects.get(id=question_id)
+        recipient = User.objects.get(id=question_row.student_id)
+        course_title = Course.objects.values_list('title').get(id=video_id)
+        message = f"[{course_title[0]}] {request.user.first_name} answered your question"
+        notify.send(sender, recipient=recipient, verb='Message',
+                    description=message)
         return JsonResponse({'msg': 'Answer added'})
 
     return HttpResponseBadRequest()

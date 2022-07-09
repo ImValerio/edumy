@@ -44,7 +44,7 @@ def VideoUploadDetail(request, course_id, pk):
                 instance.student_id = request.user.id
                 instance.video_id = int(pk)
                 instance.save()
-                messages.add_message(request, messages.INFO, 'The question was created successfully')
+                messages.add_message(request, messages.SUCCESS, 'The question was created successfully')
                 return redirect('courseHandler:course-upload-video-detail', course_id, pk)
         else:
             form_question = QuestionForm()
@@ -73,7 +73,7 @@ def VideoUploadView(request, pk):
                 instance = form.save(commit=False)
                 instance.course_id = int(pk)
                 instance.save()
-                messages.add_message(request, messages.INFO, 'The video was created successfully')
+                messages.add_message(request, messages.SUCCESS, 'The video was created successfully')
                 return redirect('courseHandler:course-upload-video', pk)
 
         user_follow_course = False
@@ -153,7 +153,7 @@ class CourseDetail(FormMixin, DetailView):
         if teacher_is_authorized(self.request, self.object.id):
             student_count = FollowCourse.objects.filter(course_id=self.object.id)
             context['student_count'] = len(student_count)
-        percentage = self.object.price * 0.3
+        percentage = self.object.price * 0.5
         min_price = self.object.price - percentage
         max_price = self.object.price + percentage
         all_courses = Course.objects.filter(category=self.object.category, price__range=(min_price, max_price),
@@ -173,7 +173,8 @@ class CourseDetail(FormMixin, DetailView):
             context['reviews'] = reviews[:5]
         if self.request.user.is_authenticated:
             check_follow = FollowCourse.objects.filter(course_id=self.object.id, student_id=self.request.user.id)
-            if check_follow:
+            check_review = Review.objects.filter(student_id=self.request.user.id, course_id=self.object.id)
+            if check_follow and not check_review:
                 context['formReview'] = ReviewForm(initial={'post': self.object})
         context['videosCount'] = videos_count
         return context
