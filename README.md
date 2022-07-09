@@ -17,3 +17,7 @@ Specifically, we have set ourselves the following objectives:
 - django-cleanup v6.0
 - dj-shop-cart v4.1
 - model_baker v1.6
+
+## How to install
+
+You can install all packages with <code>pip install "package-name"</code>
