@@ -185,9 +185,17 @@ class CourseDetail(FormMixin, DetailView):
         max_price = self.object.price + percentage
         all_courses = Course.objects.filter(category=self.object.category, price__range=(min_price, max_price), is_active='True').order_by('-price')[:4]
         # ids = [course.pk for course in userCourses]
-        course_no_follow = [course for course in all_courses if course.id != self.object.id]
+
+        courses_user_follow = FollowCourse.objects.filter(student_id=self.request.user.id)
+        id_course_user_follow = [course.course_id for course in courses_user_follow]
+        print(id_course_user_follow)
+        course_filtered = [course for course in all_courses if course.id != self.object.id]
+        print(course_filtered)
+        course_filtered = [course for course in course_filtered if course.id not in id_course_user_follow]
+
+
         videos_count = len(Video.objects.filter(course_id=self.object.id))
-        context['couseList'] = course_no_follow
+        context['couseList'] = course_filtered
         # context['couseList'] = all_courses
         reviews = Review.objects.filter(course_id=self.object.id).select_related('student')
         ratings = [review.rating for review in reviews]
