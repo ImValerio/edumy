@@ -23,7 +23,6 @@ class Course(models.Model):
     description = models.CharField(max_length=1024)
     category = models.CharField(max_length=100)
     image = models.ImageField(upload_to='imgs', validators=[validate_image])
-    duration = models.IntegerField(default= 0, blank=True)
     price = models.IntegerField()
     author = models.ForeignKey(UserType, related_name='course_user', on_delete=models.CASCADE)
     is_active = models.BooleanField(default= False)
@@ -38,13 +37,11 @@ class FollowCourse(models.Model):
     course = models.ForeignKey(Course, related_name='followCourse_course', on_delete=models.PROTECT)
     student = models.ForeignKey(UserType, related_name='followCourse_user', on_delete=models.PROTECT)
     start_date = models.DateTimeField(default=timezone.now)
-    end_date = models.DateTimeField(null=True)
 
 # Se il corso viene eliminato i video rimangono disponibili per gli utenti che hanno gia acquistato il corso
 class Video(models.Model):
     title = models.CharField(max_length=120)
     description = models.CharField(max_length=1024)
-    duration = models.IntegerField(default=0)
     file = models.FileField(upload_to='videos', validators=[FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm', 'mkv'])])
     course = models.ForeignKey(Course, related_name='video_course', on_delete=models.PROTECT, null=True, blank=True)
 
