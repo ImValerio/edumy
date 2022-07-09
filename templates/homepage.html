@@ -6,7 +6,7 @@
 {% block content %}
     <div class="container">
         <div class="border-bottom border-dark my-3">
-            <h1>Edumy</h1>
+            <h1>Edumy </h1>
         </div>
         <nav class="blog-pagination justify-content-center d-flex">
                 <ul class="pagination">
@@ -47,7 +47,6 @@
         <div class="my-3 flex-md-row flex-column justify-content-center">
             <div class="d-flex justify-content-between align-items-center">
                 <h3 class="">The most popular courses</h3>
-                {% include 'courseHandler/course/search.html' %}
             </div>
         </div>
         <div class="d-flex justify-content-start flex-wrap ml-md-5" style="gap: 1.25rem">
@@ -61,7 +60,7 @@
                                      style="width:250px; height:150px; object-fit: cover">
                             </div>
                             <div class="col">
-                                <a class="text-info" href="{% url 'courseHandler:course-detail' course.pk %}">
+                                <a class="text-info" href="{% url 'courseHandler:course-detail' course.id %}">
                                     <ion-icon name="search-outline" style="height: 1.3rem; width: 1.3rem;"></ion-icon>
                                 </a>
                             </div>

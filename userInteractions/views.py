@@ -4,13 +4,11 @@ import json
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponse
-from django.urls import reverse_lazy, reverse
+from django.urls import  reverse
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import UpdateView
 
 from Edumy.settings import MEDIA_URL
-from courseHandler.models import Video, FollowCourse
-from notifications.signals import notify
 from courseHandler.models import Video, Course
 from courseHandler.views import teacher_is_authorized
 from userAuth.models import UserType
@@ -20,7 +18,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 
 from django.forms.models import model_to_dict
-from django.contrib import messages
 
 
 def QuestionList(request, video):
@@ -124,3 +121,18 @@ def delete_answer(request, answer_id):
             return HttpResponseBadRequest()
 
     return render(request, 'homepage.html')
+
+@require_GET
+def delete_question(request, question_id):
+    video_id = Question.objects.get(id=question_id).video_id
+    course_id = Video.objects.get(id=video_id).course_id
+    if teacher_is_authorized(request, course_id):
+        try:
+            question = Question.objects.get(id=question_id)
+            question.delete()
+            return HttpResponse()
+        except:
+            return HttpResponseBadRequest()
+
+    return render(request, 'homepage.html')
+

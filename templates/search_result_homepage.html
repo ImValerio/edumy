@@ -24,16 +24,11 @@
                                 </div>
                             </div>
                             <div class="">
-                                <h1 class="text-body">{{ course.title }}</h1>
+                                <a class="text-info" href="{% url 'courseHandler:course-detail' course.pk %}"><h1 class="text-body">{{ course.title }}</h1></a>
                                 <p class="font-italic">{{ course.author.first_name }} {{ course.author.last_name }}</p>
                                 <h6 class="card-subtitle mb-2 text-muted">{{ course.category }}</h6>
                                 <p class="card-text">{{ course.price }}$</p>
                             </div>
-                            {% if user.is_authenticated and user.userType == 'student' %}
-                                <div class="d-flex flex-row justify-content-end">
-                                    <button data-product="{{ course.id }}" data-action="add" class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add to cart</button>
-                                </div>
-                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}

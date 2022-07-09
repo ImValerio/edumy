@@ -17,13 +17,49 @@
             {% for question in page_obj %}
                 <div class="accordion" id="accordionQuestionList{{ question.id }}">
                     <div class="card">
-                        <div class="card-header" id="question{{ question.id }}">
+                        <div class="card-header d-flex justify-content-between" id="question{{ question.id }}">
                             <button class="w-100 h-100 border-0 text-left bg-transparent font-weight-light"
                                     type="button" class="card-link"
                                     data-toggle="collapse"
                                     data-target="#questionAnswer{{ question.id }}" aria-expanded="false">
                                 {{ question.body }}
                             </button>
+                            <div class="d-flex ">
+                                <button class="btn btn-danger" data-toggle="modal"
+                                        data-target="#deleteModal{{ question.id }}" id="del-modal{{ question.id }}">
+                                    Delete
+                                </button>
+                            </div>
+                            <div class="modal fade" id="deleteModal{{ question.id }}" tabindex="-1"
+                                 aria-labelledby="deleteModalLabel{{ question.id }}"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ question.id }}">Question
+                                                Delete</h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            You sure you want to delete your question?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <button type="button" class="del-question btn btn-primary "
+                                                    id="del-question{{ question.id }}"
+                                                    data-id=
+                                                    {{ question.id }}>Confirm
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div id="questionAnswer{{ question.id }}" class="collapse show"

@@ -1,6 +1,6 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Row, Column, Div, HTML, Field
+from crispy_forms.layout import Layout, Submit, Row, Column
 from courseHandler.models import Course, Payment
 from courseHandler.models import Video
 import datetime
@@ -13,8 +13,6 @@ class CreateVideo(forms.ModelForm):
     class Meta:
         model = Video
         fields = ['title', 'description', 'file']
-
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -66,17 +64,15 @@ class CourseForm(forms.ModelForm):
     helper = FormHelper()
     helper.form_id = "add_course_crispy_form"
     helper.form_method = 'POST'
-    # title = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-    # description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-    # category = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-    # image = forms.FileField(widget=forms.FileInput(attrs={"class": "form-control"}))
-    #
-    # price = forms.IntegerField(widget=forms.NumberInput(attrs={"class": "form-control", 'placeholder': '$'}))
     creation_date = forms.DateField(widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}))
 
     class Meta:
         model = Course
         fields = ('title', 'description', 'category', 'image', 'price', 'creation_date')
+
+    categories = [('Programming', 'Programming'), ('Science', 'Science'), ('Sport', 'Sport'), ('Cooking', 'Cooking'), ('Language', 'Language')]
+    sorted_categories = sorted(categories, key=lambda tup: tup[0])
+    category = forms.ChoiceField(choices=sorted_categories, label='Categories',required=True)
 
     def clean_creation_date(self):
         date = self.cleaned_data['creation_date']
@@ -108,14 +104,14 @@ class CourseForm(forms.ModelForm):
 
 class SearchCourseForm(forms.Form):
 
-    CHOICE_LIST = [("Title","Cerca tra i corsi"), ("Author","Cerca tra gli autori"),
-                   ("Category","Cerca tra le categorie")]
+    CHOICE_LIST = [("Title","Search among course"), ("Author","Search among author"),
+                   ("Category","Search among category")]
     helper = FormHelper()
     helper.form_id = "search_crispy_form"
     helper.form_method = "POST"
     helper.add_input(Submit("submit","Cerca"))
-    search_string = forms.CharField(label="Cerca qualcosa",max_length=100, min_length=3, required=True)
-    search_where = forms.ChoiceField(label="Dove?", required=True, choices=CHOICE_LIST)
+    search_string = forms.CharField(label="Search somethings",max_length=100, min_length=3, required=True)
+    search_where = forms.ChoiceField(label="Where?", required=True, choices=CHOICE_LIST)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

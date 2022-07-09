@@ -162,6 +162,24 @@ window.onload = () => {
         })
     }
 
+    const delQuestionBtn = document.getElementsByClassName("del-question");
+    if (delQuestionBtn) {
+        for (let btn of delQuestionBtn) {
+            btn.addEventListener('click', async () => {
+                const questionID = btn.dataset.id;
+                const res = await fetch(`/question/${questionID}/delete`);
+                document.querySelector(`#del-modal${questionID}`).dataset.target = ''
+                $(`#deleteModal${questionID}`).modal('hide');
+                if (res.ok){
+                    document.querySelector('#alert').innerHTML = `<div class="alert alert-success"> Question deleted successfully</div>`
+                    document.querySelector(`#del-modal${ questionID}`).parentElement.parentElement.remove();
+                }else{
+                    document.querySelector('#alert').innerHTML = `<div class="alert alert-danger"> Error: Bad request!</div>`
+                }
+            })
+        }
+    }
+
     const answerForms = document.getElementsByClassName("form-answer");
     if (answerForms) {
         for (let form of answerForms) {

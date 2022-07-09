@@ -25,8 +25,10 @@
                             <h5 class="font-weight-normal text-muted">({{ object.category }})</h5>
                         </div>
                         <h4 class="font-weight-normal"> {{ videosCount }} videos!</h4>
-                        <h4 class="font-weight-normal text-muted"> Number of students who have bought the
-                            course: {{ student_count }}</h4>
+                        {% if user.usertype.type == 'teacher' and student_count %}
+                            <h4 class="font-weight-normal text-muted"> Number of students who have bought the
+                                course: {{ student_count }}</h4>
+                        {% endif %}
                         <h3 class="font-weight-normal">{{ object.price }} $</h3>
                     </div>
                     {% if prodInCart %}
@@ -109,7 +111,7 @@
 
             </div>
 
-            {% if couseList and user.userType == 'student' %}
+            {% if couseList and user.usertype.type == 'student' %}
                 <div class="my-3">
                 <div class="">
                     <h3>Other courses you might be interested</h3>
@@ -118,17 +120,12 @@
                     {% for course in couseList %}
                         <div class="card bg-light shadow d-flex flex-col align-items-stretch"
                              style="width: 20rem; border-radius: 1rem 1rem 1rem 1rem;">
+                        <a class="text-decoration-none" href="{% url 'courseHandler:course-detail' course.pk %}">
                             <div class="card-body d-flex flex-column justify-content-between">
                                 <div class="row">
                                     <div class="col-10 d-flex">
                                         <img class="img-fluid rounded" src="{% get_media_prefix %}{{ course.image }}"
                                              style="width:250px; height:150px; object-fit: cover">
-                                    </div>
-                                    <div class="col">
-                                        <a class="text-info" href="{% url 'courseHandler:course-detail' course.pk %}">
-                                            <ion-icon name="search-outline"
-                                                      style="height: 1.3rem; width: 1.3rem;"></ion-icon>
-                                        </a>
                                     </div>
                                 </div>
                                 <div class="">
@@ -137,15 +134,8 @@
                                     <h6 class="card-subtitle mb-2 text-muted">{{ course.category }}</h6>
                                     <p class="card-text">{{ course.price }}$</p>
                                 </div>
-                                {% if user.is_authenticated %}
-                                    <div class="d-flex flex-row justify-content-end">
-                                        <button data-product="{{ course.id }}" data-action="add"
-                                                class="btn-success cart-update font-weight-bold p-2 px-3 border-0">Add
-                                            to cart
-                                        </button>
-                                    </div>
-                                {% endif %}
                             </div>
+                        </a>
                         </div>
                     {% endfor %}
                 </div>

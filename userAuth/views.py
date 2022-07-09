@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET
@@ -13,7 +12,6 @@ from userAuth.models import UserType
 
 from django.contrib import messages
 
-from django.http import HttpResponseRedirect
 
 class UserCreationView(SuccessMessageMixin, CreateView):
     form_class = UserSignup

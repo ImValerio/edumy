@@ -8,6 +8,7 @@ django = "*"
 helpers = "*"
 django-cleanup = "*"
 dj-shop-cart = "*"
+baker = "*"
 
 [dev-packages]
 

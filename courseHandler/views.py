@@ -1,12 +1,11 @@
 # Create your views here.index'
 from collections import Counter
-from django.db.models import Avg, Prefetch
+from django.db.models import Avg
 
 from dj_shop_cart.cart import get_cart_class
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
-from django.db.models import Max, Count
-from django.forms import model_to_dict
+from django.db.models import  Count
 from django.views.generic.edit import FormMixin
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET, require_POST
@@ -17,7 +16,7 @@ from courseHandler.models import Video, Course, FollowCourse, Payment
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse, HttpRequest
 from django.contrib import messages
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView
 from courseHandler.forms import CourseForm
@@ -25,16 +24,7 @@ from courseHandler.forms import CourseForm
 from userInteractions.forms import QuestionForm, ReviewForm
 from userInteractions.models import Question, Answer, Review
 
-"""
-class VideoUploadView(CreateView):
-    model = Video
-    form_class = CreateVideo
-    template_name = 'courseHandler/video/upload-video.html'
-
-"""
-
 Cart = get_cart_class()
-
 
 def teacher_is_authorized(request, pk):
     if not request.user.is_authenticated:
@@ -142,12 +132,8 @@ class CourseCreate(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        # author = get_object_or_404(UserType, pk=form.instance.author_id)
-        # if author.type == "Teacher":
         form.instance.author_id = self.request.user.id
         return super().form_valid(form)
-        # else:
-        # print("Tu non sei un teacher")
 
 
 class CourseDetail(FormMixin, DetailView):
@@ -169,27 +155,13 @@ class CourseDetail(FormMixin, DetailView):
         if teacher_is_authorized(self.request, self.object.id):
             student_count = FollowCourse.objects.filter(course_id=self.object.id)
             context['student_count'] = len(student_count)
-        # se userCourses è vuoto fare una ricerca totale dei corsi
-        # userCourses = FollowCourse.objects.filter(student_id=self.request.user.id).select_related('course')
-        # courses = [course.course for course in userCourses]
-        # listPrice = [c.price for c in courses]
-        # listcategory = [c.category for c in courses]
-        # avg = sum(listPrice) / len(listcategory)
-        # percentage = avg * 0.3
-        # minAvg = avg - percentage
-        # maxAvg = avg + percentage
-        # popularCategory = list(Counter(listcategory))[0]
-        # fare la ricerca su corso preso in dettaglio(utilizzare self)
-        # all_courses = Course.objects.filter(category=popularCategory, price__range=(minAvg,maxAvg))
         percentage = self.object.price * 0.3
         min_price = self.object.price - percentage
         max_price = self.object.price + percentage
         all_courses = Course.objects.filter(category=self.object.category, price__range=(min_price, max_price), is_active='True')[:4]
-        # ids = [course.pk for course in userCourses]
         course_no_follow = [course for course in all_courses if course.id != self.object.id]
         videos_count = len(Video.objects.filter(course_id=self.object.id))
         context['couseList'] = course_no_follow
-        # context['couseList'] = all_courses
         reviews = Review.objects.filter(course_id=self.object.id).select_related('student')
         ratings = [review.rating for review in reviews]
         cart = Cart.new(self.request)
@@ -373,12 +345,6 @@ def CourseListStore(request):
 
         return render(request, 'courseHandler/course/store.html', context)
 
-
-"""class CourseListStore(LoginRequiredMixin, ListView):
-    model = Course
-    template_name = 'courseHandler/course/store.html'
-
-"""
 
 
 def search(request):

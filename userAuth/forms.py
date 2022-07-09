@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from crispy_forms.layout import Layout, Submit, Row, Column, Div, HTML, Field, ButtonHolder
+from crispy_forms.layout import Layout, Submit, Row, Column, HTML
 from crispy_forms.helper import FormHelper
 from userAuth.models import UserType
 
@@ -59,16 +59,6 @@ class UserSignup(UserCreationForm):
 class UserUpdate(forms.ModelForm):
     helper = FormHelper()
     helper.form_method = 'POST'
-
-    """layout = Layout(Fieldset(
-        Field('first_name'),
-        Field('last_name'),
-        Field('username'),
-        Field('email'),
-        Field('type'),
-    ))
-    layout.insert(3, HTML(""<a href="{% url 'userAuth:password_change' %}">Change password</a>""))
-    helper.layout = layout """
 
     class Meta:
         model = UserType
