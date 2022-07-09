@@ -39,13 +39,13 @@
 
             <a class='d-flex justify-content-center align-items-center text-white' href="{% url 'logout' %}">
                 <ion-icon name="log-out-outline" class="h2"></ion-icon>
-                <h4 class="d-none d-sm-flex">Logout</h4>
+                <h4 class="d-none d-sm-flex text-white">Logout</h4>
             </a>
         </div>
 
     {% else %}
-        <a class='h3' href="{% url 'login' %}">Login</a>
-        <a class='h3' href="{% url 'userAuth:signup' %}">Signup</a>
+        <a class='h3 text-white' href="{% url 'login' %}">Login</a>
+        <a class='h3 text-white' href="{% url 'userAuth:signup' %}">Signup</a>
     {% endif %}
 
 </nav>
