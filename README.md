@@ -11,7 +11,7 @@ Specifically, we have set ourselves the following objectives:
 - Upload videos in multimedia format (specify formats) based on a specific course
 - Ability to create a course (only users who are registered as authors)
 
-## Technologies
+## Packages
 - django v4.0  
 - helpers v0.2
 - django-cleanup v6.0
